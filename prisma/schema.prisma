@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String     @id @default(uuid())
+  name        String
+  email       String     @unique
+  image       String?
+  globalRole  GlobalRole @default(BROTHER)
+  walkoutSong String? // optional walkout song URL or name
+  moneyRaised Float      @default(0) // total $ raised by this user
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  teamMemberships TeamMember[]
+  donations       Donation[]
+  draftPicks      DraftPick[]
+  images          Image[]
+}
+
+model Team {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members              TeamMember[]
+  donations            Donation[]
+  externalTransactions ExternalTransaction[]
+
+  points      Int         @default(0)
+  tshirtsSold Int         @default(0)
+  moneyRaised Float       @default(0) // sum of all $ for this team
+  DraftPick   DraftPick[]
+}
+
+model TeamMember {
+  id       String   @id @default(uuid())
+  userId   String
+  teamId   String
+  teamRole TeamRole
+
+  user User @relation(fields: [userId], references: [id])
+  team Team @relation(fields: [teamId], references: [id])
+
+  @@unique([userId, teamId])
+}
+
+model Donation {
+  id        String   @id @default(uuid())
+  userId    String
+  teamId    String?
+  amount    Float
+  stripeId  String   @unique
+  createdAt DateTime @default(now())
+
+  user User  @relation(fields: [userId], references: [id])
+  team Team? @relation(fields: [teamId], references: [id])
+}
+
+model ExternalTransaction {
+  id        String          @id @default(uuid())
+  email     String
+  name      String?
+  type      TransactionType
+  amount    Float
+  teamId    String?
+  stripeId  String          @unique
+  createdAt DateTime        @default(now())
+
+  team Team? @relation(fields: [teamId], references: [id])
+}
+
+model DraftPick {
+  id         String   @id @default(uuid())
+  teamId     String
+  userId     String?
+  round      Int
+  pickNumber Int
+  createdAt  DateTime @default(now())
+
+  team Team  @relation(fields: [teamId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
+}
+
+model Image {
+  id           String   @id @default(uuid())
+  url          String
+  uploadedById String?
+  uploadedBy   User?    @relation(fields: [uploadedById], references: [id])
+  createdAt    DateTime @default(now())
+}
+
+enum GlobalRole {
+  ADMIN
+  JUDGE
+  BROTHER
+  DERBY_DARLING
+}
+
+enum TeamRole {
+  HEAD_COACH
+  COACH
+  DERBY_DARLING
+}
+
+enum TransactionType {
+  DONATION
+  TSHIRT
+  AD
+}
