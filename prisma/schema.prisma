@@ -1,31 +1,97 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          String     @id @default(uuid())
-  name        String
-  email       String     @unique
-  image       String?
-  globalRole  GlobalRole @default(BROTHER)
-  walkoutSong String? // optional walkout song URL or name
-  moneyRaised Float      @default(0) // total $ raised by this user
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+generator client {
+  provider = "prisma-client-js"
+}
 
-  teamMemberships TeamMember[]
-  donations       Donation[]
-  draftPicks      DraftPick[]
-  images          Image[]
+model User {
+  id            String     @id @default(cuid())
+  name          String?
+  email         String?    @unique
+  emailVerified DateTime?
+  image         String?
+  moneyRaised   Float      @default(0)
+  walkoutSong   String?
+  globalRole    GlobalRole @default(BROTHER)
+
+  accounts      Account[]
+  sessions      Session[]
+  Authenticator Authenticator[]
+
+  teamMemberships      TeamMember[]
+  donations            Donation[]
+  draftPicks           DraftPick[]
+  images               Image[]
+  externalTransactions ExternalTransaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String  @unique
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User?   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
 }
 
 model Team {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -33,15 +99,14 @@ model Team {
   members              TeamMember[]
   donations            Donation[]
   externalTransactions ExternalTransaction[]
-
-  points      Int         @default(0)
-  tshirtsSold Int         @default(0)
-  moneyRaised Float       @default(0) // sum of all $ for this team
-  DraftPick   DraftPick[]
+  draftPicks           DraftPick[]
+  points               Int                   @default(0)
+  tshirtsSold          Int                   @default(0)
+  moneyRaised          Float                 @default(0)
 }
 
 model TeamMember {
-  id       String   @id @default(uuid())
+  id       String   @id @default(cuid())
   userId   String
   teamId   String
   teamRole TeamRole
@@ -53,7 +118,7 @@ model TeamMember {
 }
 
 model Donation {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   userId    String
   teamId    String?
   amount    Float
@@ -65,20 +130,22 @@ model Donation {
 }
 
 model ExternalTransaction {
-  id        String          @id @default(uuid())
+  id        String          @id @default(cuid())
   email     String
   name      String?
   type      TransactionType
   amount    Float
   teamId    String?
+  userId    String?
   stripeId  String          @unique
   createdAt DateTime        @default(now())
 
   team Team? @relation(fields: [teamId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
 }
 
 model DraftPick {
-  id         String   @id @default(uuid())
+  id         String   @id @default(cuid())
   teamId     String
   userId     String?
   round      Int
@@ -90,11 +157,12 @@ model DraftPick {
 }
 
 model Image {
-  id           String   @id @default(uuid())
+  id           String   @id @default(cuid())
   url          String
   uploadedById String?
-  uploadedBy   User?    @relation(fields: [uploadedById], references: [id])
   createdAt    DateTime @default(now())
+
+  uploadedBy User? @relation(fields: [uploadedById], references: [id])
 }
 
 enum GlobalRole {

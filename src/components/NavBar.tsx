@@ -1,9 +1,11 @@
 'use client';
 import React, { useState } from 'react'
+import { signIn } from 'next-auth/react';
 import Image from "next/image";
 import Link from 'next/link';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { UserGroupIcon, TrophyIcon, HeartIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/solid';
+import SignIn from './SignIn';
 
 
 const NavBar = () => {
@@ -24,7 +26,7 @@ const NavBar = () => {
             <Link href="/standings" className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md">Standings</Link>
             <Link href="/donors" className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md">Donors</Link>
             <Link href="/donors" className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md">Draft</Link>
-            <Link href="/api/auth/signin">Log In</Link>
+            <SignIn/>
           </nav>
 
           {/* Desktop Button */}
