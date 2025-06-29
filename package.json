@@ -12,6 +12,7 @@
     "@auth/prisma-adapter": "^2.10.0",
     "@heroicons/react": "^2.2.0",
     "@prisma/client": "^6.10.1",
+    "@prisma/extension-accelerate": "^2.0.1",
     "bcrypt": "^6.0.0",
     "next": "15.3.4",
     "next-auth": "^5.0.0-beta.29",
@@ -31,6 +32,7 @@
     "eslint-config-next": "15.3.4",
     "prisma": "^6.10.1",
     "tailwindcss": "^4.1.11",
+    "tsx": "^4.20.3",
     "typescript": "^5"
   }
 }
