@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
+import { auth } from "../../auth";
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -14,15 +15,12 @@ export const metadata: Metadata = {
   description: "Sigma Chi Epsilon Eta Derby Days landing page",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default async function RootLayout({children,}: Readonly<{children: React.ReactNode;}>) {
+  const session = await auth()
   return (
     <html lang="en" data-theme="sigmachi">
       <body className={poppins.variable}>
-        <NavBar/>
+        <NavBar session={session} />
         <main>{children}</main>
       </body>
     </html>

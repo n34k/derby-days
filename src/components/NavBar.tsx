@@ -1,14 +1,16 @@
 'use client';
 import React, { useState } from 'react'
-import { signIn } from 'next-auth/react';
 import Image from "next/image";
 import Link from 'next/link';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import type { Session } from "next-auth";
 import { UserGroupIcon, TrophyIcon, HeartIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/solid';
-import SignIn from './SignIn';
 
+interface Props {
+  session: Session | null;
+}
 
-const NavBar = () => {
+const NavBar = ({ session }:Props) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -25,8 +27,8 @@ const NavBar = () => {
             <Link href="/teams" className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md">Teams</Link>
             <Link href="/standings" className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md">Standings</Link>
             <Link href="/donors" className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md">Donors</Link>
-            <Link href="/donors" className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md">Draft</Link>
-            <SignIn/>
+            <Link href="/draft" className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md">Draft</Link>
+            {session && <Link href="/account" className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md">Account</Link>}
           </nav>
 
           {/* Desktop Button */}
