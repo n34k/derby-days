@@ -18,9 +18,8 @@ async function AccountPage() {
   const { user: userData } = await res.json();
 
   return (
-    <section className="p-15">
-      <h1>Welcome {userData.name}</h1>
-      <UpdateUserForm initialImage={userData.image} initialName={userData.name} initialWalkoutSong={userData.walkoutSong}/>
+    <section className="flex flex-col items-center p-15">
+      <UpdateUserForm initialImage={userData.image} initialName={userData.name} initialWalkoutSong={userData.walkoutSong} initialPublicId={userData.imagePublicId}/>
     </section>
   )
 }

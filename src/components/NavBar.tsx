@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from 'next/link';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import type { Session } from "next-auth";
-import { UserGroupIcon, TrophyIcon, HeartIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/solid';
+import { UserGroupIcon, TrophyIcon, HeartIcon, ClipboardDocumentListIcon, UserIcon } from '@heroicons/react/24/solid';
 
 interface Props {
   session: Session | null;
@@ -65,6 +65,11 @@ const NavBar = ({ session }:Props) => {
             <ClipboardDocumentListIcon className="h-8 w-8 text-base-content"/>
             <p className='text-base-content font-bold'>Draft</p>
           </Link>
+          {session &&
+          <Link className='flex flex-col items-center' href="/account" onClick={() => setMenuOpen(false)}>
+            <UserIcon className="h-8 w-8 text-base-content"/>
+            <p className='text-base-content font-bold'>Account</p>
+          </Link>}
         </div>
       </div>
     </header>
