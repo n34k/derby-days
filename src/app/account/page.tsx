@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import React from 'react'
 import { cookies } from "next/headers";
 
-import UpdateUserForm from "@/components/UpdateUserForm";
+import UpdateUserForm from "@/section/UpdateUserForm";
 
 async function AccountPage() {
   const session = await auth();
@@ -20,6 +20,7 @@ async function AccountPage() {
   return (
     <section className="flex flex-col items-center p-15">
       <UpdateUserForm initialImage={userData.image} initialName={userData.name} initialWalkoutSong={userData.walkoutSong} initialPublicId={userData.imagePublicId}/>
+
     </section>
   )
 }

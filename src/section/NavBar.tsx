@@ -19,7 +19,7 @@ const NavBar = ({ session }:Props) => {
         <div className="flex justify-between items-center px-5 text-text">
           {/* Logo */}
           <Link href="/" onClick={() => setMenuOpen(false)}>
-            <Image src="/images/logo.png" alt="Derby Days" width={70} height={40} className="h-20 cursor-pointer transition duration-300 transform hover:scale-110"/>
+            <Image src="/images/logo.png" alt="Derby Days" width={70} height={40} priority className="h-20 cursor-pointer transition duration-300 transform hover:scale-110"/>
           </Link>
 
           {/* Desktop Navigation */}
@@ -47,7 +47,7 @@ const NavBar = ({ session }:Props) => {
         {/* Dropdown Menu */}
         <div
           className={`flex justify-evenly items-center md:hidden w-full bg-primary shadow-lg overflow-hidden
-            transition-[max-height] duration-150 ${menuOpen ? 'max-h-[60vh] py-3' : 'max-h-0'} `}
+            transition-[max-height] duration-200 ${menuOpen ? 'max-h-[60vh] py-3' : 'max-h-0'} `}
         >
           <Link className='flex flex-col items-center' href="/teams" onClick={() => setMenuOpen(false)}>
             <UserGroupIcon className="h-8 w-8 text-base-content"/>

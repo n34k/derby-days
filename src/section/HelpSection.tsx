@@ -1,5 +1,5 @@
 import React from 'react'
-import Service from './Service'
+import Service from '@/components/Service'
 import { BanknotesIcon, GiftIcon, ShoppingBagIcon, MegaphoneIcon } from '@heroicons/react/24/solid'
 
 const HelpSection = () => {

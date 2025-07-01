@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { CldUploadWidget, CldImage, CloudinaryUploadWidgetInfo } from 'next-cloudinary'
 import { PencilIcon, XMarkIcon, CheckIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 
-import TextInput from './TextInput'
+import TextInput from '../components/TextInput'
 
 interface Props {
   initialName: string | null | undefined;
@@ -105,53 +105,70 @@ const UpdateUserForm = ({ initialName, initialImage, initialWalkoutSong, initial
   };
 
   return (
-    <form className='bg-primary p-10 rounded-[var(--radius-box)] md:w-1/2' onSubmit={handleSubmit}>
+    <form className='bg-primary p-10 rounded-[var(--radius-box)] ' onSubmit={handleSubmit}>
       <div className='flex flex-col items-center'>
-        {imagePublicId ? <CldImage className='rounded-full self-center h-[225px] w-[225px] shadow-lg' src={image ?? ""} alt='Profile Picture' width={225} height={225}/> :
-        <Image className='rounded-full object-cover self-center' src={image ?? ""} alt='Profile Picture' width={250} height={250}></Image>}
-            <CldUploadWidget
-              signatureEndpoint="/api/sign-cloudinary-params"
-              uploadPreset='profilepic'
-              options={{
-                sources: ['local'],
-                multiple: false
-              }}
-              onSuccess={(results) => {
-                const info = results.info as CloudinaryUploadWidgetInfo
-                setPublicId(info.public_id)
-                setImage(info.secure_url)
-                submitUpdate(name, info.secure_url, walkoutSong, info.public_id)
-              }}> 
-              {({ open }) => 
-                <button type='button' className={`btn btn-secondary w-1/2 mt-2.5 transition-all duration-300 ${
-                  editing ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`} onClick={() => open()}>
-                  Edit Pic
-                  <ArrowUpTrayIcon className='h-4 w-4'/>
-                </button>} 
-            </CldUploadWidget>
-            <div className='flex flex-col gap-5'>
-              <TextInput title='Name' onChange={setName} readOnly={!editing} value={name ?? ""}/>
-              <TextInput title='Walkout Song' onChange={setWalkoutSong} readOnly={!editing} value={walkoutSong}/>
-              {editing ? (
-                <div className='flex justify-evenly'>
-                  <button className='btn btn-secondary' type='button' onClick={handleCancel}>
-                    Cancel
-                    <XMarkIcon className='h-4 w-4'/>
-                  </button>
-                  <button className='btn btn-secondary' type='submit'>
-                    Submit
-                    <CheckIcon className='h-4 w-4'/>
-                  </button>
-                </div>
-                ) : (
-                <button className='btn btn-secondary w-1/2 self-center' onClick={toggleEditing}>
-                  Edit  
-                  <PencilIcon className='h-4 w-4'/>
+        <div className="w-[225px] h-[225px] rounded-full overflow-hidden shadow-lg self-center">
+          {imagePublicId ? (
+            <CldImage
+              className="object-cover"
+              src={image ?? ""}
+              alt="Profile Picture"
+              width={225}
+              height={225}
+            />
+          ) : (
+            <Image
+              className="object-cover"
+              src={image ?? ""}
+              alt="Profile Picture"
+              width={225}
+              height={225}
+            />
+          )}
+        </div>
+        <CldUploadWidget
+          signatureEndpoint="/api/sign-cloudinary-params"
+          uploadPreset='profilepic'
+          options={{sources: ['local'], multiple: false }}
+          onSuccess={(results) => {
+            const info = results.info as CloudinaryUploadWidgetInfo
+            setPublicId(info.public_id)
+            setImage(info.secure_url)
+            submitUpdate(name, info.secure_url, walkoutSong, info.public_id)
+          }}> 
+          {({ open }) => 
+            <button 
+              type='button' 
+              className={`btn btn-secondary w-1/2 mt-2.5 transition-all duration-300 
+                ${editing ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`} 
+              onClick={() => open()}>
+              Edit Pic
+              <ArrowUpTrayIcon className='h-4 w-4'/>
+            </button>} 
+        </CldUploadWidget>
+          <div className='flex flex-col gap-5'>
+            <TextInput title='Full Name' onChange={setName} readOnly={!editing} value={name ?? ""}/>
+            <TextInput title='Walkout Song' onChange={setWalkoutSong} readOnly={!editing} value={walkoutSong}/>
+            {editing ? (
+              <div className='flex justify-evenly'>
+                <button className='btn btn-secondary' type='button' onClick={handleCancel}>
+                  Cancel
+                  <XMarkIcon className='h-4 w-4'/>
                 </button>
-              )}
-            </div>
+                <button className='btn btn-secondary' type='submit'>
+                  Submit
+                  <CheckIcon className='h-4 w-4'/>
+                </button>
+              </div>
+              ) : (
+              <button className='btn btn-secondary w-1/2 self-center' onClick={toggleEditing}>
+                Edit  
+                <PencilIcon className='h-4 w-4'/>
+              </button>
+            )}
+          </div>
       </div>
-  </form>
+    </form>
   )
 }
 

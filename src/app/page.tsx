@@ -1,8 +1,8 @@
 'use client';
 import React from 'react';
-import MainSection from '@/components/MainSection';
-import WhatSection from '@/components/WhatSection';
-import HelpSection from '@/components/HelpSection';
+import MainSection from '@/section/MainSection';
+import WhatSection from '@/section/WhatSection';
+import HelpSection from '@/section/HelpSection';
 
 const HomePage = () => {
   return (
