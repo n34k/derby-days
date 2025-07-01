@@ -14,7 +14,7 @@ const NavBar = ({ session }:Props) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 w-full z-50 bg-base backdrop-blur-md shadow-lg">
+    <header className="sticky top-0 w-full z-50 bg-base border-b-1 backdrop-blur-md shadow-lg">
       <div className="relative">
         <div className="flex justify-between items-center px-5 text-text">
           {/* Logo */}

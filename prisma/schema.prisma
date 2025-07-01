@@ -36,13 +36,17 @@ model User {
   sessions      Session[]
   Authenticator Authenticator[]
 
-  teamMemberships      TeamMember[]
+  teamId               String?
+  team                 Team?                 @relation(fields: [teamId], references: [id])
   donations            Donation[]
-  draftPicks           DraftPick[]
+  draftPick            DraftPick?
   externalTransactions ExternalTransaction[]
 
+  headCoachOf    Team? @relation("HeadCoach")
+  derbyDarlingOf Team? @relation("DerbyDarling")
+
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Account {
@@ -101,30 +105,24 @@ model Authenticator {
 }
 
 model Team {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id   String @id @default(cuid())
+  name String
 
-  members              TeamMember[]
+  headCoachId    String? @unique
+  headCoach      User?   @relation("HeadCoach", fields: [headCoachId], references: [id])
+  derbyDarlingId String? @unique
+  derbyDarling   User?   @relation("DerbyDarling", fields: [derbyDarlingId], references: [id])
+  members        User[]
+
   donations            Donation[]
   externalTransactions ExternalTransaction[]
   draftPicks           DraftPick[]
   points               Int                   @default(0)
   tshirtsSold          Int                   @default(0)
   moneyRaised          Float                 @default(0)
-}
 
-model TeamMember {
-  id       String   @id @default(cuid())
-  userId   String
-  teamId   String
-  teamRole TeamRole
-
-  user User @relation(fields: [userId], references: [id])
-  team Team @relation(fields: [teamId], references: [id])
-
-  @@unique([userId, teamId])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Donation {
@@ -155,12 +153,10 @@ model ExternalTransaction {
 }
 
 model DraftPick {
-  id         String   @id @default(cuid())
+  id         String @id @default(cuid())
   teamId     String
-  userId     String?
-  round      Int
+  userId     String @unique
   pickNumber Int
-  createdAt  DateTime @default(now())
 
   team Team  @relation(fields: [teamId], references: [id])
   user User? @relation(fields: [userId], references: [id])
@@ -171,12 +167,7 @@ enum GlobalRole {
   JUDGE
   BROTHER
   DERBY_DARLING
-}
-
-enum TeamRole {
   HEAD_COACH
-  COACH
-  DERBY_DARLING
 }
 
 enum TransactionType {

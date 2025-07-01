@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/section/NavBar";
 import { auth } from "../../auth";
+import Footer from "@/section/Footer";
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -22,6 +23,7 @@ export default async function RootLayout({children,}: Readonly<{children: React.
       <body className={poppins.variable}>
         <NavBar session={session} />
         <main>{children}</main>
+        <Footer/>
       </body>
     </html>
   );
