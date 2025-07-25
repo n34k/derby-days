@@ -35,7 +35,7 @@ const NavBar = ({ session }:Props) => {
 
           {/* Desktop Button */}
           <Link href="/donate" className="">
-            <button className="btn btn-secondary btn-lg p-3 transition duration-300 hover:text-secondary hover:scale-110">Donate Here</button>
+            <button className="btn btn-secondary btn-lg p-3 transition duration-300 hover:text-secondary hover:scale-110">Support Us</button>
           </Link>
 
           {/* Mobile Toggle */}

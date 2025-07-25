@@ -162,6 +162,15 @@ model DraftPick {
   user User? @relation(fields: [userId], references: [id])
 }
 
+model Product {
+  productId String   @id
+  name      String
+  price     Int // in cents
+  priceId   String // Stripe Price ID
+  category  String // "ads" or "tshirt"
+  createdAt DateTime @default(now())
+}
+
 enum GlobalRole {
   ADMIN
   JUDGE
