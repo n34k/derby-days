@@ -1,13 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  TrashIcon,
-  PencilIcon,
-  CheckIcon,
-  XMarkIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
+import { TrashIcon, PencilIcon, CheckIcon, XMarkIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { Product } from "@/generated/prisma";
 import CreateProductModal from "./CreateProductModal";
 
@@ -70,7 +64,6 @@ export const ProductsTable = ({ products }: { products: Product[] }) => {
     setProductsState(prev => [...prev, newProduct]);
   };
 
-
   return (
     <div>
       <CreateProductModal
@@ -104,11 +97,11 @@ export const ProductsTable = ({ products }: { products: Product[] }) => {
         <table className="w-full border border-base-content text-sm">
           <thead className="bg-base-200">
             <tr>
-              <th className="border px-2 py-1">Product ID</th>
               <th className="border px-2 py-1">Name</th>
               <th className="border px-2 py-1">Price</th>
               <th className="border px-2 py-1">Category</th>
               <th className="border px-2 py-1">Stripe Price ID</th>
+              <th className="border px-2 py-1">Product ID</th>
               {editing && <th className="border px-2 py-1">Actions</th>}
             </tr>
           </thead>
@@ -119,7 +112,6 @@ export const ProductsTable = ({ products }: { products: Product[] }) => {
                 const isEdited = editedProducts[product.productId];
                 return (
                   <tr key={product.productId}>
-                    <td className="border px-2 py-1">{product.productId}</td>
                     <td className="border px-2 py-1">
                       {editing ? (
                         <input
@@ -167,6 +159,7 @@ export const ProductsTable = ({ products }: { products: Product[] }) => {
                         product.priceId
                       )}
                     </td>
+                    <td className="border px-2 py-1">{product.productId}</td>
                     {editing && (
                       <td className="border px-2 py-1">
                         <button

@@ -11,6 +11,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Grab invite token passed via OAuth 'state' param
       const inviteToken = account?.state;
 
+      if (process.env.NODE_ENV === "development") {
+        return true;
+      }
+
       if (inviteToken !== "derby2025invite") {
         console.log("Blocked sign in — invalid or missing invite token");
         return false;  // Reject sign-in

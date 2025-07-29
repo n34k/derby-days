@@ -48,8 +48,8 @@ const NavBar = ({ session }:Props) => {
 
         {/* Dropdown Menu */}
         <div
-          className={`flex justify-evenly items-center md:hidden w-full bg-primary shadow-lg overflow-hidden
-            transition-[max-height] duration-200 ${menuOpen ? 'max-h-[60vh] py-3' : 'max-h-0'} `}
+          className={`flex justify-evenly items-center md:hidden w-full bg-base backdrop-blur-md border-t-1 shadow-lg overflow-hidden
+            transition-[max-height] duration-50 ${menuOpen ? 'max-h-[60vh] py-3' : 'max-h-0'} `}
         >
           <Link className='flex flex-col items-center' href="/teams" onClick={() => setMenuOpen(false)}>
             <UserGroupIcon className="h-8 w-8 text-base-content"/>

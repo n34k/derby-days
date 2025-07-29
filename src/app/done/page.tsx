@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams, redirect } from "next/navigation";
+import { CheckCircleIcon } from "@heroicons/react/24/solid";
 
 
 export default function Page() {
@@ -32,12 +33,15 @@ export default function Page() {
   }
 
   return (
-    <div className="container">
-      <p className="message">Your purchase was successful</p>
-
-      <Link href="/" className="button">
-        Back to products
-      </Link>
-    </div>
+    <main className="flex flex-col items-center justify-center px-4 pt-50 text-center">
+      <div className="w-full max-w-xl space-y-6">
+        <div className="flex items-center justify-center gap-2 md:gap-3">
+          <h1 className="text-lg md:text-4xl font-semibold">Your transaction was successful</h1>
+          <CheckCircleIcon className="h-6 w-6 md:h-8 md:w-8 text-success" />
+        </div>
+        <p className="text-base md:text-2xl text-info-content">Thank you for the support!</p>
+        <Link href="/standings" className="btn btn-secondary">View Updated Standings</Link>
+      </div>
+    </main>
   );
 }

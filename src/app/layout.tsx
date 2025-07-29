@@ -20,10 +20,10 @@ export default async function RootLayout({children,}: Readonly<{children: React.
   const session = await auth()
   return (
     <html lang="en" data-theme="sigmachi">
-      <body className={poppins.variable}>
+      <body className={`min-h-screen flex flex-col ${poppins.variable}`}>
         <NavBar session={session} />
-        <main>{children}</main>
-        <Footer/>
+        <main className="flex-1">{children}</main>
+        <Footer />
       </body>
     </html>
   );
