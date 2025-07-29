@@ -14,7 +14,7 @@ const AdPurchaseWidget = async () => {
       </div>
       <div className='flex flex-col gap-7.5'>
         {Object.values(ads).map((ad) => (
-          <Link key={ad.priceId} href={`/checkout/${ad.priceId}`} className="btn btn-secondary w-45 text-center">
+          <Link key={ad.priceId} href={`/checkout/${ad.priceId}`} className="btn btn-secondary btn-xl text-lg w-[15vw] text-center">
             {ad.name}: ${ad.price/100}
           </Link>
         ))}

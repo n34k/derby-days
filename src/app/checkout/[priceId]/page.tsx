@@ -46,7 +46,7 @@ const Page = () => {
         },
       }}
     >
-      <CheckoutForm />
+      <CheckoutForm transactionType="ad"/>
     </CheckoutProvider>
   );
 }

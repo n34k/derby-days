@@ -16,7 +16,6 @@ const AdminPanel = async () => {
 
   const users = await prisma.user.findMany({ include: { team: true } });
   const teams = await prisma.team.findMany({include: { headCoach: true, derbyDarling: true }});
-  const transactions = await prisma.externalTransaction.findMany();
   const products = await prisma.product.findMany();
 
   return (
@@ -25,7 +24,6 @@ const AdminPanel = async () => {
       <UsersTable users={users}/>
       <TeamsTable teams={teams}/>
       <ProductsTable products={products}/>
-      <TransactionsTable transactions={transactions} />
     </div>
   );
 };

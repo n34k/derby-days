@@ -1,28 +1,30 @@
-import { NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe';
+import { stripe } from "@/lib/stripe";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  // Get amount and product details from request
-  const { amount, productName } = await request.json()
+  const { amount, metadata } = await request.json();
 
   const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    ui_mode: "hosted",
+    success_url: `${process.env.DOMAIN}/done?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.DOMAIN}/cancel`,
+    customer_email: metadata.email,
+    metadata,
     line_items: [
       {
         price_data: {
-          currency: 'usd',
+          currency: "usd",
           product_data: {
-            name: productName || 'Donation',
-            description: 'Thank you for your support',
+            name: "Donation",
+            description: "Thank you for your support",
           },
-          unit_amount: Math.round(amount * 100), // Convert dollars to cents
+          unit_amount: Math.round(amount * 100),
         },
         quantity: 1,
       },
     ],
-    mode: "payment",
-    ui_mode: "custom",
-    return_url: `${process.env.DOMAIN}/done?session_id={CHECKOUT_SESSION_ID}`,
   });
 
-  return NextResponse.json({ clientSecret: session.client_secret });
+  return NextResponse.json({ url: session.url });
 }

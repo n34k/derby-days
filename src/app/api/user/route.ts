@@ -10,6 +10,11 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+export async function GET() {
+  const users = await prisma.user.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" }});
+  return NextResponse.json(users);
+}
+
 export async function PATCH(req: NextRequest) {
   const session = await auth();
   if (!session) {
