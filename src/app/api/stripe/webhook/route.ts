@@ -6,7 +6,6 @@ import { headers } from "next/headers";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: "2025-06-30.basil"
 });
-
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 export async function POST(req: Request) {
@@ -19,9 +18,9 @@ export async function POST(req: Request) {
 
   try {
     event = stripe.webhooks.constructEvent(rawBody, signature!, endpointSecret);
-  } catch (err: any) {
-    console.error(`Webhook error: ${err.message}`);
-    return new NextResponse(`Webhook Error: ${err.message}`, { status: 400 });
+  } catch (err: unknown) {
+    console.error(`Webhook error: ${err}`);
+    return new NextResponse(`Webhook Error: ${err}`, { status: 400 });
   }
 
   // Process only successful checkout sessions

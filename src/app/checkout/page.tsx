@@ -3,12 +3,20 @@ import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { MetadataForm } from "@/components/MetadataForm";
 
+type FormValueData = {
+  email: string;
+  name: string;
+  note: string;
+  referredBy: string;
+  teamId: string;
+}
+
 const DonationPage = () => {
   const searchParams = useSearchParams();
   const amount = parseFloat(searchParams.get("amount") || "0");
   const [loading, setLoading] = useState(false);
 
-  const handleMetadataSubmit = async (formValues: any) => {
+  const handleMetadataSubmit = async (formValues:FormValueData) => {
     setLoading(true);
     const res = await fetch("/api/create-checkout-session", {
       method: "POST",

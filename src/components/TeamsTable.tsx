@@ -10,7 +10,7 @@ export const TeamsTable = ({ teams }: { teams: Team[] }) => {
 
   const toggleEditing = () => setEditing(!editing);
 
-  const handleChange = (teamId: string, field: keyof Team, value: any) => {
+  const handleChange = (teamId: string, field: keyof Team, value: Team[keyof Team]) => {
     setEditedTeams(prev => ({
       ...prev,
       [teamId]: {
@@ -148,7 +148,7 @@ export const TeamsTable = ({ teams }: { teams: Team[] }) => {
                         value={isTeamEdited?.headCoachId ?? team.headCoachId ?? ""}
                         onChange={e => handleChange(team.id, "headCoachId", e.target.value)}
                       />
-                    ) : (team.headCoach?.name ?? "—")}
+                    ) : (team.headCoachId ?? "—")}
                   </td>
                   <td className="border px-2 py-1">
                     {editing ? (
@@ -157,7 +157,7 @@ export const TeamsTable = ({ teams }: { teams: Team[] }) => {
                         value={isTeamEdited?.derbyDarlingId ?? team.derbyDarlingId ?? ""}
                         onChange={e => handleChange(team.id, "derbyDarlingId", e.target.value)}
                       />
-                    ) : (team.derbyDarling?.name ?? "—")}
+                    ) : (team.derbyDarlingId ?? "—")}
                   </td>
                   {editing && (
                     <td className="border px-2 py-1">

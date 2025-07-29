@@ -19,7 +19,7 @@ export const ProductsTable = ({ products }: { products: Product[] }) => {
 
   const toggleEditing = () => setEditing(!editing);
 
-  const handleChange = (productId: string, field: keyof Product, value: any) => {
+  const handleChange = (productId: string, field: keyof Product, value: Product[keyof Product]) => {
     setEditedProducts(prev => ({
       ...prev,
       [productId]: {

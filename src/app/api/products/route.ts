@@ -1,18 +1,29 @@
 import { prisma } from "../../../../prisma";
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET() {
-  const products = await prisma.product.findMany({ orderBy: { price: 'asc'}});
-  return NextResponse.json(products);
+  try {
+    const products = await prisma.product.findMany({
+      orderBy: { price: 'asc' },
+    });
+    return NextResponse.json(products);
+  } catch (error) {
+    console.error('[GET /api/products]', error);
+    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+  }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body: {
+      productId?: string;
+      name?: string;
+      price?: number;
+      priceId?: string;
+      category?: string;
+    } = await req.json();
 
     const { productId, name, price, priceId, category } = body;
-
-    console.log('PROD ID IN ROUTE', productId)
 
     if (!productId || !name || !price || !priceId || !category) {
       return NextResponse.json(

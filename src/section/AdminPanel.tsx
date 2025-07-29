@@ -1,7 +1,6 @@
 // AdminPanel.tsx
 import { UsersTable } from "@/components/UsersTable";
 import { TeamsTable } from "@/components/TeamsTable";
-import { TransactionsTable } from "@/components/TransactionsTable";
 import { prisma } from "../../prisma";
 import { auth } from "../../auth";
 import { redirect } from "next/navigation";

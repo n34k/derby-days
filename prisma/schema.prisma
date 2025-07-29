@@ -182,12 +182,11 @@ model DraftPick {
 }
 
 model Product {
-  productId String   @id
+  productId String @id
   name      String
   price     Int // in cents
   priceId   String // Stripe Price ID
   category  String // "ads" or "tshirt"
-  createdAt DateTime @default(now())
 }
 
 enum GlobalRole {

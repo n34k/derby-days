@@ -9,8 +9,10 @@ type Props = {
   onProductCreated: (product: Product) => void;
 };
 
+type ProductValue = Product[keyof Product];
+
 const CreateProductModal: React.FC<Props> = ({ isOpen, onClose, onProductCreated }) => {
-  const [formData, setFormData] = useState<Partial<Product>>({
+  const [formData, setFormData] = useState<Product>({
     productId: "",
     name: "",
     price: 0,
@@ -21,7 +23,7 @@ const CreateProductModal: React.FC<Props> = ({ isOpen, onClose, onProductCreated
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleChange = (field: keyof Product, value: any) => {
+  const handleChange = (field: keyof Product, value: ProductValue) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -56,7 +58,12 @@ const CreateProductModal: React.FC<Props> = ({ isOpen, onClose, onProductCreated
       // now update state with `created`
     } catch (err) {
       console.error("Error creating product:", err);
-      setError(err.message);
+
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred.");
+      }
     }
   };
 

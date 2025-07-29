@@ -14,7 +14,7 @@ export const UsersTable = ({ users }: { users: User[] }) => {
     setEditing(!editing)
   }
 
-  const handleChange = (userId: string, field: keyof User, value: any) => {
+  const handleChange = (userId: string, field: keyof User, value: User[keyof User]) => {
     setEditedUsers(prev => ({
       ...prev,
       [userId]: {
@@ -122,7 +122,7 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                     {editing ? (
                       <input
                         className="w-full max-w-[150px] truncate"
-                        value={isUserEdited?.name ?? user.name}
+                        value={isUserEdited?.name ?? user.name ?? ""}
                         onChange={e => handleChange(user.id, "name", e.target.value)}
                       />
                     ) : (user.name ?? "—")}
@@ -158,7 +158,7 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                       {editing ? (
                         <input
                           className="w-full max-w-[150px] truncate"
-                          value={isUserEdited?.walkoutSong ?? user.walkoutSong}
+                          value={isUserEdited?.walkoutSong ?? user.walkoutSong ?? ""}
                           onChange={e =>
                             handleChange(user.id, "walkoutSong", e.target.value)
                           }
@@ -183,7 +183,7 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                       </select>
                     ) : (user.globalRole)}
                   </td>
-                  <td className="border px-2 py-1">{user.team?.name ?? "—"}</td>
+                  <td className="border px-2 py-1">{user.teamId ?? "—"}</td>
                   {editing && (
                     <td className="border px-2 py-1">
                       <div className="flex justify-center">
