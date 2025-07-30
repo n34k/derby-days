@@ -2,14 +2,7 @@
 import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { MetadataForm } from "@/components/MetadataForm";
-
-type FormValueData = {
-  email: string;
-  name: string;
-  note: string;
-  referredBy: string;
-  teamId: string;
-}
+import { FormValueData } from "@/models/DefaultValues";
 
 const DonationPage = () => {
   const searchParams = useSearchParams();
@@ -18,12 +11,19 @@ const DonationPage = () => {
 
   const handleMetadataSubmit = async (formValues:FormValueData) => {
     setLoading(true);
+    const metadata = {
+      ...formValues,
+      category: 'donation'
+    }
+
     const res = await fetch("/api/create-checkout-session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount, metadata: formValues }),
+      body: JSON.stringify({ amount, metadata }),
     });
     const data = await res.json();
+
+    
     if (data.url) {
       window.location.href = data.url;
     } else {
@@ -33,8 +33,8 @@ const DonationPage = () => {
   };
 
   return (
-    <div className="flex justify-center p-5">
-      <MetadataForm onSubmit={handleMetadataSubmit} loading={loading} />
+    <div className="flex justify-center">
+      <MetadataForm onSubmit={handleMetadataSubmit} productCost={amount} productName="Donation" loading={loading} />
     </div>
   );
 };

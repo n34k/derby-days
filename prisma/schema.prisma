@@ -148,6 +148,8 @@ model AdPurchase {
   teamId    String?
   email     String
   name      String?
+  //note      String?
+  //size      String
   amount    Float
   stripeId  String   @unique
   createdAt DateTime @default(now())
@@ -185,7 +187,7 @@ model Product {
   productId String @id
   name      String
   price     Int // in cents
-  priceId   String // Stripe Price ID
+  priceId   String @unique // Stripe Price ID
   category  String // "ads" or "tshirt"
 }
 

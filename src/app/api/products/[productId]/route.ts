@@ -1,13 +1,43 @@
 import { prisma } from "../../../../../prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-function extractProductId(url: string): string | null {
+function extractId(url: string): string | null {
   const segments = url.split("/");
   return segments[segments.length - 1] || null;
 }
 
+//this is GET using priceId, hopefully i wont need to get with productId or else i need to move this to a new folder
+export async function GET(req: NextRequest) { 
+  const priceId = extractId(req.url);
+  if (!priceId) {
+    return NextResponse.json({ error: "Missing priceId" }, { status: 400 });
+  }
+
+  try {
+    const product = await prisma.product.findUnique({ 
+      where: { priceId }, 
+      select: {
+        productId: true,
+        name: true,
+        price: true,
+        category: true,
+        priceId: true,
+      } 
+    });
+
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404});
+    }
+    
+    return NextResponse.json(product);
+  } catch (err) {
+    console.error("Error fetching product by priceId:", err);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
+};
+
 export async function PATCH(req: NextRequest) {
-  const productId = extractProductId(req.url);
+  const productId = extractId(req.url);
   if (!productId) {
     return NextResponse.json({ error: "Missing productId" }, { status: 400 });
   }
@@ -33,7 +63,7 @@ export async function PATCH(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const productId = extractProductId(req.url);
+  const productId = extractId(req.url);
   if (!productId) {
     return NextResponse.json({ error: "Missing productId" }, { status: 400 });
   }

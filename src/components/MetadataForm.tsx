@@ -13,9 +13,11 @@ type MetadataFormProps = {
     teamId: string;
   }) => void;
   loading?: boolean;
+  productName: string;
+  productCost: number;
 };
 
-export const MetadataForm = ({ onSubmit, loading }: MetadataFormProps) => {
+export const MetadataForm = ({ onSubmit, loading, productName, productCost }: MetadataFormProps) => {
   const [teams, setTeams] = useState<Team[]>([]);
   const [users, setUsers] = useState<Brother[]>([]);
   const [referrerType, setReferrerType] = useState<"brother" | "team" | "">("");
@@ -39,10 +41,10 @@ export const MetadataForm = ({ onSubmit, loading }: MetadataFormProps) => {
 
   return (
     <form
-      className="flex flex-col rounded-2xl border-2 border-secondary gap-4 items-center max-h-[80vh] bg-primary overflow-y-scroll p-5 w-full max-w-xl mx-auto"
+      className="flex flex-col rounded-2xl border-2 border-secondary gap-4 items-center bg-primary overflow-y-scroll p-8 md:w-fit mt-10 mx-5"
       onSubmit={handleSubmit}
     >
-      <h1 className="text-3xl font-bold text-primary-content">Donation Info</h1>
+      <h1 className="text-3xl font-bold text-primary-content">{loading ? '' : `$${productCost} ${productName}`}</h1>
 
       <div className="form-control w-full max-w-md">
         <label className="label"><span className="label-text">Email</span></label>

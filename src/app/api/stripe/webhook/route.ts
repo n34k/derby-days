@@ -31,27 +31,48 @@ export async function POST(req: Request) {
     console.log("session metadata:", session.metadata);
     const amount = session.amount_total! / 100;
     const email = session.customer_email!;
-    const metadata = session.metadata;
-
-    const name = metadata?.name || null;
-    const note = metadata?.note || null;
-    const referredById = metadata?.referredBy || null;
-    const teamId = metadata?.teamId || null;
+    const name = session.metadata?.name || null;
+    const note = session.metadata?.note || null;
+    const referredById = session.metadata?.referredBy || null;
+    const teamId = session.metadata?.teamId || null;
+    const category = session.metadata?.category || null;
 
     try {
-      await prisma.donation.create({
-        data: {
-          email,
-          name,
-          note,
-          amount,
-          stripeId: session.id,
-          team: teamId ? { connect: { id: teamId } } : undefined,
-          user: referredById ? { connect: { id: referredById } } : undefined,
-        },
-      });
+      if (category === 'donation')
+        await prisma.donation.create({
+          data: {
+            email,
+            name,
+            note,
+            amount,
+            stripeId: session.id,
+            team: teamId ? { connect: { id: teamId } } : undefined,
+            user: referredById ? { connect: { id: referredById } } : undefined,
+          },
+        });
+      else if (category === 'ad') {
+        await prisma.adPurchase.create({
+          data: {
+            email,
+            name,
+            //note, //uncomment once we migrate db also SEND THE SIZE OF THE AD AND MAKE PATCH REQUEST SO ADMIN CAN MANUALLY ADD THE AD AFTER GETTING IT EMAILED
+            amount,
+            stripeId: session.id,
+            team: teamId ? { connect: { id: teamId } } : undefined,
+            user: referredById ? { connect: { id: referredById } } : undefined,
+          },
+        });
+      }
+      else if (category === 'shirt') {
+        //TODO add shirt logic
+      }
+      else {
+        return new NextResponse('Invalid product category', { status: 404})
+      }
+    
+      //TODO, EMAIL THE PURCHASER AN EMAIL DEPENDING ON THE TRANSACTION TYPE
 
-      // update logic
+      // Update logic for user and team money raised
       if (referredById) {
         const user = await prisma.user.findUnique({
           where: { id: referredById },
