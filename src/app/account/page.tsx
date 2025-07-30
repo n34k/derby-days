@@ -19,7 +19,7 @@ async function AccountPage() {
   const { user: userData } = await res.json();
 
   return (
-    <div className="flex flex-col items-center justify-center gap-15 md:flex-row md:px-15 py-10">
+    <div className="flex flex-col items-center justify-center gap-15 md:flex-row md:px-15 py-5">
       <UpdateUserForm initialImage={userData.image} initialName={userData.name} initialWalkoutSong={userData.walkoutSong} initialPublicId={userData.imagePublicId}/>
       {userData.globalRole === 'ADMIN' && <AdminPanel/>}
     </div>

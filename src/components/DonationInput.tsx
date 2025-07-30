@@ -14,7 +14,7 @@ const DonationInput = () => {
   };
 
   const parsedAmount = parseInt(donationInput, 10);
-  const donationAmount = !isNaN(parsedAmount) ? parsedAmount : 0;
+  const donationAmount = !isNaN(parsedAmount) ? parsedAmount : '';
 
   return (
     <div className="flex flex-col items-center gap-5 space-x-5 w-fit">
@@ -23,13 +23,23 @@ const DonationInput = () => {
           <input
             type="text"
             inputMode="numeric"
-            placeholder="25"
+            placeholder="0"
             value={donationAmount}
             onChange={handleChange}
             className="input input-xl text-center w-60 h-60 shadow-sm text-9xl"
           />
       </div>
-       <Link className='btn btn-secondary btn-lg p-3 transition duration-300 hover:text-secondary hover:scale-110"' href={`/checkout?amount=${donationAmount}`} >Donate ${donationAmount}</Link>
+      <Link 
+        className='btn btn-secondary btn-lg p-3 transition duration-300 hover:text-secondary hover:scale-110' 
+        href={`/checkout?amount=${donationAmount}`}
+        onClick={(e) => {
+          if (!donationAmount) {
+            e.preventDefault(); // cancel the navigation
+          }
+        }}
+      >
+        Donate
+      </Link>
     </div>
   );
 };

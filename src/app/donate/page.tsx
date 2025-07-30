@@ -12,7 +12,7 @@ const DonatePage = () => {
         <h1 className='text-4xl md:text-7xl font-bold'>Support the Cause</h1>
         <HeartIcon className='w-10 h-10 md:h-18 md:w-18'/>
       </div>
-      <div className='flex flex-col items-center justify-center gap-5 md:flex-row md:gap-25'>
+      <div className='flex flex-col items-center justify-center gap-10 md:flex-row md:gap-25'>
         <AdPurchaseWidget/>
         <DonationWidget/>
         <ShirtPurcahseWidget/>
