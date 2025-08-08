@@ -11,7 +11,7 @@ cloudinary.config({
 });
 
 export async function GET() {
-  const users = await prisma.user.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" }});
+  const users = await prisma.user.findMany({ select: { id: true, name: true, teamId: true }, orderBy: { name: "asc" }});
   return NextResponse.json(users);
 }
 

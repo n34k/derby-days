@@ -1,8 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
 type Team = { id: string; name: string };
-type Brother = { id: string; name: string };
+type Brother = { id: string; name: string, teamId: string };
 
 type MetadataFormProps = {
   onSubmit: (metadata: {
@@ -36,7 +37,25 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
     const name = (form.elements.namedItem("name") as HTMLInputElement).value;
     const note = (form.elements.namedItem("note") as HTMLInputElement).value;
 
-    onSubmit({ email, name, note, referredBy: referrerType === "brother" ? referredBy : "", teamId: referrerType === "team" ? teamId : "" });
+    if (referrerType === "") {
+      alert("Please select a referrer (Brother or Team).");
+    return;
+  }
+
+    let finalReferredBy = "";
+    let finalTeamId = "";
+
+    if (referrerType === "brother") {
+      finalReferredBy = referredBy;
+      const brother = users.find((u) => u.id === referredBy);
+      if (brother && brother.teamId) {
+        finalTeamId = brother.teamId;
+      }
+    } else if (referrerType === "team") {
+      finalTeamId = teamId;
+    }
+
+    onSubmit({ email, name, note, referredBy: finalReferredBy, teamId: finalTeamId });
   };
 
   return (
@@ -52,20 +71,34 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
       </div>
 
       <div className="form-control w-full max-w-md">
-        <label className="label"><span className="label-text">Name (optional)</span></label>
-        <input type="text" name="name" className="input input-bordered text-black bg-white rounded-sm w-full" />
+        <label className="label"><span className="label-text">Name</span></label>
+        <input type="text" name="name" className="input input-bordered text-black bg-white rounded-sm w-full" required/>
       </div>
 
       <div className="form-control w-full max-w-md">
-        <label className="label"><span className="label-text">Note (optional)</span></label>
+        <label className="label">
+          <span className="label-text">Note (optional)</span>
+          <InformationCircleIcon 
+            onClick={() => alert("This will be displayed on the donors page along with your name")}
+            className="h-4 w-4 label-text hover:text-accent" 
+          />
+        </label>
         <textarea name="note" className="textarea textarea-bordered text-black bg-white rounded-sm w-full" />
       </div>
 
-      <div className="form-control w-full max-w-md">
-        <label className="label"><span className="label-text">Referral</span></label>
-        <div className="flex gap-2">
+     <div className="form-control w-full max-w-md">
+      <label className="label flex items-center gap-1">
+        <span className="label-text">Referred By</span>
+        <InformationCircleIcon 
+          onClick={() => alert("Choose who brought you here. If you choose a team, this will add to their total. If you choose a brother, it will add to his total and his team's total")}
+          className="h-4 w-4 label-text hover:text-accent" 
+        />
+      </label>
+      <div className="flex flex-row gap-4">
+        <div className="flex-1">
+          <label className="label"><span className="text-sm">Brother</span></label>
           <select
-            className="select select-bordered bg-white text-black rounded-sm w-1/2"
+            className="select select-bordered bg-white text-black rounded-sm w-full"
             value={referrerType === "brother" ? referredBy : ""}
             onChange={(e) => {
               setReferredBy(e.target.value);
@@ -73,14 +106,17 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
               setTeamId("");
             }}
           >
-            <option value="">Sigma Chi Brother</option>
-            {users.map(bro => (
+            <option value="" disabled hidden>-</option>
+            {users.map((bro) => (
               <option key={bro.id} value={bro.id}>{bro.name}</option>
             ))}
           </select>
+        </div>
 
+        <div className="flex-1">
+          <label className="label"><span className="text-sm">Team</span></label>
           <select
-            className="select select-bordered bg-white text-black rounded-sm w-1/2"
+            className="select select-bordered bg-white text-black rounded-sm w-full"
             value={referrerType === "team" ? teamId : ""}
             onChange={(e) => {
               setTeamId(e.target.value);
@@ -88,13 +124,14 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
               setReferredBy("");
             }}
           >
-            <option value="">Team (e.g., Sorority)</option>
-            {teams.map(team => (
+            <option value="" disabled hidden>-</option>
+            {teams.map((team) => (
               <option key={team.id} value={team.id}>{team.name}</option>
             ))}
           </select>
         </div>
       </div>
+    </div>
 
       <button type="submit" className="btn btn-secondary w-full max-w-md" disabled={loading}>
         {loading ? <span className="loading loading-spinner" /> : "Continue to Payment"}

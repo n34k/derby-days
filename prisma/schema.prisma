@@ -129,10 +129,10 @@ model Team {
 
 model Donation {
   id        String   @id @default(cuid())
-  userId    String? // Optional
-  teamId    String? // Optional
+  userId    String?
+  teamId    String?
   email     String
-  name      String?
+  name      String
   note      String?
   amount    Float
   stripeId  String   @unique
@@ -147,9 +147,9 @@ model AdPurchase {
   userId    String?
   teamId    String?
   email     String
-  name      String?
-  //note      String?
-  //size      String
+  name      String
+  note      String?
+  size      String
   amount    Float
   stripeId  String   @unique
   createdAt DateTime @default(now())

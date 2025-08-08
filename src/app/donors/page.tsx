@@ -1,8 +1,11 @@
+import RecentDonations from '@/section/RecentDonations'
 import React from 'react'
 
 const DonorsPage = () => {
   return (
-    <div>DonorsPage</div>
+    <main>
+      <RecentDonations/>
+    </main>
   )
 }
 

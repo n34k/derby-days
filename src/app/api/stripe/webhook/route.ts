@@ -33,6 +33,7 @@ export async function POST(req: Request) {
     const email = session.customer_email!;
     const name = session.metadata?.name || null;
     const note = session.metadata?.note || null;
+    const size = session.metadata?.size || null;
     const referredById = session.metadata?.referredBy || null;
     const teamId = session.metadata?.teamId || null;
     const category = session.metadata?.category || null;
@@ -55,7 +56,8 @@ export async function POST(req: Request) {
           data: {
             email,
             name,
-            //note, //uncomment once we migrate db also SEND THE SIZE OF THE AD AND MAKE PATCH REQUEST SO ADMIN CAN MANUALLY ADD THE AD AFTER GETTING IT EMAILED
+            size,
+            note, //uncomment once we migrate db also SEND THE SIZE OF THE AD AND MAKE PATCH REQUEST SO ADMIN CAN MANUALLY ADD THE AD AFTER GETTING IT EMAILED
             amount,
             stripeId: session.id,
             team: teamId ? { connect: { id: teamId } } : undefined,

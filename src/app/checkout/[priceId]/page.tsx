@@ -16,6 +16,7 @@ const PurchasePage = () => {
      const metadata = {
       ...formValues,
       category: product.category, // Inject the product's category here
+      size: product.name
     };
 
     const res = await fetch("/api/create-checkout-session", {
