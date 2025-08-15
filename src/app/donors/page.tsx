@@ -3,7 +3,7 @@ import React from 'react'
 
 const DonorsPage = () => {
   return (
-    <main>
+    <main className='flex flex-col min-h-screen gap-15 py-15 items-center'>
       <RecentDonations/>
     </main>
   )

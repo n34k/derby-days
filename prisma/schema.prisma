@@ -105,6 +105,12 @@ model Authenticator {
   @@id([userId, credentialID])
 }
 
+model Stats {
+  id          String   @id @default("global")
+  totalRaised Float    @default(0)
+  updatedAt   DateTime @updatedAt
+}
+
 model Team {
   id   String @id @default(cuid())
   name String

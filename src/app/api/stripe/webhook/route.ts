@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     const category = session.metadata?.category || null;
 
     try {
-      if (category === 'donation')
+      if (category === 'donation') {
         await prisma.donation.create({
           data: {
             email,
@@ -51,6 +51,7 @@ export async function POST(req: Request) {
             user: referredById ? { connect: { id: referredById } } : undefined,
           },
         });
+      }
       else if (category === 'ad') {
         await prisma.adPurchase.create({
           data: {
@@ -100,6 +101,10 @@ export async function POST(req: Request) {
           data: { moneyRaised: { increment: amount } },
         });
       }
+
+      //Update total money raised
+      await prisma.stats.update({ where: { id: "global"}, data: { totalRaised: { increment: amount}}})
+
     } catch (err) {
       console.error("Donation processing error:", err);
       return new NextResponse("Failed to process donation", { status: 500 });
