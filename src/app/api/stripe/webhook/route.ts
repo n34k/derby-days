@@ -27,13 +27,17 @@ export async function POST(req: Request) {
   // Process only successful checkout sessions
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
+    if (!session.metadata) {
+      console.error("Session metadata is missing");
+      return new NextResponse("Session metadata is required", { status: 400 });
+    }
     console.log("✅ Webhook received!");
     console.log("session metadata:", session.metadata);
     const amount = session.amount_total! / 100;
     const email = session.customer_email!;
-    const name = session.metadata?.name || null;
+    const name = session.metadata?.name;
     const note = session.metadata?.note || null;
-    const size = session.metadata?.size || null;
+    const size = session.metadata?.size;
     const referredById = session.metadata?.referredBy || null;
     const teamId = session.metadata?.teamId || null;
     const category = session.metadata?.category || null;
