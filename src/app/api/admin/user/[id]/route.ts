@@ -45,10 +45,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const updatedUser = await prisma.user.update({
-      where: { id },
-      data,
-    });
+    const updatedUser = await prisma.user.update({ where: { id }, data });
 
     return NextResponse.json({ success: true, user: updatedUser });
   } catch (err) {
