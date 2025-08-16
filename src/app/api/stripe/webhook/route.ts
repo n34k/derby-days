@@ -2,6 +2,7 @@ import { prisma } from "../../../../../prisma";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { headers } from "next/headers";
+import sendPurchaseEmail from "@/app/utilities/emailservice";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: "2025-06-30.basil"
@@ -27,7 +28,7 @@ export async function POST(req: Request) {
   // Process only successful checkout sessions
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    
+
     if (!session.metadata) {
       console.error("Session metadata is missing");
       return new NextResponse("Session metadata is required", { status: 400 });
@@ -114,6 +115,12 @@ export async function POST(req: Request) {
     } catch (err) {
       console.error("Donation processing error:", err);
       return new NextResponse("Failed to process donation", { status: 500 });
+    }
+    try {
+      await sendPurchaseEmail({to: email, name, category, amount });
+    } catch(err) {
+      console.error("Failed to send purchase email:", err);
+      return new NextResponse("Failed to send purchase email", { status: 500 });
     }
   }
 

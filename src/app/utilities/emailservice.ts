@@ -1,0 +1,49 @@
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY!);
+
+interface PurchaseEmailParams {
+  to: string;
+  name: string;
+  category: 'donation' | 'ad' | 'shirt';
+  amount: number;
+}
+
+export default async function sendPurchaseEmail({ to, name, category, amount,}: PurchaseEmailParams) {
+  let subject = '';
+  let html = '';
+
+  if (category === 'donation') {
+    subject = 'Thank you for your donation to Valley Children\'s Hospital!';
+    html = `
+    <p>Hi ${name},</p>
+    <p>Thank you so much for your generous donation of <strong>$${amount.toFixed(2)}</strong> to Valley Children’s Hospital through Derby Days. Your support helps us make a real difference in the lives of the children and families we serve.</p>
+    <p>You will be able to see you donation reflected in the live standings, as well as the donors page on our website.<p>
+    <p>We truly appreciate your generosity.</p>
+    <p>With gratitude,<br/>The Derby Days Team</p>
+    `;
+  } else if (category === 'ad') {
+    subject = 'Thank you for your ad purchase – Derby Days';
+    html = `
+    <p>Hi ${name},</p>
+    <p>Thank you for purchasing an ad through our Derby Days fundraiser. Your support means a lot to us and directly contributes to our efforts to raise money for Valley Children’s Hospital.</p>
+    <p>If you haven’t submitted your ad yet, please email <strong>ndavis55862@gmail.com</strong> to send in your ad or if you have any questions.</p>
+    <p>Best regards,<br/>The Derby Days Team</p>
+    `;
+  } else if (category === 'shirt') {
+    subject = 'Your Derby Days shirt order is confirmed!';
+    html = `
+    <p>Hi ${name},</p>
+    <p>Thank you for purchasing a Derby Days shirt! Your order has been received, and we’ll notify you as soon as your shirt is ready for pickup or delivery.</p>
+    <p>Your support helps us raise money for Valley Children’s Hospital — thank you for being part of this cause.</p>
+    <p>Warmly,<br/>The Derby Days Team</p>
+    `;
+  }
+
+  await resend.emails.send({
+    from: "Fresno State Derby Days <onboarding@resend.dev>",
+    to,
+    subject,
+    html,
+  });
+}
