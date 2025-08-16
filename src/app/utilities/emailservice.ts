@@ -27,7 +27,7 @@ export default async function sendPurchaseEmail({ to, name, category, amount,}: 
     html = `
     <p>Hi ${name},</p>
     <p>Thank you for purchasing an ad through our Derby Days fundraiser. Your support means a lot to us and directly contributes to our efforts to raise money for Valley Children’s Hospital.</p>
-    <p>If you haven’t submitted your ad yet, please email <strong>ndavis55862@gmail.com</strong> to send in your ad or if you have any questions.</p>
+    <p>To submit your ad, please email <strong>ndavis55862@gmail.com</strong> to send in your ad or if you have any questions.</p>
     <p>Best regards,<br/>The Derby Days Team</p>
     `;
   } else if (category === 'shirt') {
