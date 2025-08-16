@@ -28,7 +28,7 @@ const WhatSection = () => {
             tradition, competition, and service — all rolled into one unforgettable week.
           </p>
         </div>
-        <div className='flex flex-col items-center justify-center w-full md:w-1/2 rounded-xl max-h-[300px] md:max-h-none relative'>
+        <div className='flex flex-col items-center justify-center w-full md:w-1/2 rounded-xl max-h-[500px] md:max-h-none relative'>
           <div className="relative w-full flex justify-center items-center">
             <Swiper
               className="px-8 md:px-16 w-full"
