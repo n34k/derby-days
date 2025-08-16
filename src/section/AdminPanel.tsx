@@ -15,7 +15,7 @@ const AdminPanel = async () => {
   if (user.globalRole !== "ADMIN") redirect("/");
 
   const users = await prisma.user.findMany({ include: { team: true } });
-  const teams = await prisma.team.findMany({include: { headCoach: true, derbyDarling: true }});
+  const teams = await prisma.team.findMany({include: { headCoach: { select: { id: true, name: true }}}});
   const products = await prisma.product.findMany();
   const ads = await prisma.adPurchase.findMany();
 

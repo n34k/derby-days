@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { CldImage, CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import { AdPurchase } from "@/generated/prisma";
+import { useRouter } from "next/navigation";
 
 type Props = {
   ads: AdPurchase[];
@@ -10,17 +11,21 @@ type Props = {
 
 const AdTable: React.FC<Props> = ({ ads }) => {
   const [uploadingId, setUploadingId] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleUpload = async (info: CloudinaryUploadWidgetInfo, adId: string) => {
     setUploadingId(adId);
     console.log("UPLOADING AD:", adId, info);
-    const res = await fetch(`/api/ad/${adId}`, {
+    const res = await fetch(`/api/admin/ad/${adId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ adId, adUrl: info.secure_url, adPublicId: info.public_id }),
     });
 
-    if (res.ok) setUploadingId(null);
+    if (res.ok) {
+      setUploadingId(null);
+      router.refresh();
+    }
   };
 
   return (

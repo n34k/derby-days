@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../../../prisma";
+import { prisma } from "../../../../../../prisma";
 import { v2 as cloudinary } from "cloudinary";
+import { AdUploadSchema } from "./schema";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -18,7 +19,17 @@ export async function PATCH(req: NextRequest) {
 
   console.log("Received body:", body);  
 
-  const { adId, adUrl, adPublicId } = body;
+  const parsed = AdUploadSchema.safeParse(body);
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", issues: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+
+  const { adId, adUrl, adPublicId } = parsed.data;
+  console.log("Parsed data:", parsed.data);
 
   try {
       // Fetch current ad to get their existing adPublicId

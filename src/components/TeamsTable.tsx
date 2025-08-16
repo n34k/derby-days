@@ -1,16 +1,30 @@
 "use client";
-import React, { useState } from "react";
-import { Team } from "@/generated/prisma";
-import { PencilIcon, XMarkIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 
-export const TeamsTable = ({ teams }: { teams: Team[] }) => {
+import React, { useEffect, useMemo, useState } from "react";
+import { PencilIcon, XMarkIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { CldImage, CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
+import { useRouter } from "next/navigation";
+import { CoachOption, EditedTeam, TeamWithCoach } from "@/models/TeamTableTypes";
+
+
+export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
+  const router = useRouter();
+
   const [editing, setEditing] = useState(false);
-  const [editedTeams, setEditedTeams] = useState<Record<string, Partial<Team>>>({});
-  const [teamState, setTeamState] = useState<Team[]>(teams);
+  const [editedTeams, setEditedTeams] = useState<Record<string, EditedTeam>>({});
+  const [teamState, setTeamState] = useState<TeamWithCoach[]>(teams);
+
+  // Head coach dropdown options
+  const [coachOptions, setCoachOptions] = useState<CoachOption[]>([]);
+  const [loadingCoaches, setLoadingCoaches] = useState(false);
+  const [coachErr, setCoachErr] = useState<string | null>(null);
+
+  // Cloudinary upload in-flight state (per team)
+  const [uploadingTeamId, setUploadingTeamId] = useState<string | null>(null);
 
   const toggleEditing = () => setEditing(!editing);
 
-  const handleChange = (teamId: string, field: keyof Team, value: Team[keyof Team]) => {
+  const handleChange = (teamId: string, field: keyof TeamWithCoach, value: TeamWithCoach[keyof TeamWithCoach]) => {
     setEditedTeams(prev => ({
       ...prev,
       [teamId]: {
@@ -32,12 +46,15 @@ export const TeamsTable = ({ teams }: { teams: Team[] }) => {
         });
 
         if (!response.ok) {
-          const errorData = await response.json();
+          const errorData = await response.json().catch(() => ({}));
           console.error(`Failed to update team ${teamId}:`, errorData);
           continue;
         }
 
-        setTeamState(prev => prev.map(team => team.id === teamId ? { ...team, ...updatedFields } : team));
+        const resJson = await response.json();
+        const freshTeam = (resJson?.team ?? null) as TeamWithCoach | null;
+
+        setTeamState(prev => prev.map(t => (t.id === teamId ? (freshTeam ?? { ...t, ...updatedFields }) : t)));
       } catch (error) {
         console.error(`Error updating team ${teamId}:`, error);
       }
@@ -45,6 +62,7 @@ export const TeamsTable = ({ teams }: { teams: Team[] }) => {
 
     setEditing(false);
     setEditedTeams({});
+    router.refresh();
   };
 
   const handleDelete = async (teamId: string) => {
@@ -53,15 +71,92 @@ export const TeamsTable = ({ teams }: { teams: Team[] }) => {
     try {
       const res = await fetch(`/api/admin/team/${teamId}`, { method: "DELETE" });
       if (!res.ok) {
-        const error = await res.json();
+        const error = await res.json().catch(() => ({}));
         console.error("Failed to delete team:", error);
         return;
       }
       setTeamState(prev => prev.filter(team => team.id !== teamId));
+      router.refresh();
     } catch (err) {
       console.error("Error deleting team:", err);
     }
   };
+
+  // --- Cloudinary: upload/replace Derby Darling image immediately ---
+  const handleUploadDerby = async (info: CloudinaryUploadWidgetInfo, teamId: string) => {
+    try {
+      setUploadingTeamId(teamId);
+      const body = {
+        derbyDarlingImageUrl: info.secure_url,
+        derbyDarlingPublicId: info.public_id,
+      };
+
+      const res = await fetch(`/api/admin/team/${teamId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error("Failed to attach Derby Darling image:", err);
+        return;
+      }
+
+      const updated = await res.json();
+      const freshTeam = (updated?.team ?? null) as TeamWithCoach | null;
+
+      // Update local table state & edited state
+      setTeamState(prev =>
+        prev.map(t => t.id === teamId ?
+          (freshTeam ?? { ...t, derbyDarlingImageUrl: body.derbyDarlingImageUrl, derbyDarlingPublicId: body.derbyDarlingPublicId }) : t)
+      );
+
+      setEditedTeams(prev => ({
+        ...prev,
+        [teamId]: {
+          ...prev[teamId],
+          derbyDarlingImageUrl: info.secure_url,
+          derbyDarlingPublicId: info.public_id,
+        },
+      }));
+    } finally {
+      setUploadingTeamId(null);
+      router.refresh();
+    }
+  };
+
+  // Fetch head-coach options
+  useEffect(() => {
+    (async () => {
+      setLoadingCoaches(true);
+      setCoachErr(null);
+      try {
+        // Adjust this endpoint to your actual implementation.
+        const res = await fetch("/api/admin/user", { cache: "no-store" });
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        const data = await res.json();                  
+        const brothers = Array.isArray(data?.brothers) ? data.brothers : [];
+
+        const options: CoachOption[] = brothers.map((u: { id: string; name?: string | null }) => ({id: u.id, name: u.name ?? "Unnamed"}));
+
+        options.sort((a, b) => a.name.localeCompare(b.name));
+        setCoachOptions(options);
+      } catch (e) {
+        setCoachErr("Failed to load coach options");
+        console.error(e);
+      } finally {
+        setLoadingCoaches(false);
+      }
+    })();
+  }, []);
+
+  const uploadBtnLabel = useMemo(() => (id: string, hasImage: boolean) => 
+    uploadingTeamId === id ? "Uploading..." : hasImage ? "Replace" : "Upload",
+    [uploadingTeamId]
+  );
 
   return (
     <div>
@@ -92,80 +187,173 @@ export const TeamsTable = ({ teams }: { teams: Team[] }) => {
               <th className="border px-2 py-1">Money Raised</th>
               <th className="border px-2 py-1">Points</th>
               <th className="border px-2 py-1">Head Coach</th>
-              <th className="border px-2 py-1">Derby Darling</th>
+              <th className="border px-2 py-1">Derby Darling Name</th>
+              <th className="border px-2 py-1">Derby Darling Image</th>
               {editing && <th className="border px-2 py-1">Actions</th>}
             </tr>
           </thead>
           <tbody>
             {teamState.map(team => {
-              const isTeamEdited = editedTeams[team.id];
+              const isEdited = editedTeams[team.id];
+              const currentImageUrl = (isEdited?.derbyDarlingImageUrl ?? team.derbyDarlingImageUrl) || "";
+              const hasImage = Boolean(currentImageUrl);
+
               return (
                 <tr key={team.id}>
+                  {/* Team Name */}
                   <td className="border px-2 py-1">
                     {editing ? (
                       <input
                         className="w-full max-w-[150px] truncate"
-                        value={isTeamEdited?.name ?? team.name}
+                        value={isEdited?.name ?? team.name}
                         onChange={e => handleChange(team.id, "name", e.target.value)}
                       />
-                    ) : (team.name)}
+                    ) : (
+                      team.name
+                    )}
                   </td>
+
+                  {/* T-Shirts */}
                   <td className="border px-2 py-1">
                     {editing ? (
                       <input
                         type="number"
                         className="w-full max-w-[80px]"
-                        value={isTeamEdited?.tshirtsSold ?? team.tshirtsSold ?? 0}
-                        onChange={e => handleChange(team.id, "tshirtsSold", parseInt(e.target.value))}
+                        value={isEdited?.tshirtsSold ?? team.tshirtsSold ?? 0}
+                        onChange={e => handleChange(team.id, "tshirtsSold", parseInt(e.target.value || "0", 10))}
                       />
-                    ) : (team.tshirtsSold ?? "—")}
+                    ) : (
+                      team.tshirtsSold ?? "—"
+                    )}
                   </td>
+
+                  {/* Money Raised */}
                   <td className="border px-2 py-1">
                     {editing ? (
                       <input
                         type="number"
                         step="0.01"
                         className="w-full max-w-[100px]"
-                        value={isTeamEdited?.moneyRaised ?? team.moneyRaised ?? 0}
-                        onChange={e => handleChange(team.id, "moneyRaised", parseFloat(e.target.value))}
+                        value={isEdited?.moneyRaised ?? team.moneyRaised ?? 0}
+                        onChange={e => handleChange(team.id, "moneyRaised", parseFloat(e.target.value || "0"))}
                       />
-                    ) : (`$${team.moneyRaised.toFixed(2)}`)}
+                    ) : (
+                      `$${(team.moneyRaised ?? 0).toFixed(2)}`
+                    )}
                   </td>
+
+                  {/* Points */}
                   <td className="border px-2 py-1">
                     {editing ? (
                       <input
                         type="number"
                         className="w-full max-w-[80px]"
-                        value={isTeamEdited?.points ?? team.points ?? 0}
-                        onChange={e => handleChange(team.id, "points", parseInt(e.target.value))}
+                        value={isEdited?.points ?? team.points ?? 0}
+                        onChange={e => handleChange(team.id, "points", parseInt(e.target.value || "0", 10))}
                       />
-                    ) : (team.points ?? "—")}
+                    ) : (
+                      team.points ?? "—"
+                    )}
                   </td>
+
+                  {/* Head Coach (dropdown) */}
+                  <td className="border px-2 py-1">
+                    {editing ? (
+                      <div className="flex items-center gap-2">
+                        <select
+                          className="w-full max-w-[220px]"
+                          value={isEdited?.headCoachId ?? team.headCoachId ?? ""}
+                          onChange={e => {
+                            const val = e.target.value; // "" means clear
+                            handleChange(team.id, "headCoachId", val);
+                          }}
+                          disabled={loadingCoaches || Boolean(coachErr)}
+                        >
+                          <option value="">None</option>
+                          {coachOptions.map(opt => (
+                            <option key={opt.id} value={opt.id}>
+                              {opt.name}
+                            </option>
+                          ))}
+                        </select>
+                        {loadingCoaches && <span className="text-xs opacity-70">loading…</span>}
+                        {coachErr && <span className="text-xs text-error">{coachErr}</span>}
+                      </div>
+                    ) : (
+                      team.headCoach?.name ?? "—"
+                    )}
+                  </td>
+
+                  {/* Derby Darling Name (separate column) */}
                   <td className="border px-2 py-1">
                     {editing ? (
                       <input
-                        className="w-full max-w-[200px] truncate"
-                        value={isTeamEdited?.headCoachId ?? team.headCoachId ?? ""}
-                        onChange={e => handleChange(team.id, "headCoachId", e.target.value)}
+                        className="w-full max-w-[220px]"
+                        placeholder="Derby Darling name"
+                        value={isEdited?.derbyDarlingName ?? team.derbyDarlingName ?? ""}
+                        onChange={e => handleChange(team.id, "derbyDarlingName", e.target.value)}
                       />
-                    ) : (team.headCoachId ?? "—")}
+                    ) : (
+                      team.derbyDarlingName ?? "—"
+                    )}
                   </td>
+
+                  {/* Derby Darling Image (separate column) */}
                   <td className="border px-2 py-1">
-                    {editing ? (
-                      <input
-                        className="w-full max-w-[200px] truncate"
-                        value={isTeamEdited?.derbyDarlingId ?? team.derbyDarlingId ?? ""}
-                        onChange={e => handleChange(team.id, "derbyDarlingId", e.target.value)}
-                      />
-                    ) : (team.derbyDarlingId ?? "—")}
+                    <CldUploadWidget
+                      signatureEndpoint="/api/sign-cloudinary-params"
+                      uploadPreset="profilepic"
+                      options={{ sources: ["local"], multiple: false }}
+                      onSuccess={(results) => {
+                        const info = results.info as CloudinaryUploadWidgetInfo;
+                        handleUploadDerby(info, team.id);
+                      }}
+                    >
+                      {({ open }) => (
+                        <div className="flex justify-center items-center">
+                          {hasImage ? (
+                            // Show a small circular image that is clickable to change
+                            <button
+                              type="button"
+                              aria-label="Change Derby Darling photo"
+                              className={`rounded-full overflow-hidden h-15 w-15 focus:outline-none focus:ring focus:ring-offset-1 ${
+                                uploadingTeamId === team.id ? "opacity-50 pointer-events-none" : ""
+                              }`}
+                              onClick={() => open()}
+                              disabled={uploadingTeamId === team.id}
+                              title="Click to replace photo"
+                            >
+                              <CldImage
+                                src={currentImageUrl}
+                                alt="Derby Darling"
+                                width={40}
+                                height={40}
+                                className="h-15 w-15 rounded-full object-cover"
+                              />
+                            </button>
+                          ) : (
+                            // No image yet — show an Upload button
+                            <button
+                              type="button"
+                              className={`btn btn-secondary btn-xs w-15 h-15 md:btn-sm transition-all duration-300 ${
+                                uploadingTeamId === team.id ? "opacity-50 pointer-events-none" : ""
+                              }`}
+                              onClick={() => open()}
+                              disabled={uploadingTeamId === team.id}
+                            >
+                              {uploadBtnLabel(team.id, false)}
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </CldUploadWidget>
                   </td>
+
+                  {/* Actions */}
                   {editing && (
                     <td className="border px-2 py-1">
                       <div className="flex justify-center">
-                        <button
-                          onClick={() => handleDelete(team.id)}
-                          className="btn btn-error btn-xs text-white"
-                        >
+                        <button onClick={() => handleDelete(team.id)} className="btn btn-error btn-xs text-white">
                           Delete <TrashIcon className="h-4 w-4 ml-1" />
                         </button>
                       </div>
@@ -180,3 +368,5 @@ export const TeamsTable = ({ teams }: { teams: Team[] }) => {
     </div>
   );
 };
+
+export default TeamsTable;

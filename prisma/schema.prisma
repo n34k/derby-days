@@ -41,8 +41,7 @@ model User {
   donations Donation[]
   draftPick DraftPick?
 
-  headCoachOf    Team? @relation("HeadCoach")
-  derbyDarlingOf Team? @relation("DerbyDarling")
+  headCoachOf Team? @relation("HeadCoach")
 
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @default(now()) @updatedAt
@@ -115,11 +114,14 @@ model Team {
   id   String @id @default(cuid())
   name String
 
-  headCoachId    String? @unique
-  headCoach      User?   @relation("HeadCoach", fields: [headCoachId], references: [id])
-  derbyDarlingId String? @unique
-  derbyDarling   User?   @relation("DerbyDarling", fields: [derbyDarlingId], references: [id])
-  members        User[]
+  headCoachId String? @unique
+  headCoach   User?   @relation("HeadCoach", fields: [headCoachId], references: [id])
+
+  derbyDarlingName     String?
+  derbyDarlingImageUrl String?
+  derbyDarlingPublicId String?
+
+  members User[]
 
   donations   Donation[]
   draftPicks  DraftPick[]
@@ -203,6 +205,5 @@ enum GlobalRole {
   ADMIN
   JUDGE
   BROTHER
-  DERBY_DARLING
   HEAD_COACH
 }
