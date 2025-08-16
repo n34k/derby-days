@@ -2,7 +2,7 @@ import { prisma } from "../../../../../prisma";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { headers } from "next/headers";
-import sendPurchaseEmail from "@/app/utilities/emailservice";
+import sendPurchaseEmail from "@/lib/emailservice";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: "2025-06-30.basil"

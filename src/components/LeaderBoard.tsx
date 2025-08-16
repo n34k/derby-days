@@ -3,6 +3,7 @@ import React from 'react';
 import { prisma } from '../../prisma';
 import { ShoppingBagIcon, StarIcon, CurrencyDollarIcon } from '@heroicons/react/24/solid'; 
 import { JSX } from 'react';
+import greekLetters from '@/lib/greekLetters';
 
 type LeaderBoardProps = {
     metric: LeaderboardMetric;
@@ -20,17 +21,7 @@ async function LeaderBoard({ metric }: LeaderBoardProps) {
         orderBy: { [metric]: 'desc' },
     });
 
-    const getDisplayName = (fullName: string): string => {
-        const replacements: Record<string, string> = {
-            "Kappa Kappa Gamma": "ΚΚΓ",   
-            "Kappa Alpha Theta": "ΚΑΘ", 
-            "Delta Gamma": "ΔΓ",
-            "Sigma Alpha": "ΣΑ",
-            "Phi Mu": "ΦΜ",
-            "Delta Zeta": "ΔΖ",
-        };
-        return replacements[fullName] ?? fullName;
-    };
+    
 
     return (
         <div className='flex flex-col items-center justify-center gap-5'>
@@ -45,13 +36,13 @@ async function LeaderBoard({ metric }: LeaderBoardProps) {
                 <div key={team.id} className="flex flex-col md:flex-row items-center justify-between text-center gap-4 w-[75vw] md:w-[50rem]">
                     {/* This container holds the rank and name for mobile */}
                     <div className="md:hidden text-5xl">
-                        {index + 1}. {getDisplayName(team.name)}
+                        {index + 1}. {greekLetters(team.id)}
                     </div>
 
                     {/* Desktop-only layout: number and name split */}
                     <div className="hidden md:flex md:flex-row md:justify-between md:gap-5 md:items-center md:text-center w-full">
                         <span className="flex-1 text-left text-4xl">{index + 1}.</span>
-                        <span className="flex-1 text-center text-4xl">{getDisplayName(team.name)}</span>
+                        <span className="flex-1 text-center text-4xl">{greekLetters(team.id)}</span>
                         <span className="flex-1 text-right text-4xl text-success">
                             {metric === 'moneyRaised'
                             ? `$${(team[metric] as number).toFixed(2)}`
