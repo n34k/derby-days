@@ -28,7 +28,7 @@ const PersonCard = ({ role, person }: PersonCardProps) => {
               className="border-2 border-secondary rounded-sm"
             />
           )}
-          <h2 className="text-4xl font-semibold">{person?.name}</h2>
+          <h2 className="text-3xl text-info-content">{person?.name}</h2>
         </>
       ) : (
         <p className="text-2xl opacity-70">Coming soon</p>

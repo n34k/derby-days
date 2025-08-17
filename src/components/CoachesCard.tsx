@@ -44,7 +44,7 @@ const CoachesCard: React.FC<CoachesCardProps> = ({ coaches }) => {
                   ) : (
                     <p className="w-[80px] h-[80px] rounded-full bg-secondary/20 flex items-center justify-center text-sm">X</p>
                   )}
-                  <h3 className="text-lg font-semibold text-center">{coach.name}</h3>
+                  <h3 className="text-lg text-info-content text-center">{coach.name}</h3>
                 </li>
               ))}
             </ul>

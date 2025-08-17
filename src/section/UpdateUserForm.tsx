@@ -105,8 +105,8 @@ const UpdateUserForm = ({ initialName, initialImage, initialWalkoutSong, initial
   };
 
   return (
-    <form className='bg-primary p-10 rounded-[var(--radius-box)] ' onSubmit={handleSubmit}>
-      <div className='flex flex-col items-center'>
+    <form className='h-[70vh] bg-primary rounded-lg border-2 border-secondary' onSubmit={handleSubmit}>
+      <div className='flex flex-col items-center p-10'>
         <div className="w-[225px] h-[225px] rounded-full overflow-hidden shadow-lg self-center">
           {imagePublicId ? (
             <CldImage

@@ -6,6 +6,7 @@ import { auth } from "../../auth";
 import { redirect } from "next/navigation";
 import { User } from "@/generated/prisma";
 import { ProductsTable } from "@/components/ProductTable";
+import { Cog6ToothIcon } from "@heroicons/react/24/solid";
 import AdTable from "@/components/AdTable";
 
 const AdminPanel = async () => {
@@ -20,12 +21,17 @@ const AdminPanel = async () => {
   const ads = await prisma.adPurchase.findMany();
 
   return (
-    <div className="flex flex-col bg-primary p-5 rounded-[var(--radius-box)] gap-5 w-[90vw] md:max-h-[75vh] overflow-scroll ">
-      <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-      <UsersTable users={users}/>
-      <TeamsTable teams={teams}/>
-      <ProductsTable products={products}/>
-      <AdTable ads={ads}/>
+    <div className="flex flex-col bg-primary p-5 rounded-lg border-2 border-secondary gap-5 w-[90vw] md:h-[70vh] overflow-scroll ">
+      <div className='flex self-center items-center gap-3'>
+        <h1 className="text-4xl font-bold">Admin Dashboard</h1>
+        <Cog6ToothIcon className="w-10 h-10" />
+      </div>
+      <div className="flex flex-col justify-evenly h-full gap-5">
+        <UsersTable users={users}/>
+        <TeamsTable teams={teams}/>
+        <ProductsTable products={products}/>
+        <AdTable ads={ads}/>
+      </div>
     </div>
   );
 };
