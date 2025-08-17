@@ -42,15 +42,19 @@ export async function PATCH(req: NextRequest) {
   }
   const data = parsed.data;
 
-  console.log("DATA", data)
+  console.log("DATA", data);
 
   try {
-    const existing = await prisma.team.findUnique({ //if existing derby darling public id is present, delete it
+    const existing = await prisma.team.findUnique({
+      //if existing derby darling public id is present, delete it
       where: { id: teamId },
       select: { derbyDarlingPublicId: true },
     });
 
-    if ( existing?.derbyDarlingPublicId && existing.derbyDarlingPublicId !== data.derbyDarlingPublicId) {
+    if (
+      existing?.derbyDarlingPublicId &&
+      existing.derbyDarlingPublicId !== data.derbyDarlingPublicId
+    ) {
       try {
         await cloudinary.uploader.destroy(existing.derbyDarlingPublicId, {
           invalidate: true,
@@ -72,7 +76,12 @@ export async function PATCH(req: NextRequest) {
 
       // 1) Handle head coach reassignment if present in payload
       if ("headCoachId" in data) {
-        console.log("Updating head coach for team", teamId, "to", data.headCoachId);
+        console.log(
+          "Updating head coach for team",
+          teamId,
+          "to",
+          data.headCoachId
+        );
         const newCoachId = data.headCoachId ?? null;
         const oldCoachId = existingTeam.headCoachId ?? null;
 
@@ -129,11 +138,13 @@ export async function PATCH(req: NextRequest) {
         await tx.team.update({ where: { id: teamId }, data: updatable });
       }
 
-      // Return a fresh copy 
+      // Return a fresh copy
       return tx.team.findUnique({
         where: { id: teamId },
         include: {
-          headCoach: { select: { id: true, name: true, email: true, globalRole: true } },
+          headCoach: {
+            select: { id: true, name: true, email: true, globalRole: true },
+          },
         },
       });
     });

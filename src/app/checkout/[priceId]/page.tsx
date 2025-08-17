@@ -7,16 +7,16 @@ import { DefaultProduct, FormValueData } from "@/models/DefaultValues";
 
 const PurchasePage = () => {
   const params = useParams();
-  const priceId = params?.priceId
+  const priceId = params?.priceId;
   const [product, setProduct] = useState<Product>(DefaultProduct);
   const [loading, setLoading] = useState(false);
-  
-  const handleMetadataSubmit = async (formValues:FormValueData) => {
+
+  const handleMetadataSubmit = async (formValues: FormValueData) => {
     setLoading(true);
-     const metadata = {
+    const metadata = {
       ...formValues,
       category: product.category, // Inject the product's category here
-      size: product.name
+      size: product.name,
     };
 
     const res = await fetch("/api/create-checkout-session", {
@@ -26,7 +26,7 @@ const PurchasePage = () => {
     });
 
     const data = await res.json();
-    
+
     if (data.url) {
       window.location.href = data.url;
     } else {
@@ -36,29 +36,37 @@ const PurchasePage = () => {
   };
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     const fetchProduct = async () => {
       const res = await fetch(`/api/products/${priceId}`);
       const data = await res.json();
       setProduct(data);
     };
 
-    if (priceId){
+    if (priceId) {
       fetchProduct();
     }
-    setLoading(false)
-  }, [priceId])
+    setLoading(false);
+  }, [priceId]);
 
-  const priceInDollars = (price: number):number => {
-    return price/100;
-  }
+  const priceInDollars = (price: number): number => {
+    return price / 100;
+  };
 
   return (
     <main className="flex justify-center items-center">
-      {loading || !product.name ? <div className="text-center py-10 text-xl">Loading...</div> : 
-      <MetadataForm onSubmit={handleMetadataSubmit} productCost={priceInDollars(product.price)} productName={product.name} loading={loading}/>}
+      {loading || !product.name ? (
+        <div className="text-center py-10 text-xl">Loading...</div>
+      ) : (
+        <MetadataForm
+          onSubmit={handleMetadataSubmit}
+          productCost={priceInDollars(product.price)}
+          productName={product.name}
+          loading={loading}
+        />
+      )}
     </main>
   );
-}
+};
 
-export default PurchasePage
+export default PurchasePage;

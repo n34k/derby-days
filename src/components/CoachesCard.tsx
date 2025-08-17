@@ -1,6 +1,6 @@
-'use client';
-import React from 'react';
-import { CldImage } from 'next-cloudinary';
+"use client";
+import React from "react";
+import { CldImage } from "next-cloudinary";
 
 type Coach = {
   name: string | null;
@@ -30,21 +30,25 @@ const CoachesCard: React.FC<CoachesCardProps> = ({ coaches }) => {
             <ul className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {coaches.map((coach, idx) => (
                 <li
-                  key={`${coach.name ?? 'coach'}-${idx}`}
+                  key={`${coach.name ?? "coach"}-${idx}`}
                   className="flex flex-col items-center gap-2.5"
                 >
                   {coach.image ? (
                     <CldImage
                       src={coach.image}
-                      alt={`${coach.name ?? 'Coach'}'s profile photo`}
+                      alt={`${coach.name ?? "Coach"}'s profile photo`}
                       width={40}
                       height={40}
                       className="rounded-full"
                     />
                   ) : (
-                    <p className="w-[80px] h-[80px] rounded-full bg-secondary/20 flex items-center justify-center text-sm">X</p>
+                    <p className="w-[80px] h-[80px] rounded-full bg-secondary/20 flex items-center justify-center text-sm">
+                      X
+                    </p>
                   )}
-                  <h3 className="text-lg text-info-content text-center">{coach.name}</h3>
+                  <h3 className="text-lg text-info-content text-center">
+                    {coach.name}
+                  </h3>
                 </li>
               ))}
             </ul>

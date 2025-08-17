@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../../prisma"; 
+import { prisma } from "../../../../../prisma";
 
 // used in the teams table to fetch eligible head coaches
 export async function GET() {
   try {
     const brothers = await prisma.user.findMany({
-      where: { globalRole: "BROTHER"},
+      where: { globalRole: "BROTHER" },
       select: { id: true, name: true },
       orderBy: { name: "asc" },
     });
@@ -17,6 +17,9 @@ export async function GET() {
     );
   } catch (err) {
     console.error("[GET /api/admin/users] error:", err);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

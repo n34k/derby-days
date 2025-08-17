@@ -11,4 +11,3 @@ export const LeaderboardLabels: Record<LeaderboardMetric, string> = {
   tshirtsSold: "T-Shirts Sold",
   moneyRaised: "Money Raised",
 };
-

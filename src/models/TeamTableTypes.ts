@@ -4,7 +4,7 @@ export type CoachOption = { id: string; name: string };
 
 export type TeamWithCoach = Prisma.TeamGetPayload<{
   include: { headCoach: { select: { id: true; name: true } } };
-}>; 
+}>;
 
 export type EditedTeam = Partial<
   Pick<

@@ -8,7 +8,7 @@ const TeamsOverviewPage = async () => {
 
   return (
     <main className="flex flex-col md:flex-row h-dvh w-dvw overflow-hidden">
-      {teams.map(team => (
+      {teams.map((team) => (
         <Link
           href={`/teams/${team.id}`}
           key={team.id}

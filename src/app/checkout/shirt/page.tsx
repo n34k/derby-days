@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const ShirtPage = () => {
-  return (
-    <div>ShirtPage</div>
-  )
-}
+  return <div>ShirtPage</div>;
+};
 
-export default ShirtPage
+export default ShirtPage;

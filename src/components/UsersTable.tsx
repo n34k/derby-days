@@ -2,17 +2,29 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { User } from "@/generated/prisma";
-import { PencilIcon, XMarkIcon, CheckIcon, TrashIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import {
+  PencilIcon,
+  XMarkIcon,
+  CheckIcon,
+  TrashIcon,
+  ChevronDownIcon,
+} from "@heroicons/react/24/outline";
 
 export const UsersTable = ({ users }: { users: User[] }) => {
   const [expanded, setExpanded] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [editedUsers, setEditedUsers] = useState<Record<string, Partial<User>>>({});
+  const [editedUsers, setEditedUsers] = useState<Record<string, Partial<User>>>(
+    {}
+  );
   const [usersState, setUsersState] = useState<User[]>(users);
 
   const toggleEditing = () => setEditing((e) => !e);
 
-  const handleChange = (userId: string, field: keyof User, value: User[keyof User]) => {
+  const handleChange = (
+    userId: string,
+    field: keyof User,
+    value: User[keyof User]
+  ) => {
     setEditedUsers((prev) => ({
       ...prev,
       [userId]: {
@@ -37,7 +49,11 @@ export const UsersTable = ({ users }: { users: User[] }) => {
           continue;
         }
         await response.json();
-        setUsersState((prev) => prev.map((u) => (u.id === userId ? { ...u, ...updatedFields } as User : u)));
+        setUsersState((prev) =>
+          prev.map((u) =>
+            u.id === userId ? ({ ...u, ...updatedFields } as User) : u
+          )
+        );
       } catch (error) {
         console.error(`Error updating user ${userId}:`, error);
       }
@@ -49,7 +65,9 @@ export const UsersTable = ({ users }: { users: User[] }) => {
   const handleDelete = async (userId: string) => {
     if (!confirm("Are you sure you want to delete this user?")) return;
     try {
-      const res = await fetch(`/api/admin/user/${userId}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/user/${userId}`, {
+        method: "DELETE",
+      });
       if (!res.ok) {
         const error = await res.json();
         console.error("Failed to delete user:", error);
@@ -68,18 +86,25 @@ export const UsersTable = ({ users }: { users: User[] }) => {
         {/* Chevron toggle */}
         <button
           type="button"
-          onClick={() => setExpanded(v => !v)}
+          onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
           aria-controls="ad-table-panel"
           className="p-1 rounded hover:bg-base-200 transition"
           title={expanded ? "Collapse" : "Expand"}
         >
-          <ChevronDownIcon className={`w-7 h-7 transition-transform ${expanded ? "rotate-180" : ""}`}/>
+          <ChevronDownIcon
+            className={`w-7 h-7 transition-transform ${
+              expanded ? "rotate-180" : ""
+            }`}
+          />
         </button>
         {expanded &&
           (editing ? (
             <>
-              <button className="btn btn-secondary w-28" onClick={toggleEditing}>
+              <button
+                className="btn btn-secondary w-28"
+                onClick={toggleEditing}
+              >
                 Cancel <XMarkIcon className="h-4 w-4" />
               </button>
               <button className="btn btn-secondary w-28" onClick={handleSave}>
@@ -120,7 +145,9 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                           <input
                             className="w-full max-w-[150px] truncate"
                             value={isUserEdited?.name ?? user.name ?? ""}
-                            onChange={(e) => handleChange(user.id, "name", e.target.value)}
+                            onChange={(e) =>
+                              handleChange(user.id, "name", e.target.value)
+                            }
                           />
                         ) : (
                           user.name ?? "—"
@@ -128,7 +155,9 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                       </td>
 
                       <td className="border px-2 py-1">
-                        <div className="md:overflow-x-auto md:whitespace-nowrap">{user.email}</div>
+                        <div className="md:overflow-x-auto md:whitespace-nowrap">
+                          {user.email}
+                        </div>
                       </td>
 
                       <td className="border px-2 py-1">
@@ -153,8 +182,16 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                             <input
                               className="w-full max-w-[50px] truncate"
                               type="number"
-                              value={isUserEdited?.moneyRaised ?? user.moneyRaised}
-                              onChange={(e) => handleChange(user.id, "moneyRaised", parseFloat(e.target.value || "0"))}
+                              value={
+                                isUserEdited?.moneyRaised ?? user.moneyRaised
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  user.id,
+                                  "moneyRaised",
+                                  parseFloat(e.target.value || "0")
+                                )
+                              }
                             />
                           ) : (
                             `$${user.moneyRaised.toFixed(2)}`
@@ -167,8 +204,18 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                           {editing ? (
                             <input
                               className="w-full max-w-[150px] truncate"
-                              value={isUserEdited?.walkoutSong ?? user.walkoutSong ?? ""}
-                              onChange={(e) => handleChange(user.id, "walkoutSong", e.target.value)}
+                              value={
+                                isUserEdited?.walkoutSong ??
+                                user.walkoutSong ??
+                                ""
+                              }
+                              onChange={(e) =>
+                                handleChange(
+                                  user.id,
+                                  "walkoutSong",
+                                  e.target.value
+                                )
+                              }
                             />
                           ) : (
                             user.walkoutSong ?? "—"
@@ -181,12 +228,20 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                           <select
                             className="w-full max-w-[150px] truncate"
                             value={isUserEdited?.globalRole ?? user.globalRole}
-                            onChange={(e) => handleChange(user.id, "globalRole", e.target.value as User["globalRole"])}
+                            onChange={(e) =>
+                              handleChange(
+                                user.id,
+                                "globalRole",
+                                e.target.value as User["globalRole"]
+                              )
+                            }
                           >
                             <option value="ADMIN">ADMIN</option>
                             <option value="JUDGE">JUDGE</option>
                             <option value="BROTHER">BROTHER</option>
-                            {user.globalRole === "HEAD_COACH" && <option value="HEAD_COACH">HEAD_COACH</option>}
+                            {user.globalRole === "HEAD_COACH" && (
+                              <option value="HEAD_COACH">HEAD_COACH</option>
+                            )}
                           </select>
                         ) : (
                           user.globalRole
@@ -198,7 +253,10 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                       {editing && (
                         <td className="border px-2 py-1">
                           <div className="flex justify-center">
-                            <button onClick={() => handleDelete(user.id)} className="btn btn-error btn-xs text-white">
+                            <button
+                              onClick={() => handleDelete(user.id)}
+                              className="btn btn-error btn-xs text-white"
+                            >
                               Delete
                               <TrashIcon className="h-4 w-4 ml-1" />
                             </button>

@@ -11,7 +11,11 @@ type Props = {
 
 type ProductValue = Product[keyof Product];
 
-const CreateProductModal: React.FC<Props> = ({ isOpen, onClose, onProductCreated }) => {
+const CreateProductModal: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  onProductCreated,
+}) => {
   const [formData, setFormData] = useState<Product>({
     productId: "",
     name: "",
@@ -24,7 +28,7 @@ const CreateProductModal: React.FC<Props> = ({ isOpen, onClose, onProductCreated
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (field: keyof Product, value: ProductValue) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,8 +56,8 @@ const CreateProductModal: React.FC<Props> = ({ isOpen, onClose, onProductCreated
 
       const created = await res.json(); // only called if res.ok is true
       if (created) {
-        onProductCreated(formData)
-        onClose()
+        onProductCreated(formData);
+        onClose();
       }
       // now update state with `created`
     } catch (err) {
@@ -128,10 +132,19 @@ const CreateProductModal: React.FC<Props> = ({ isOpen, onClose, onProductCreated
           {error && <p className="text-error text-sm">{error}</p>}
 
           <div className="flex justify-end gap-3 pt-4">
-            <button type="button" className="btn" onClick={onClose} disabled={loading}>
+            <button
+              type="button"
+              className="btn"
+              onClick={onClose}
+              disabled={loading}
+            >
               Cancel
             </button>
-            <button type="submit" className="btn btn-secondary" disabled={loading}>
+            <button
+              type="submit"
+              className="btn btn-secondary"
+              disabled={loading}
+            >
               {loading ? "Creating..." : "Create"}
             </button>
           </div>

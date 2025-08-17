@@ -1,24 +1,24 @@
-import React from 'react'
+import React from "react";
 
-import { HeartIcon } from '@heroicons/react/24/solid'
-import DonationWidget from '@/components/DonationWidget'
-import AdPurchaseWidget from '@/components/AdPurchaseWidget'
-import ShirtPurcahseWidget from '@/components/ShirtPurcahseWidget'
+import { HeartIcon } from "@heroicons/react/24/solid";
+import DonationWidget from "@/components/DonationWidget";
+import AdPurchaseWidget from "@/components/AdPurchaseWidget";
+import ShirtPurcahseWidget from "@/components/ShirtPurcahseWidget";
 
 const DonatePage = () => {
   return (
-    <div className='flex flex-col gap-10 py-7.5 items-center'>
-      <div className='flex items-center gap-3'>
-        <h1 className='text-4xl md:text-7xl font-bold'>Support the Cause</h1>
-        <HeartIcon className='w-10 h-10 md:h-18 md:w-18'/>
+    <div className="flex flex-col gap-10 py-7.5 items-center">
+      <div className="flex items-center gap-3">
+        <h1 className="text-4xl md:text-7xl font-bold">Support the Cause</h1>
+        <HeartIcon className="w-10 h-10 md:h-18 md:w-18" />
       </div>
-      <div className='flex flex-col items-center justify-center gap-10 md:flex-row md:gap-25'>
-        <AdPurchaseWidget/>
-        <DonationWidget/>
-        <ShirtPurcahseWidget/>
+      <div className="flex flex-col items-center justify-center gap-10 md:flex-row md:gap-25">
+        <AdPurchaseWidget />
+        <DonationWidget />
+        <ShirtPurcahseWidget />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DonatePage
+export default DonatePage;

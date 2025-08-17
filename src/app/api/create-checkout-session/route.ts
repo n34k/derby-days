@@ -21,11 +21,11 @@ export async function POST(request: Request) {
             currency: "usd",
             product_data: {
               name: isDonation ? "Donation" : product.name,
-              description: isDonation ? "Thank you for your support" : "Product Purchase",
+              description: isDonation
+                ? "Thank you for your support"
+                : "Product Purchase",
             },
-            unit_amount: isDonation
-              ? Math.round(amount * 100)
-              : product.price, // already in cents
+            unit_amount: isDonation ? Math.round(amount * 100) : product.price, // already in cents
           },
           quantity: 1,
         },
@@ -35,6 +35,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ url: session.url });
   } catch (error) {
     console.error("Checkout session error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

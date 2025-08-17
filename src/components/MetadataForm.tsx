@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
 type Team = { id: string; name: string };
-type Brother = { id: string; name: string, teamId: string };
+type Brother = { id: string; name: string; teamId: string };
 
 type MetadataFormProps = {
   onSubmit: (metadata: {
@@ -18,7 +18,12 @@ type MetadataFormProps = {
   productCost: number;
 };
 
-export const MetadataForm = ({ onSubmit, loading, productName, productCost }: MetadataFormProps) => {
+export const MetadataForm = ({
+  onSubmit,
+  loading,
+  productName,
+  productCost,
+}: MetadataFormProps) => {
   const [teams, setTeams] = useState<Team[]>([]);
   const [users, setUsers] = useState<Brother[]>([]);
   const [referrerType, setReferrerType] = useState<"brother" | "team" | "">("");
@@ -26,8 +31,12 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
   const [teamId, setTeamId] = useState("");
 
   useEffect(() => {
-    fetch("/api/teams").then(res => res.json()).then(setTeams);
-    fetch("/api/user").then(res => res.json()).then(setUsers);
+    fetch("/api/teams")
+      .then((res) => res.json())
+      .then(setTeams);
+    fetch("/api/user")
+      .then((res) => res.json())
+      .then(setUsers);
   }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -39,8 +48,8 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
 
     if (referrerType === "") {
       alert("Please select a referrer (Brother or Team).");
-    return;
-  }
+      return;
+    }
 
     let finalReferredBy = "";
     let finalTeamId = "";
@@ -55,7 +64,13 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
       finalTeamId = teamId;
     }
 
-    onSubmit({ email, name, note, referredBy: finalReferredBy, teamId: finalTeamId });
+    onSubmit({
+      email,
+      name,
+      note,
+      referredBy: finalReferredBy,
+      teamId: finalTeamId,
+    });
   };
 
   return (
@@ -63,78 +78,125 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
       className="flex flex-col rounded-2xl border-2 border-secondary gap-4 items-center bg-primary overflow-y-scroll p-8 md:w-fit mt-10 mx-5"
       onSubmit={handleSubmit}
     >
-      <h1 className="text-3xl font-bold text-primary-content">{loading ? '' : `$${productCost} ${productName}`}</h1>
+      <h1 className="text-3xl font-bold text-primary-content">
+        {loading ? "" : `$${productCost} ${productName}`}
+      </h1>
 
       <div className="form-control w-full max-w-md">
-        <label className="label"><span className="label-text">Email</span></label>
-        <input type="email" name="email" className="input input-bordered text-black bg-white rounded-sm w-full" required />
+        <label className="label">
+          <span className="label-text">Email</span>
+        </label>
+        <input
+          type="email"
+          name="email"
+          className="input input-bordered text-black bg-white rounded-sm w-full"
+          required
+        />
       </div>
 
       <div className="form-control w-full max-w-md">
-        <label className="label"><span className="label-text">Name</span></label>
-        <input type="text" name="name" className="input input-bordered text-black bg-white rounded-sm w-full" required/>
+        <label className="label">
+          <span className="label-text">Name</span>
+        </label>
+        <input
+          type="text"
+          name="name"
+          className="input input-bordered text-black bg-white rounded-sm w-full"
+          required
+        />
       </div>
 
       <div className="form-control w-full max-w-md">
         <label className="label">
           <span className="label-text">Note (optional)</span>
-          <InformationCircleIcon 
-            onClick={() => alert("This will be displayed on the donors page along with your name")}
-            className="h-4 w-4 label-text hover:text-accent" 
+          <InformationCircleIcon
+            onClick={() =>
+              alert(
+                "This will be displayed on the donors page along with your name"
+              )
+            }
+            className="h-4 w-4 label-text hover:text-accent"
           />
         </label>
-        <textarea name="note" className="textarea textarea-bordered text-black bg-white rounded-sm w-full" />
-      </div>
-
-     <div className="form-control w-full max-w-md">
-      <label className="label flex items-center gap-1">
-        <span className="label-text">Referred By</span>
-        <InformationCircleIcon 
-          onClick={() => alert("Choose who brought you here. If you choose a team, this will add to their total. If you choose a brother, it will add to his total and his team's total")}
-          className="h-4 w-4 label-text hover:text-accent" 
+        <textarea
+          name="note"
+          className="textarea textarea-bordered text-black bg-white rounded-sm w-full"
         />
-      </label>
-      <div className="flex flex-row gap-4">
-        <div className="flex-1">
-          <label className="label"><span className="text-sm">Brother</span></label>
-          <select
-            className="select select-bordered bg-white text-black rounded-sm w-full"
-            value={referrerType === "brother" ? referredBy : ""}
-            onChange={(e) => {
-              setReferredBy(e.target.value);
-              setReferrerType("brother");
-              setTeamId("");
-            }}
-          >
-            <option value="" disabled hidden>-</option>
-            {users.map((bro) => (
-              <option key={bro.id} value={bro.id}>{bro.name}</option>
-            ))}
-          </select>
-        </div>
+      </div>
 
-        <div className="flex-1">
-          <label className="label"><span className="text-sm">Team</span></label>
-          <select
-            className="select select-bordered bg-white text-black rounded-sm w-full"
-            value={referrerType === "team" ? teamId : ""}
-            onChange={(e) => {
-              setTeamId(e.target.value);
-              setReferrerType("team");
-              setReferredBy("");
-            }}
-          >
-            <option value="" disabled hidden>-</option>
-            {teams.map((team) => (
-              <option key={team.id} value={team.id}>{team.name}</option>
-            ))}
-          </select>
+      <div className="form-control w-full max-w-md">
+        <label className="label flex items-center gap-1">
+          <span className="label-text">Referred By</span>
+          <InformationCircleIcon
+            onClick={() =>
+              alert(
+                "Choose who brought you here. If you choose a team, this will add to their total. If you choose a brother, it will add to his total and his team's total"
+              )
+            }
+            className="h-4 w-4 label-text hover:text-accent"
+          />
+        </label>
+        <div className="flex flex-row gap-4">
+          <div className="flex-1">
+            <label className="label">
+              <span className="text-sm">Brother</span>
+            </label>
+            <select
+              className="select select-bordered bg-white text-black rounded-sm w-full"
+              value={referrerType === "brother" ? referredBy : ""}
+              onChange={(e) => {
+                setReferredBy(e.target.value);
+                setReferrerType("brother");
+                setTeamId("");
+              }}
+            >
+              <option value="" disabled hidden>
+                -
+              </option>
+              {users.map((bro) => (
+                <option key={bro.id} value={bro.id}>
+                  {bro.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex-1">
+            <label className="label">
+              <span className="text-sm">Team</span>
+            </label>
+            <select
+              className="select select-bordered bg-white text-black rounded-sm w-full"
+              value={referrerType === "team" ? teamId : ""}
+              onChange={(e) => {
+                setTeamId(e.target.value);
+                setReferrerType("team");
+                setReferredBy("");
+              }}
+            >
+              <option value="" disabled hidden>
+                -
+              </option>
+              {teams.map((team) => (
+                <option key={team.id} value={team.id}>
+                  {team.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
-    </div>
 
-      <button type="submit" className="btn btn-secondary w-full max-w-md" disabled={loading}>
-        {loading ? <span className="loading loading-spinner" /> : "Continue to Payment"}
+      <button
+        type="submit"
+        className="btn btn-secondary w-full max-w-md"
+        disabled={loading}
+      >
+        {loading ? (
+          <span className="loading loading-spinner" />
+        ) : (
+          "Continue to Payment"
+        )}
       </button>
     </form>
   );

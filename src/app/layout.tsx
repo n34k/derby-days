@@ -6,9 +6,9 @@ import { auth } from "../../auth";
 import Footer from "@/section/Footer";
 
 const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400', '600', '700'], // adjust as needed
-  variable: '--font-poppins',
+  subsets: ["latin"],
+  weight: ["400", "600", "700"], // adjust as needed
+  variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
@@ -16,8 +16,10 @@ export const metadata: Metadata = {
   description: "Sigma Chi Epsilon Eta Derby Days landing page",
 };
 
-export default async function RootLayout({children,}: Readonly<{children: React.ReactNode;}>) {
-  const session = await auth()
+export default async function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  const session = await auth();
   return (
     <html lang="en" data-theme="sigmachi">
       <body className={`min-h-screen flex flex-col ${poppins.variable}`}>

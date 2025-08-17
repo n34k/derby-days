@@ -5,5 +5,5 @@ export const AdminUpdateUserSchema = z.object({
   walkoutSong: z.string().max(50).optional(),
   moneyRaised: z.number().min(0).optional(),
   globalRole: z.enum(["ADMIN", "JUDGE", "HEAD_COACH", "BROTHER"]).optional(),
-  teamId: z.string().uuid().optional()
+  teamId: z.string().uuid().optional(),
 });

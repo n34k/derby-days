@@ -5,13 +5,13 @@ import { headers } from "next/headers";
 import sendPurchaseEmail from "@/lib/emailService";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: "2025-06-30.basil"
+  apiVersion: "2025-06-30.basil",
 });
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 export async function POST(req: Request) {
-  console.log('IN POST REQ', req);
+  console.log("IN POST REQ", req);
   const rawBody = await req.text();
   const headersList = await headers();
   const signature = headersList.get("stripe-signature");
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     const category = session.metadata?.category || null;
 
     try {
-      if (category === 'donation') {
+      if (category === "donation") {
         await prisma.donation.create({
           data: {
             email,
@@ -58,8 +58,7 @@ export async function POST(req: Request) {
             user: referredById ? { connect: { id: referredById } } : undefined,
           },
         });
-      }
-      else if (category === 'ad') {
+      } else if (category === "ad") {
         await prisma.adPurchase.create({
           data: {
             email,
@@ -72,14 +71,12 @@ export async function POST(req: Request) {
             user: referredById ? { connect: { id: referredById } } : undefined,
           },
         });
-      }
-      else if (category === 'shirt') {
+      } else if (category === "shirt") {
         //TODO add shirt logic
+      } else {
+        return new NextResponse("Invalid product category", { status: 404 });
       }
-      else {
-        return new NextResponse('Invalid product category', { status: 404})
-      }
-    
+
       //TODO, EMAIL THE PURCHASER AN EMAIL DEPENDING ON THE TRANSACTION TYPE
 
       // Update logic for user and team money raised
@@ -110,15 +107,17 @@ export async function POST(req: Request) {
       }
 
       //Update total money raised
-      await prisma.stats.update({ where: { id: "global"}, data: { totalRaised: { increment: amount}}})
-
+      await prisma.stats.update({
+        where: { id: "global" },
+        data: { totalRaised: { increment: amount } },
+      });
     } catch (err) {
       console.error("Donation processing error:", err);
       return new NextResponse("Failed to process donation", { status: 500 });
     }
     try {
-      await sendPurchaseEmail({to: email, name, category, amount });
-    } catch(err) {
+      await sendPurchaseEmail({ to: email, name, category, amount });
+    } catch (err) {
       console.error("Failed to send purchase email:", err);
       return new NextResponse("Failed to send purchase email", { status: 500 });
     }

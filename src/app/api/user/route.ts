@@ -11,7 +11,10 @@ cloudinary.config({
 });
 
 export async function GET() {
-  const users = await prisma.user.findMany({ select: { id: true, name: true, teamId: true }, orderBy: { name: "asc" }});
+  const users = await prisma.user.findMany({
+    select: { id: true, name: true, teamId: true },
+    orderBy: { name: "asc" },
+  });
   return NextResponse.json(users);
 }
 
@@ -45,13 +48,16 @@ export async function PATCH(req: NextRequest) {
       where: { id: session.user?.id },
     });
 
-    if (existingUser?.imagePublicId && existingUser.imagePublicId !== imagePublicId) {
+    if (
+      existingUser?.imagePublicId &&
+      existingUser.imagePublicId !== imagePublicId
+    ) {
       // Delete the old image from Cloudinary
       await cloudinary.uploader.destroy(existingUser.imagePublicId);
     }
 
     // Update the user with the new data
-    console.log('Setting image public Id', imagePublicId)
+    console.log("Setting image public Id", imagePublicId);
     await prisma.user.update({
       where: { id: session.user?.id },
       data: {

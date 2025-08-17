@@ -9,12 +9,12 @@ const DonationPage = () => {
   const amount = parseFloat(searchParams.get("amount") || "0");
   const [loading, setLoading] = useState(false);
 
-  const handleMetadataSubmit = async (formValues:FormValueData) => {
+  const handleMetadataSubmit = async (formValues: FormValueData) => {
     setLoading(true);
     const metadata = {
       ...formValues,
-      category: 'donation'
-    }
+      category: "donation",
+    };
 
     const res = await fetch("/api/create-checkout-session", {
       method: "POST",
@@ -23,7 +23,6 @@ const DonationPage = () => {
     });
     const data = await res.json();
 
-    
     if (data.url) {
       window.location.href = data.url;
     } else {
@@ -34,7 +33,12 @@ const DonationPage = () => {
 
   return (
     <div className="flex justify-center">
-      <MetadataForm onSubmit={handleMetadataSubmit} productCost={amount} productName="Donation" loading={loading} />
+      <MetadataForm
+        onSubmit={handleMetadataSubmit}
+        productCost={amount}
+        productName="Donation"
+        loading={loading}
+      />
     </div>
   );
 };

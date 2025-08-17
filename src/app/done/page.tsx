@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useSearchParams, redirect } from "next/navigation";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 
-
 export default function Page() {
   // Get the checkout session ID from the URL
   const searchParams = useSearchParams();
@@ -36,11 +35,17 @@ export default function Page() {
     <main className="flex flex-col items-center justify-center px-4 pt-50 text-center">
       <div className="w-full max-w-xl space-y-6">
         <div className="flex items-center justify-center gap-2 md:gap-3">
-          <h1 className="text-lg md:text-4xl font-semibold">Your transaction was successful</h1>
+          <h1 className="text-lg md:text-4xl font-semibold">
+            Your transaction was successful
+          </h1>
           <CheckCircleIcon className="h-6 w-6 md:h-8 md:w-8 text-success" />
         </div>
-        <p className="text-base md:text-2xl text-info-content">Thank you for the support!</p>
-        <Link href="/standings" className="btn btn-secondary">View Updated Standings</Link>
+        <p className="text-base md:text-2xl text-info-content">
+          Thank you for the support!
+        </p>
+        <Link href="/standings" className="btn btn-secondary">
+          View Updated Standings
+        </Link>
       </div>
     </main>
   );

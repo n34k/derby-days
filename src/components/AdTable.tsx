@@ -1,6 +1,10 @@
 "use client";
 import React, { useState } from "react";
-import { CldImage, CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
+import {
+  CldImage,
+  CldUploadWidget,
+  CloudinaryUploadWidgetInfo,
+} from "next-cloudinary";
 import { AdPurchase } from "@/generated/prisma";
 import { useRouter } from "next/navigation";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
@@ -15,12 +19,19 @@ const AdTable: React.FC<Props> = ({ ads }) => {
   const [uploadingId, setUploadingId] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleUpload = async (info: CloudinaryUploadWidgetInfo, adId: string) => {
+  const handleUpload = async (
+    info: CloudinaryUploadWidgetInfo,
+    adId: string
+  ) => {
     setUploadingId(adId);
     const res = await fetch(`/api/admin/ad/${adId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ adId, adUrl: info.secure_url, adPublicId: info.public_id }),
+      body: JSON.stringify({
+        adId,
+        adUrl: info.secure_url,
+        adPublicId: info.public_id,
+      }),
     });
     setUploadingId(null);
     if (res.ok) router.refresh();
@@ -33,14 +44,16 @@ const AdTable: React.FC<Props> = ({ ads }) => {
         <h2 className="text-2xl font-semibold">Ad Purchases</h2>
         <button
           type="button"
-          onClick={() => setExpanded(v => !v)}
+          onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
           aria-controls="ad-table-panel"
           className="p-1 rounded hover:bg-base-200 transition"
           title={expanded ? "Collapse" : "Expand"}
         >
           <ChevronDownIcon
-            className={`w-7 h-7 transition-transform ${expanded ? "rotate-180" : ""}`}
+            className={`w-7 h-7 transition-transform ${
+              expanded ? "rotate-180" : ""
+            }`}
           />
         </button>
       </div>
@@ -59,7 +72,7 @@ const AdTable: React.FC<Props> = ({ ads }) => {
                 </tr>
               </thead>
               <tbody>
-                {ads.map(ad => (
+                {ads.map((ad) => (
                   <tr key={ad.id}>
                     <td className="border px-2 py-1">{ad.name}</td>
                     <td className="border px-2 py-1">{ad.email}</td>
@@ -79,8 +92,9 @@ const AdTable: React.FC<Props> = ({ ads }) => {
                           signatureEndpoint="/api/sign-cloudinary-params"
                           uploadPreset="ad"
                           options={{ sources: ["local"], multiple: false }}
-                          onSuccess={results => {
-                            const info = results.info as CloudinaryUploadWidgetInfo;
+                          onSuccess={(results) => {
+                            const info =
+                              results.info as CloudinaryUploadWidgetInfo;
                             handleUpload(info, ad.id);
                           }}
                         >
@@ -88,7 +102,9 @@ const AdTable: React.FC<Props> = ({ ads }) => {
                             <button
                               type="button"
                               className={`btn btn-secondary md:w-1/2 transition ${
-                                uploadingId === ad.id ? "opacity-50 pointer-events-none" : ""
+                                uploadingId === ad.id
+                                  ? "opacity-50 pointer-events-none"
+                                  : ""
                               }`}
                               onClick={() => open()}
                               disabled={uploadingId === ad.id}
