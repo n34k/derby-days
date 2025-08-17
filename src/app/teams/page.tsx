@@ -7,7 +7,7 @@ const TeamsOverviewPage = async () => {
   const teams = await prisma.team.findMany();
 
   return (
-    <main className="h-dvh w-dvw overflow-hidden flex">
+    <main className="flex flex-col md:flex-row h-dvh w-dvw overflow-hidden">
       {teams.map(team => (
         <Link
           href={`/teams/${team.id}`}
