@@ -4,7 +4,7 @@ import Image from "next/image";
 const MainSection = () => {
     const year = new Date().getFullYear();
     return (
-        <section className="relative h-[87vh] w-full overflow-hidden">
+        <section className="relative h-[92vh] w-full overflow-hidden">
             {/* Background Image */}
             <Image
                 src="/images/chapterhouse.jpg"

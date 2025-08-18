@@ -9,7 +9,7 @@ import {
 
 const HelpSection = () => {
     return (
-        <section className="flex flex-col bg-base items-center justify-start relative w-full min-h-screen gap-8 px-6 md:px-36 py-20">
+        <section className="flex flex-col bg-base items-center justify-start relative w-full gap-8 px-6">
             <div className="flex flex-col items-center gap-3">
                 <p className="font-bold text-base-content text-3xl md:text-5xl text-center">
                     How to Help

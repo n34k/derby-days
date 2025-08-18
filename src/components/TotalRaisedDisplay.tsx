@@ -1,0 +1,88 @@
+// src/components/TotalRaisedDisplay.tsx
+import React from "react";
+import { prisma } from "../../prisma";
+import { TrophyIcon, HeartIcon } from "@heroicons/react/24/solid";
+import Link from "next/link";
+
+function formatUSD(n: number) {
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+    }).format(n);
+}
+
+const TotalRaisedDisplay = async () => {
+    const stats = await prisma.stats.findFirst({
+        select: { totalRaised: true },
+    });
+
+    if (!stats) return null;
+
+    const pretty = formatUSD(stats.totalRaised);
+
+    return (
+        <section className="relative w-full">
+            {/* soft glow background */}
+            <div
+                className="pointer-events-none absolute inset-0 blur-3xl opacity-30 -z-10 
+                      bg-gradient-to-r from-secondary via-primary to-accent"
+            />
+            <div className="mx-auto w-11/12 md:w-5/6">
+                <div
+                    className="rounded-3xl bg-base-200/70 backdrop-blur-md
+                        ring-1 ring-base-content/10 shadow-2xl
+                        px-6 py-10 md:px-12 md:py-14"
+                >
+                    <div className="flex flex-col items-center text-center gap-6">
+                        <div className="inline-flex items-center gap-3">
+                            <TrophyIcon className="h-10 w-10 text-secondary drop-shadow" />
+                            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
+                                Together, we’re making history
+                            </h2>
+                        </div>
+
+                        <p className="text-base md:text-lg text-base-content/70 max-w-3xl">
+                            Every gift fuels care and hope for kids at Valley
+                            Children’s Hospital. Thank you to our brothers,
+                            participating sororities, and generous donors.
+                        </p>
+
+                        {/* Big number */}
+                        <div className="relative">
+                            <div className="absolute -inset-2 rounded-2xl bg-gradient-to-r from-secondary to-primary opacity-30 blur-xl" />
+                            <div className="relative rounded-2xl bg-base-100 px-8 py-6 md:px-12 md:py-8 ring-1 ring-base-content/10">
+                                <span className="block text-sm uppercase tracking-widest text-base-content/60">
+                                    Total Raised
+                                </span>
+                                <span className="mt-1 block text-5xl md:text-7xl font-black tabular-nums">
+                                    {pretty}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* CTAs */}
+                        <div className="mt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                            <Link
+                                href="/donate"
+                                className="inline-flex items-center gap-2 rounded-xl bg-secondary px-5 py-3 
+                           font-semibold text-secondary-content shadow-lg hover:shadow-xl
+                           hover:brightness-110 transition"
+                            >
+                                <HeartIcon className="h-5 w-5" />
+                                Donate Now
+                            </Link>
+                        </div>
+
+                        <p className="text-xs text-base-content/50">
+                            Every dollar helps us write the next chapter of
+                            Derby Days.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+export default TotalRaisedDisplay;

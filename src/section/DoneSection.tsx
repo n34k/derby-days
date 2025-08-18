@@ -14,29 +14,28 @@ const images = [
     { src: "/images/check2020.jpg", alt: "Check 2020" },
 ];
 
-const WhatSection = () => {
+const DoneSection = () => {
     return (
         <section className="flex relative items-center justify-center mx-5">
             <div className="flex flex-col md:flex-row justify-center align-middle bg-primary w-full max-w-6xl border-2 border-secondary rounded-box p-5 md:p-7 gap-5 md:gap-7 transition duration-300 transform hover:scale-105">
                 <div className="flex flex-col gap-3 w-full md:w-1/2 text-center md:text-left">
                     <h1 className="text-5xl text-base-content font-bold">
-                        What is Derby Days?
+                        What We&apos;ve Done
                     </h1>
                     <p className="text-info-content text-sm md:text-base">
-                        ABOUT
+                        IMPACT
                     </p>
                     <p className="text-base-content">
-                        Derby Days is Sigma Chi&apos;s national philanthropy
-                        event — a spirited, week-long competition that brings
-                        together fraternities, sororities, and the campus
-                        community to raise funds for a meaningful cause. Through
-                        challenges, performances, team spirit, and campus
-                        engagement, Derby Days unites fun with purpose. At its
-                        heart, Derby Days is about making a difference. Every
-                        dollar raised supports Valley Childrens hospital,
-                        helping fund research, provide care, and uplift lives.
-                        Derby Days is tradition, competition, and service — all
-                        rolled into one unforgettable week.
+                        Thanks to the unwavering dedication of our brothers, the
+                        enthusiasm of participating sororities, and the
+                        generosity of our donors, Sigma Chi Epsilon Eta has
+                        raised more than $250,000 for Valley Children&apos;s
+                        Hospital through Derby Days. But we&apos;re just getting
+                        started. With your support, we can continue to grow this
+                        tradition, make an even greater impact, and bring
+                        brighter futures to the children and families who need
+                        it most. Join us in writing the next chapter of
+                        hope—every contribution brings us closer.
                     </p>
                 </div>
                 <div className="flex flex-col items-center justify-center w-full md:w-1/2 rounded-xl max-h-[500px] md:max-h-none relative">
@@ -75,4 +74,4 @@ const WhatSection = () => {
     );
 };
 
-export default WhatSection;
+export default DoneSection;
