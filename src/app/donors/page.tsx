@@ -1,11 +1,16 @@
 import AdDisplay from "@/section/AdDisplay";
 import RecentDonations from "@/section/RecentDonations";
 import React from "react";
+import { prisma } from "../../../prisma";
 
-const DonorsPage = () => {
+const DonorsPage = async () => {
+    const ads = await prisma.adPurchase.findMany({
+        where: { adUrl: { not: null } },
+        orderBy: { createdAt: "desc" },
+    });
     return (
         <main className="flex flex-col min-h-screen gap-15 py-15 items-center">
-            <AdDisplay />
+            <AdDisplay ads={ads} />
             <RecentDonations />
         </main>
     );

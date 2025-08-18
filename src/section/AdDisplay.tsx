@@ -1,13 +1,17 @@
-import React from "react";
-import { prisma } from "../../prisma";
+"use client";
+import React, { useState } from "react";
 import { NewspaperIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
+import { AdPurchase } from "@/generated/prisma";
+import Lightbox from "yet-another-react-lightbox";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
 
-const AdDisplay = async () => {
-    const ads = await prisma.adPurchase.findMany({
-        where: { adUrl: { not: null } },
-        orderBy: { createdAt: "desc" },
-    });
+type AdDisplayProps = {
+    ads: AdPurchase[];
+};
+
+const AdDisplay = ({ ads }: AdDisplayProps) => {
+    const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
     const fullPageAds = ads.filter((ad) => ad.size === "Full Page");
     const halfPageAds = ads.filter((ad) => ad.size === "Half Page");
@@ -33,21 +37,34 @@ const AdDisplay = async () => {
                     <h2 className="text-info-content text-2xl md:text-4xl mb-4">
                         {title}
                     </h2>
+
                     <div className="flex flex-wrap justify-center gap-5">
                         {ads.map((ad) => (
                             <div key={ad.id} className="max-w-full">
                                 <Image
                                     src={ad.adUrl!}
                                     alt="Ad"
-                                    className="object-contain rounded mx-auto"
+                                    className="object-contain rounded mx-auto cursor-pointer"
                                     height={size}
                                     width={size}
+                                    onClick={() => setLightboxSrc(ad.adUrl!)}
                                 />
                             </div>
                         ))}
                     </div>
                 </div>
             ))}
+
+            {/* Single lightbox for the page */}
+            <Lightbox
+                open={!!lightboxSrc}
+                close={() => setLightboxSrc(null)}
+                slides={lightboxSrc ? [{ src: lightboxSrc }] : []}
+                plugins={[Zoom]}
+                zoom={{ maxZoomPixelRatio: 2.5, scrollToZoom: true }}
+                carousel={{ finite: true }}
+                render={{ buttonPrev: () => null, buttonNext: () => null }}
+            />
         </div>
     );
 };

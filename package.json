@@ -26,6 +26,7 @@
     "resend": "^6.0.1",
     "stripe": "^18.3.0",
     "swiper": "^11.2.10",
+    "yet-another-react-lightbox": "^3.25.0",
     "zod": "^3.25.67"
   },
   "devDependencies": {

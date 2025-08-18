@@ -5,6 +5,7 @@ import NavBar from "@/section/NavBar";
 import { auth } from "../../auth";
 import Footer from "@/section/Footer";
 import { getUserSessionData } from "@/lib/getUserSessionData";
+import "yet-another-react-lightbox/styles.css";
 
 const poppins = Poppins({
     subsets: ["latin"],
