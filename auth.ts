@@ -4,23 +4,25 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
-  providers: [Google],
-  callbacks: {
-    async signIn({ account }) {
-      // Grab invite token passed via OAuth 'state' param
-      const inviteToken = account?.state;
+    adapter: PrismaAdapter(prisma),
+    providers: [Google],
+    callbacks: {
+        async signIn({ account }) {
+            // Grab invite token passed via OAuth 'state' param
+            const inviteToken = account?.state;
 
-      if (process.env.NODE_ENV === "development") {
-        return true;
-      }
+            if (process.env.NODE_ENV === "development") {
+                return true;
+            }
 
-      if (inviteToken !== "derby2025invite") {
-        console.log("Blocked sign in — invalid or missing invite token");
-        return false; // Reject sign-in
-      }
+            if (inviteToken !== "derby2025invite") {
+                console.log(
+                    "Blocked sign in — invalid or missing invite token"
+                );
+                return false; // Reject sign-in
+            }
 
-      return true; // Allow sign-in
+            return true; // Allow sign-in
+        },
     },
-  },
 });

@@ -5,13 +5,13 @@ import WhatSection from "@/section/WhatSection";
 import HelpSection from "@/section/HelpSection";
 
 const HomePage = () => {
-  return (
-    <>
-      <MainSection />
-      <WhatSection />
-      <HelpSection />
-    </>
-  );
+    return (
+        <>
+            <MainSection />
+            <WhatSection />
+            <HelpSection />
+        </>
+    );
 };
 
 export default HomePage;
