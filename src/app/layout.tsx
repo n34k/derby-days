@@ -4,29 +4,34 @@ import "./globals.css";
 import NavBar from "@/section/NavBar";
 import { auth } from "../../auth";
 import Footer from "@/section/Footer";
+import { getUserSessionData } from "@/lib/getUserSessionData";
 
 const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"], // adjust as needed
-  variable: "--font-poppins",
+    subsets: ["latin"],
+    weight: ["400", "600", "700"], // adjust as needed
+    variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
-  title: "Derby Days",
-  description: "Sigma Chi Epsilon Eta Derby Days landing page",
+    title: "Derby Days",
+    description: "Sigma Chi Epsilon Eta Derby Days landing page",
 };
 
 export default async function RootLayout({
-  children,
+    children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const session = await auth();
-  return (
-    <html lang="en" data-theme="sigmachi">
-      <body className={`min-h-screen flex flex-col ${poppins.variable}`}>
-        <NavBar session={session} />
-        <main className="flex-1">{children}</main>
-        <Footer />
-      </body>
-    </html>
-  );
+    const session = await auth();
+    let userData = null;
+    if (session) {
+        userData = await getUserSessionData();
+    }
+    return (
+        <html lang="en" data-theme="sigmachi">
+            <body className={`min-h-screen flex flex-col ${poppins.variable}`}>
+                <NavBar userData={userData} />
+                <main className="flex-1">{children}</main>
+                <Footer />
+            </body>
+        </html>
+    );
 }

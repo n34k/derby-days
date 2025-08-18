@@ -91,7 +91,10 @@ const AdTable: React.FC<Props> = ({ ads }) => {
                         <CldUploadWidget
                           signatureEndpoint="/api/sign-cloudinary-params"
                           uploadPreset="ad"
-                          options={{ sources: ["local"], multiple: false }}
+                          options={{
+                            sources: ["local"],
+                            multiple: false,
+                          }}
                           onSuccess={(results) => {
                             const info =
                               results.info as CloudinaryUploadWidgetInfo;
