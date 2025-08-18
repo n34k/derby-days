@@ -9,7 +9,7 @@ const DonorsPage = async () => {
         orderBy: { createdAt: "desc" },
     });
     return (
-        <main className="flex flex-col min-h-screen gap-15 py-15 items-center">
+        <main className="flex flex-col min-h-screen gap-15 py-5 items-center">
             <AdDisplay ads={ads} />
             <RecentDonations />
         </main>

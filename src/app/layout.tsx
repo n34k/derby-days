@@ -14,7 +14,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-    title: "Derby Days",
+    title: "Fresno State Derby Days",
     description: "Sigma Chi Epsilon Eta Derby Days landing page",
 };
 
