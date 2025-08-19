@@ -1,16 +1,9 @@
 // src/components/TotalRaisedDisplay.tsx
 import React from "react";
 import { prisma } from "../../prisma";
-import { TrophyIcon, HeartIcon } from "@heroicons/react/24/solid";
+import { HeartIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
-
-function formatUSD(n: number) {
-    return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        maximumFractionDigits: 0,
-    }).format(n);
-}
+import { formatUSD } from "@/lib/formatUSD";
 
 const TotalRaisedDisplay = async () => {
     const stats = await prisma.stats.findFirst({
@@ -35,19 +28,6 @@ const TotalRaisedDisplay = async () => {
                         px-6 py-10 md:px-12 md:py-14"
                 >
                     <div className="flex flex-col items-center text-center gap-6">
-                        <div className="inline-flex items-center gap-3">
-                            <TrophyIcon className="h-10 w-10 text-secondary drop-shadow" />
-                            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">
-                                Together, we’re making history
-                            </h2>
-                        </div>
-
-                        <p className="text-base md:text-lg text-base-content/70 max-w-3xl">
-                            Every gift fuels care and hope for kids at Valley
-                            Children’s Hospital. Thank you to our brothers,
-                            participating sororities, and generous donors.
-                        </p>
-
                         {/* Big number */}
                         <div className="relative">
                             <div className="absolute -inset-2 rounded-2xl bg-gradient-to-r from-secondary to-primary opacity-30 blur-xl" />
@@ -55,7 +35,7 @@ const TotalRaisedDisplay = async () => {
                                 <span className="block text-sm uppercase tracking-widest text-base-content/60">
                                     Total Raised
                                 </span>
-                                <span className="mt-1 block text-5xl md:text-7xl font-black tabular-nums">
+                                <span className="mt-1 block text-7xl md:text-9xl font-black tabular-nums">
                                     {pretty}
                                 </span>
                             </div>

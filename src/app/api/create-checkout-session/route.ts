@@ -12,7 +12,7 @@ export async function POST(request: Request) {
             mode: "payment",
             ui_mode: "hosted",
             success_url: `${process.env.DOMAIN}/done?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.DOMAIN}/cancel`,
+            cancel_url: `${process.env.DOMAIN}/donate`,
             customer_email: metadata.email,
             metadata,
             line_items: [

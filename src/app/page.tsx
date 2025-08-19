@@ -7,7 +7,7 @@ import TotalRaisedDisplay from "@/components/TotalRaisedDisplay";
 
 const HomePage = () => {
     return (
-        <div className="flex flex-col pb-15 gap-10">
+        <div className="flex flex-col pb-15 gap-15">
             <MainSection />
             <WhatSection />
             <TotalRaisedDisplay />

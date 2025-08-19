@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { formatUSD } from "@/lib/formatUSD";
 
 type Team = { id: string; name: string };
 type Brother = { id: string; name: string; teamId: string };
@@ -84,7 +85,7 @@ export const MetadataForm = ({
             onSubmit={handleSubmit}
         >
             <h1 className="text-3xl font-bold text-primary-content">
-                {loading ? "" : `$${productCost} ${productName}`}
+                {loading ? "" : `${formatUSD(productCost)} ${productName}`}
             </h1>
 
             <div className="form-control w-full max-w-md">
