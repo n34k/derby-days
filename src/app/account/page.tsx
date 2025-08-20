@@ -4,12 +4,13 @@ import UpdateUserForm from "@/section/UpdateUserForm";
 import UserStats from "@/components/UserStats";
 import SignOutButton from "@/components/SignOutButton";
 import { getUserSessionData } from "@/lib/getUserSessionData";
+import BrotherStats from "@/components/BrotherStandings";
 
 async function AccountPage() {
     const userData = await getUserSessionData();
 
     return (
-        <div className="flex flex-col gap-10 items-center justify-evenly md:flex-row md:px-15 md:pt-25 py-5">
+        <div className="flex flex-col gap-10 items-center justify-evenly md:flex-row md:px-15 md:pt-15 p-5">
             <div className="flex flex-col items-center gap-2.5">
                 <UpdateUserForm
                     initialImage={userData.image}
@@ -20,6 +21,7 @@ async function AccountPage() {
                 <SignOutButton />
             </div>
             <UserStats user={userData} />
+            <BrotherStats />
         </div>
     );
 }

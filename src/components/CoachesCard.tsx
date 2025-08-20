@@ -15,7 +15,7 @@ const CoachesCard: React.FC<CoachesCardProps> = ({ coaches }) => {
     const isEmpty = coaches.length === 0;
 
     return (
-        <div className="flex flex-col items-center justify-start gap-2.5 h-[60vh] md:w-[30vw] bg-primary rounded-lg border-2 border-secondary p-5">
+        <div className="flex flex-col items-center justify-start gap-2.5 h-[60vh] md:w-[30vw] bg-primary rounded-lg border-1 border-secondary p-5">
             {isEmpty ? (
                 // empty state: center everything
                 <div className="flex-1 flex flex-col items-center justify-center gap-4">

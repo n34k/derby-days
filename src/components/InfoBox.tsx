@@ -12,12 +12,14 @@ const InfoBox = ({ title, info, saleInfo = [] }: InfoBoxProps) => {
 
     return (
         <div className="flex flex-col h-fit md:max-h-[17.5vh] overflow-scroll items-center bg-base-200 rounded-lg p-5 shadow">
-            <h2 className="text-2xl font-semibold text-info-content mb-2">
+            <h2 className="text-2xl font-semibold text-center text-info-content mb-2">
                 {title}
             </h2>
             {/* Normal info box to display one thing*/}
             {info ? (
-                <p className={`text-2xl font-bold ${info.textColor}`}>
+                <p
+                    className={`text-2xl font-bold text-center ${info.textColor}`}
+                >
                     {info.text}
                 </p>
             ) : !hasItems ? (
@@ -39,7 +41,7 @@ const InfoBox = ({ title, info, saleInfo = [] }: InfoBoxProps) => {
                                 }
                                 className="flex flex-col items-center w-full rounded-md bg-base-100 p-3"
                             >
-                                <p className="font-semibold">
+                                <p className="font-semibold text-center">
                                     From {item.name}
                                 </p>
                                 <p>

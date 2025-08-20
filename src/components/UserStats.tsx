@@ -54,7 +54,7 @@ const UserStats = async ({ user }: UserStatsProps) => {
     };
 
     return (
-        <div className="h-fit w-[75vw] md:w-auto bg-primary rounded-lg border-2 border-secondary flex flex-col items-center p-10 shadow-lg min-w-[300px]">
+        <div className="md:h-[70vh] w-[75vw] md:w-auto bg-primary rounded-lg border-1 border-secondary flex flex-col items-center p-10 shadow-lg min-w-[300px]">
             <h1 className="text-3xl font-bold mb-8 text-base-content">
                 Your Stats
             </h1>

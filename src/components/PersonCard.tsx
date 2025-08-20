@@ -1,6 +1,10 @@
 "use client";
 import React from "react";
 import { CldImage } from "next-cloudinary";
+import {
+    ClipboardDocumentCheckIcon,
+    SparklesIcon,
+} from "@heroicons/react/24/solid";
 
 type PersonCardProps = {
     role: string;
@@ -14,8 +18,15 @@ const PersonCard = ({ role, person }: PersonCardProps) => {
     const hasPerson = !!person && (person.name || person.image);
 
     return (
-        <div className="flex items-center justify-center flex-col gap-6 h-[60vh] md:w-[30vw] bg-primary rounded-lg border-2 border-secondary p-5">
-            <h2 className="text-4xl font-semibold">{role}</h2>
+        <div className="flex items-center justify-center flex-col gap-6 h-[60vh] md:w-[30vw] bg-primary rounded-lg border-1 border-secondary p-5">
+            <div className="flex gap-3">
+                <h2 className="text-4xl font-semibold">{role}</h2>
+                {role === "Derby Darling" ? (
+                    <SparklesIcon className="h-10 w-10" />
+                ) : (
+                    <ClipboardDocumentCheckIcon className="h-10 w-10" />
+                )}
+            </div>
 
             {hasPerson ? (
                 <>
@@ -25,7 +36,7 @@ const PersonCard = ({ role, person }: PersonCardProps) => {
                             alt={`${person.name ?? "Profile"} photo`}
                             width={350}
                             height={350}
-                            className="border-2 border-secondary rounded-sm"
+                            className="border-1 border-secondary rounded-sm"
                         />
                     )}
                     <h2 className="text-3xl text-info-content">

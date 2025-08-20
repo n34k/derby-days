@@ -125,7 +125,7 @@ const UpdateUserForm = ({
 
     return (
         <form
-            className="w-[75vw] md:w-auto bg-primary rounded-lg border-2 border-secondary md:overflow-y-scroll"
+            className="w-[75vw] md:w-auto bg-primary rounded-lg border-1 border-secondary md:overflow-y-scroll"
             onSubmit={handleSubmit}
         >
             <div className="flex flex-col gap-1 items-center p-5">

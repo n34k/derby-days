@@ -17,7 +17,7 @@ const images = [
 const WhatSection = () => {
     return (
         <section className="flex relative items-center justify-center mx-5">
-            <div className="flex flex-col md:flex-row justify-center align-middle bg-primary w-full max-w-6xl border-2 border-secondary rounded-box p-5 md:p-7 gap-5 md:gap-7 transition duration-300 transform hover:scale-105">
+            <div className="flex flex-col md:flex-row justify-center align-middle bg-primary w-full max-w-6xl border-1 border-secondary rounded-box p-5 md:p-7 gap-5 md:gap-7 transition duration-300 transform hover:scale-105">
                 <div className="flex flex-col gap-3 w-full md:w-1/2 text-center md:text-left">
                     <h1 className="text-5xl text-base-content font-bold">
                         What is Derby Days?

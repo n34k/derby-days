@@ -81,7 +81,7 @@ export const MetadataForm = ({
 
     return (
         <form
-            className="flex flex-col rounded-2xl border-2 border-secondary gap-4 items-center bg-primary overflow-y-scroll p-8 md:w-fit mt-10 mx-5"
+            className="flex flex-col rounded-2xl border-1 border-secondary gap-4 items-center bg-primary overflow-y-scroll p-8 md:w-fit mt-10 mx-5"
             onSubmit={handleSubmit}
         >
             <h1 className="text-3xl font-bold text-primary-content">

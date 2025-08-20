@@ -4,7 +4,7 @@ import React from "react";
 
 const ShirtPurcahseWidget = () => {
     return (
-        <div className="w-[320px] h-[450px] flex flex-col items-center justify-between gap-5 bg-primary p-5 rounded-2xl border-2 border-secondary shadow-lg">
+        <div className="w-[320px] h-[450px] flex flex-col items-center justify-between gap-5 bg-primary p-5 rounded-2xl border-1 border-secondary shadow-lg">
             <div className="flex flex-col text-center">
                 <h1 className="text-4xl font-bold text-secondary">
                     Buy T-Shirt
@@ -18,7 +18,7 @@ const ShirtPurcahseWidget = () => {
                     src="/images/shirtplaceholder.webp"
                     alt="shirt picture"
                     fill
-                    className="border-2 border-primary rounded-md"
+                    className="border-1 border-primary rounded-md"
                 />
             </div>
             <Link
