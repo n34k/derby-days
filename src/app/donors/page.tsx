@@ -8,10 +8,29 @@ const DonorsPage = async () => {
         where: { adUrl: { not: null } },
         orderBy: { createdAt: "desc" },
     });
+
+    const donationsByAmount = await prisma.donation.findMany({
+        orderBy: { amount: "desc" },
+    });
+
+    const donationsByLatest = await prisma.donation.findMany({
+        orderBy: { createdAt: "desc" },
+    });
+
+    const donationsByEarliest = await prisma.donation.findMany({
+        orderBy: { createdAt: "asc" },
+    });
+
+    const donations = {
+        amount: donationsByAmount,
+        earliest: donationsByEarliest,
+        latest: donationsByLatest,
+    };
+
     return (
         <main className="flex flex-col min-h-screen gap-15 py-5 items-center">
             <AdDisplay ads={ads} />
-            <RecentDonations />
+            <RecentDonations donations={donations} />
         </main>
     );
 };
