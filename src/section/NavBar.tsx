@@ -145,7 +145,7 @@ const NavBar = ({ userData }: NavBarProps) => {
                     </Link>
                     <Link
                         className="flex flex-col items-center"
-                        href="/donate"
+                        href="/draft"
                         onClick={() => setMenuOpen(false)}
                     >
                         <ClipboardDocumentListIcon className="h-8 w-8 text-base-content" />

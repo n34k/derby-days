@@ -39,7 +39,6 @@ model User {
   teamId    String?
   team      Team?      @relation(fields: [teamId], references: [id])
   donations Donation[]
-  draftPick DraftPick?
 
   headCoachOf Team? @relation("HeadCoach")
 
@@ -47,6 +46,7 @@ model User {
   updatedAt      DateTime         @default(now()) @updatedAt
   AdPurchase     AdPurchase[]
   TshirtPurchase TshirtPurchase[]
+  DraftPick      DraftPick?
 }
 
 model Account {
@@ -183,14 +183,40 @@ model TshirtPurchase {
   team Team? @relation(fields: [teamId], references: [id])
 }
 
-model DraftPick {
-  id         String @id @default(cuid())
-  teamId     String
-  userId     String @unique
-  pickNumber Int
+model Draft {
+  id            String      @id @default(cuid())
+  name          String
+  status        DraftStatus @default(NOT_STARTED)
+  roundCount    Int
+  currentPickNo Int         @default(1)
+  startedAt     DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  teamOrder     String[]
 
-  team Team  @relation(fields: [teamId], references: [id])
-  user User? @relation(fields: [userId], references: [id])
+  picks DraftPick[]
+}
+
+model DraftPick {
+  id            String     @id @default(cuid())
+  draftId       String
+  teamId        String
+  userId        String  @unique
+  overallPickNo Int
+  round         Int
+  pickInRound   Int
+  status        PickStatus @default(ANNOUNCED)
+  announcedAt   DateTime   @default(now())
+
+  draft Draft @relation(fields: [draftId], references: [id])
+  team  Team  @relation(fields: [teamId], references: [id])
+  user  User  @relation(fields: [userId], references: [id]) 
+
+  @@unique([draftId, userId]) // a brother once per draft
+  @@unique([draftId, overallPickNo]) // one pick per overall slot
+  @@unique([draftId, round, pickInRound]) // one pick per round slot
+  @@index([draftId, teamId])
+  @@index([draftId, round])
 }
 
 model Product {
@@ -206,4 +232,16 @@ enum GlobalRole {
   JUDGE
   BROTHER
   HEAD_COACH
+}
+
+enum DraftStatus {
+  NOT_STARTED
+  ONGOING
+  PAUSED
+  COMPLETE
+}
+
+enum PickStatus {
+  ANNOUNCED
+  VOIDED
 }
