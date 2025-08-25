@@ -235,6 +235,7 @@ enum GlobalRole {
 }
 
 enum DraftStatus {
+  NOT_CREATED
   NOT_STARTED
   ONGOING
   PAUSED
