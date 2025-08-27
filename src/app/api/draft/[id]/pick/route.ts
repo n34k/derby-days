@@ -130,6 +130,7 @@ export async function POST(req: NextRequest, { params }: { params: idP }) {
         await pusher.trigger(`public-draft-${draftId}`, "event", {
             type: "ANNOUNCE",
             pickNo: result.pick.overallPickNo,
+            round: result.pick.round,
             teamId: result.pick.teamId,
             player: {
                 id: result.pick.userId,
@@ -143,9 +144,9 @@ export async function POST(req: NextRequest, { params }: { params: idP }) {
             await pusher.trigger(`public-draft-${draftId}`, "event", {
                 type: "STATE",
                 status: "COMPLETE",
-                pickNo: result.pick.overallPickNo, // last made pick
+                pickNo: result.pick.overallPickNo, //last made pick
                 teamId: result.pick.teamId,
-                deadlineAt: Date.now(), // irrelevant; draft is done
+                deadlineAt: Date.now(), //irrelevant, draft is done
             });
         } else {
             // Next team on the clock + timer

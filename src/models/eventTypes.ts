@@ -12,7 +12,12 @@ export type PublicEvent =
           type: "ANNOUNCE";
           pickNo: number;
           teamId: string;
-          player: { id: string; name: string | null; image?: string | null };
+          round: number;
+          player: {
+              id: string;
+              name: string | null;
+              image?: string | null;
+          };
       }
     | { type: "BOARD_UPDATE"; version: number }
     | { type: "UNDO"; pickNo: number; playerId: string };

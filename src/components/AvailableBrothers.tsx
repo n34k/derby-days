@@ -62,10 +62,12 @@ export default function AvailableBrothersTable({
     }
 
     return (
-        <div className="overflow-x-auto border-1 border-secondary rounded-lg bg-primary w-[90vw]">
-            <h1 className="text-4xl font-bold text-center my-3">
-                Available Brothers
-            </h1>
+        <div className="flex flex-col overflow-x-auto border-1 border-secondary rounded-lg bg-primary w-[90vw]">
+            <div className="bg-base-300">
+                <h1 className="text-4xl font-bold text-center my-3">
+                    Available Brothers
+                </h1>
+            </div>
             <table className="min-w-full border-collapse text-sm">
                 <tbody>
                     {rows.map((row, rIdx) => (

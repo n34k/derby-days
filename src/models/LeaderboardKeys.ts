@@ -21,7 +21,7 @@ export const LeaderboardKeys: LeaderboardMetric[] = [
 ];
 
 export const LeaderboardLabels: Record<LeaderboardMetric, string> = {
-    points: "Points",
-    tshirtsSold: "T-Shirts Sold",
-    moneyRaised: "Money Raised",
+    points: "POINTS",
+    tshirtsSold: "T-SHIRTS SOLD",
+    moneyRaised: "MONEY RAISED",
 };
