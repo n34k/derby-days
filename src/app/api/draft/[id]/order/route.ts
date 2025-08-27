@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../../prisma";
 import { isAdmin } from "@/lib/isAdmin";
+import { idP } from "@/models/routeParamsTypes";
 
-export async function GET(
-    req: NextRequest,
-    { params }: { params: { id: string } }
-) {
-    const p = await params;
-    const draftId = p.id;
+export async function GET(_req: NextRequest, { params }: { params: idP }) {
+    const { id } = await params;
     const draft = await prisma.draft.findUnique({
-        where: { id: draftId },
+        where: { id },
         select: { teamOrder: true },
     });
 
@@ -22,11 +19,9 @@ export async function GET(
     });
 }
 
-export async function POST(
-    req: NextRequest,
-    { params }: { params: { id: string } }
-) {
-    if (!isAdmin) {
+export async function POST(req: NextRequest, { params }: { params: idP }) {
+    const admin = await isAdmin();
+    if (!admin) {
         return NextResponse.json(
             { error: "User must be an admin" },
             { status: 401 }

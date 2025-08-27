@@ -3,11 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../../prisma";
 import { isAdmin } from "@/lib/isAdmin";
 import { pusher } from "@/lib/pusher/server";
+import { idP } from "@/models/routeParamsTypes";
 
-export async function POST(
-    req: NextRequest,
-    { params }: { params: { id: string } }
-) {
+export async function POST(req: NextRequest, { params }: { params: idP }) {
     // 1) Auth
     const admin = await isAdmin();
     if (!admin) {

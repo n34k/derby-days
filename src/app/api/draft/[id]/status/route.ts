@@ -1,11 +1,9 @@
 import { isAdmin } from "@/lib/isAdmin";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../../prisma";
+import { idP } from "@/models/routeParamsTypes";
 
-export async function PATCH(
-    req: NextRequest,
-    { params }: { params: { id: string } }
-) {
+export async function PATCH(req: NextRequest, { params }: { params: idP }) {
     const admin = await isAdmin();
 
     if (!admin) {

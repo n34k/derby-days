@@ -1,11 +1,9 @@
 import { isAdmin } from "@/lib/isAdmin";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../prisma";
+import { idP } from "@/models/routeParamsTypes";
 
-export async function GET(
-    req: NextRequest,
-    { params }: { params: { id: string } }
-) {
+export async function GET(req: NextRequest, { params }: { params: idP }) {
     const p = await params;
     if (!p) {
         return NextResponse.json({ error: "Params undefined", status: 404 });
@@ -62,10 +60,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(draft, { status: 201 });
 }
 
-export async function DELETE(
-    req: NextRequest,
-    { params }: { params: { id: string } }
-) {
+export async function DELETE(req: NextRequest, { params }: { params: idP }) {
     const p = await params;
     const draft = await prisma.draft.findUnique({ where: { id: p.id } });
     if (!draft) {
