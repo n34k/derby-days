@@ -8,3 +8,5 @@ declare module "canvas-confetti" {
 
     export default function confetti(options?: Options): void;
 }
+
+//for confetti after a donation

@@ -5,6 +5,7 @@ import NavBar from "@/section/NavBar";
 import { auth } from "../../auth";
 import Footer from "@/section/Footer";
 import { getUserSessionData } from "@/lib/getUserSessionData";
+import { RealtimeProvider } from "@/components/providers/RealtimeProvider";
 import "yet-another-react-lightbox/styles.css";
 
 const poppins = Poppins({
@@ -30,7 +31,9 @@ export default async function RootLayout({
         <html lang="en" data-theme="sigmachi">
             <body className={`min-h-screen flex flex-col ${poppins.variable}`}>
                 <NavBar userData={userData} />
-                <main className="flex-1">{children}</main>
+                <main className="flex-1">
+                    <RealtimeProvider>{children}</RealtimeProvider>
+                </main>
                 <Footer />
             </body>
         </html>

@@ -1,4 +1,4 @@
-import { SaleInfo, TextColors } from "@/models/DefaultValues";
+import { SaleInfo, TextColors } from "@/models/defaultValues";
 import React from "react";
 
 interface InfoBoxProps {

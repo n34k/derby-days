@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { MetadataForm } from "@/components/MetadataForm";
-import { FormValueData } from "@/models/DefaultValues";
+import { FormValueData } from "@/models/defaultValues";
 
 const DonationPage = () => {
     const searchParams = useSearchParams();

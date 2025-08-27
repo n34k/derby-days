@@ -2,7 +2,7 @@ import { User } from "@/generated/prisma";
 import greekLetters from "@/lib/greekLetters";
 import React from "react";
 import InfoBox from "./InfoBox";
-import { InfoBoxText } from "@/models/DefaultValues";
+import { InfoBoxText } from "@/models/defaultValues";
 import { prisma } from "../../prisma";
 import { GlobalRole } from "@/generated/prisma";
 interface UserStatsProps {

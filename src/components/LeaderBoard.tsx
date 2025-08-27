@@ -5,7 +5,7 @@ import {
     MoneyRaisedOptions,
     MoneyRaisedOption,
     LeaderBoardRow,
-} from "@/models/LeaderboardKeys";
+} from "@/models/leaderboardKeys";
 import React, { useMemo, useState } from "react";
 import {
     ShoppingBagIcon,

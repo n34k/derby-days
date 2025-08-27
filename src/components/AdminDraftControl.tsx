@@ -3,8 +3,12 @@ import DraftOrderEdit from "./DraftOrderEdit";
 import { prisma } from "../../prisma";
 import CreateDraftButton from "./CreateDraftButton";
 import DraftDeleteButton from "./DraftDeleteButton";
+import DraftStartButton from "./DraftStartButton";
+import AvailableBrothersTable from "./AvailableBrothers";
+import { isAdmin } from "@/lib/isAdmin";
 
 const AdminDraftControl = async () => {
+    const admin = await isAdmin();
     const year = String(new Date().getFullYear());
     const draftCreatedThisYear = await prisma.draft.findUnique({
         where: { id: year },
@@ -23,9 +27,14 @@ const AdminDraftControl = async () => {
                 <div className="flex flex-col items-center gap-5">
                     <h1 className="font-bold text-4xl">Pre Draft Controls</h1>
                     <DraftOrderEdit draft={draftCreatedThisYear} />
-                    {/* Draft Start Button */}
+                    <DraftStartButton />
                     <DraftDeleteButton />
                 </div>
+            ) : (
+                <></>
+            )}
+            {draftCreatedThisYear && draftStatus === "ONGOING" ? (
+                <AvailableBrothersTable isAdmin={admin} draftId={year} />
             ) : (
                 <></>
             )}

@@ -18,7 +18,7 @@ import {
     CoachOption,
     EditedTeam,
     TeamWithCoach,
-} from "@/models/TeamTableTypes";
+} from "@/models/teamTableTypes";
 
 export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
     const router = useRouter();

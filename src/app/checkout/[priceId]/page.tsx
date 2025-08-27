@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { MetadataForm } from "@/components/MetadataForm";
 import { Product } from "@/generated/prisma";
-import { DefaultProduct, FormValueData } from "@/models/DefaultValues";
+import { DefaultProduct, FormValueData } from "@/models/defaultValues";
 
 const PurchasePage = () => {
     const params = useParams();

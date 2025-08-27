@@ -4,7 +4,7 @@ import SortBy from "@/components/SortBy";
 import {
     DonationFilterOption,
     DonationFilterOptions,
-} from "@/models/DonationsTypes";
+} from "@/models/donationsTypes";
 import { useState } from "react";
 import { Donation } from "@/generated/prisma";
 
