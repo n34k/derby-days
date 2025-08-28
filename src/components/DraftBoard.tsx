@@ -1,6 +1,4 @@
-// src/components/draft/DraftBoardTable.tsx
 "use client";
-
 import { useDraftBoard } from "@/app/hooks/useDraftBoard";
 import greekLetters from "@/lib/greekLetters";
 

@@ -19,7 +19,6 @@ export async function GET(req: NextRequest, { params }: { params: idP }) {
 
 export async function POST(req: NextRequest) {
     const admin = await isAdmin();
-
     if (!admin) {
         return NextResponse.json(
             { error: "User must be an admin to make a draft" },

@@ -3,7 +3,12 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useDraftChannel } from "./useDraftChannel";
 import { publicChannel } from "@/models/eventTypes";
 
-export type Brother = { id: string; name: string; image?: string | null };
+export type Brother = {
+    id: string;
+    name: string;
+    image?: string | null;
+    walkoutSong?: string | null;
+};
 
 export function useAvailableBrothers(draftId: string) {
     const [list, setList] = useState<Brother[]>([]);

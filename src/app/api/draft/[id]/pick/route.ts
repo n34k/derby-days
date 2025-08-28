@@ -1,4 +1,3 @@
-// src/app/api/draft/[id]/pick/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../../prisma";
 import { isAdmin } from "@/lib/isAdmin";
@@ -73,7 +72,7 @@ export async function POST(req: NextRequest, { params }: { params: idP }) {
                     overallPickNo: k,
                     round,
                     pickInRound,
-                    status: "ANNOUNCED", // if you later add admin "announce" gate, change to PENDING first
+                    status: "ANNOUNCED", // later add admin "announce" gate, change to PENDING first
                 },
                 include: {
                     user: { select: { id: true, name: true, image: true } },
@@ -94,10 +93,13 @@ export async function POST(req: NextRequest, { params }: { params: idP }) {
             // Advance the pointer
             await tx.draft.update({
                 where: { id: draftId },
-                data: { currentPickNo: { increment: 1 } },
+                data: {
+                    currentPickNo: { increment: 1 },
+                    deadlineAt: new Date(Date.now() + 10 * 60 * 1000),
+                },
             });
 
-            // ✅ Option A completion check: any BROTHERs left with teamId = null?
+            // Option A completion check: any BROTHERs left with teamId = null?
             const remaining = await tx.user.count({
                 where: { globalRole: "BROTHER", teamId: null },
             });
@@ -126,7 +128,7 @@ export async function POST(req: NextRequest, { params }: { params: idP }) {
             return { pick, completed, nextPickNo: k + 1, nextTeamId };
         });
 
-        // 4) Broadcast (after TX commit)
+        //4) Broadcast (after TX commit)
         await pusher.trigger(`public-draft-${draftId}`, "event", {
             type: "ANNOUNCE",
             pickNo: result.pick.overallPickNo,

@@ -1,4 +1,3 @@
-// src/app/api/draft/[id]/available/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../../../prisma";
 
@@ -12,6 +11,7 @@ export async function GET() {
             id: true,
             name: true,
             image: true,
+            walkoutSong: true,
         },
         orderBy: { name: "asc" },
     });

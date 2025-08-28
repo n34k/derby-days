@@ -1,4 +1,3 @@
-// src/app/api/draft/[id]/board/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../../../prisma";
 import { idP } from "@/models/routeParamsTypes";

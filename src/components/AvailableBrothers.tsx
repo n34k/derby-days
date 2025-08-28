@@ -53,7 +53,12 @@ export default function AvailableBrothersTable({
         console.error("AvailableBrothers error:", error);
         return null;
     }
-    if (!list?.length) return <p>All brothers have been drafted 🎉</p>;
+    if (!list?.length)
+        return (
+            <h2 className="text-xl font-extrabold">
+                All brothers have been drafted 🎉
+            </h2>
+        );
 
     const columns = 4; // fixed
     const rows: Brother[][] = [];
@@ -78,7 +83,7 @@ export default function AvailableBrothersTable({
                                     <td
                                         key={cIdx}
                                         className={[
-                                            "border border-secondary p-3 text-center font-medium select-none text-info-content",
+                                            "border border-secondary p-3 text-center font-medium select-none",
                                             isAdmin
                                                 ? "transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10"
                                                 : "",
@@ -93,7 +98,14 @@ export default function AvailableBrothersTable({
                                         }
                                         aria-disabled={disabled}
                                     >
-                                        {b.name}
+                                        <div className="flex-col flex">
+                                            <span>{b.name}</span>
+                                            {isAdmin && b.walkoutSong && (
+                                                <span className="text-info-content text-xs">
+                                                    Song: {b.walkoutSong}
+                                                </span>
+                                            )}
+                                        </div>
                                     </td>
                                 );
                             })}
