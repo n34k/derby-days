@@ -1,8 +1,8 @@
 import React from "react";
 
-import AdminPanel from "@/section/AdminPanel";
+import AdminPanel from "@/components/section/AdminPanel";
 import { getUserSessionData } from "@/lib/getUserSessionData";
-import AdminDraftControl from "@/components/AdminDraftControl";
+import AdminDraftControl from "@/components/draft/AdminDraftControl";
 
 const AdminPage = async () => {
     const userData = await getUserSessionData();

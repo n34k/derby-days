@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import NavBar from "@/section/NavBar";
+import NavBar from "@/components/section/NavBar";
 import { auth } from "../../auth";
-import Footer from "@/section/Footer";
+import Footer from "@/components/section/Footer";
 import { getUserSessionData } from "@/lib/getUserSessionData";
 import { RealtimeProvider } from "@/components/providers/RealtimeProvider";
 import "yet-another-react-lightbox/styles.css";

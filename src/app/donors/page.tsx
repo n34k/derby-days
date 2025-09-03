@@ -1,5 +1,5 @@
-import AdDisplay from "@/section/AdDisplay";
-import RecentDonations from "@/section/RecentDonations";
+import AdDisplay from "@/components/section/AdDisplay";
+import RecentDonations from "@/components/section/RecentDonations";
 import React from "react";
 import { prisma } from "../../../prisma";
 

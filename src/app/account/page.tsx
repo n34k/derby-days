@@ -1,6 +1,6 @@
 import React from "react";
 
-import UpdateUserForm from "@/section/UpdateUserForm";
+import UpdateUserForm from "@/components/section/UpdateUserForm";
 import UserStats from "@/components/UserStats";
 import SignOutButton from "@/components/SignOutButton";
 import { getUserSessionData } from "@/lib/getUserSessionData";

@@ -1,6 +1,6 @@
 import React from "react";
 import DraftOrderEdit from "./DraftOrderEdit";
-import { prisma } from "../../prisma";
+import { prisma } from "../../../prisma";
 import CreateDraftButton from "./CreateDraftButton";
 import DraftDeleteButton from "./DraftDeleteButton";
 import DraftStartButton from "./DraftStartButton";

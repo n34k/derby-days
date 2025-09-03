@@ -13,7 +13,7 @@ import {
     ArrowUpTrayIcon,
 } from "@heroicons/react/24/outline";
 
-import TextInput from "../components/TextInput";
+import TextInput from "../TextInput";
 
 interface Props {
     initialName: string | null | undefined;

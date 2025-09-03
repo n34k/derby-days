@@ -1,6 +1,6 @@
-import AvailableBrothers from "@/components/AvailableBrothers";
-import DraftBoard from "@/components/DraftBoard";
-import DraftHeader from "@/components/DraftHeader";
+import AvailableBrothers from "@/components/draft/AvailableBrothers";
+import DraftBoard from "@/components/draft/DraftBoard";
+import DraftHeader from "@/components/draft/DraftHeader";
 import React from "react";
 import { prisma } from "../../../prisma";
 

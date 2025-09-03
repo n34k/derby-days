@@ -1,8 +1,8 @@
 import React from "react";
-import MainSection from "@/section/MainSection";
-import WhatSection from "@/section/WhatSection";
-import HelpSection from "@/section/HelpSection";
-import DoneSection from "@/section/DoneSection";
+import MainSection from "@/components/section/MainSection";
+import WhatSection from "@/components/section/WhatSection";
+import HelpSection from "@/components/section/HelpSection";
+import DoneSection from "@/components/section/DoneSection";
 import TotalRaisedDisplay from "@/components/TotalRaisedDisplay";
 
 const HomePage = () => {
