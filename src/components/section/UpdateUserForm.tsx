@@ -187,6 +187,7 @@ const UpdateUserForm = ({
                         readOnly={!editing}
                         value={name ?? ""}
                         maxLen={20}
+                        minLen={4}
                     />
                     <TextInput
                         title="Walkout Song"
@@ -194,6 +195,7 @@ const UpdateUserForm = ({
                         readOnly={!editing}
                         value={walkoutSong}
                         maxLen={30}
+                        minLen={0}
                     />
                     {editing ? (
                         <div className="flex justify-evenly">

@@ -15,8 +15,8 @@ export type PublicEvent =
           round: number;
           player: {
               id: string;
-              name: string | null;
-              image?: string | null;
+              name: string;
+              image: string;
           };
       }
     | { type: "BOARD_UPDATE"; version: number }

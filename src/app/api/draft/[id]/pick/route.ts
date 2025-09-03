@@ -75,7 +75,14 @@ export async function POST(req: NextRequest, { params }: { params: idP }) {
                     status: "ANNOUNCED", // later add admin "announce" gate, change to PENDING first
                 },
                 include: {
-                    user: { select: { id: true, name: true, image: true } },
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            image: true,
+                            imagePublicId: true,
+                        },
+                    },
                     team: { select: { id: true, name: true } },
                 },
             });
@@ -136,8 +143,8 @@ export async function POST(req: NextRequest, { params }: { params: idP }) {
             teamId: result.pick.teamId,
             player: {
                 id: result.pick.userId,
-                name: result.pick.user?.name ?? null,
-                image: result.pick.user?.image ?? null,
+                name: result.pick.user.name,
+                image: result.pick.user?.image,
             },
         });
 

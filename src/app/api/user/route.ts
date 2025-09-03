@@ -33,6 +33,7 @@ export async function PATCH(req: NextRequest) {
     } catch {
         return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
+    console.log("BODY", body);
 
     const result = UpdateUserSchema.safeParse(body);
 

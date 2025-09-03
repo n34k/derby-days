@@ -5,7 +5,7 @@ import greekLetters from "@/lib/greekLetters";
 
 const BrotherStandings = async () => {
     const userStats = await prisma.user.findMany({
-        select: { name: true, moneyRaised: true, teamId: true },
+        select: { id: true, name: true, moneyRaised: true, teamId: true },
         orderBy: { moneyRaised: "desc" },
     });
 
@@ -33,7 +33,7 @@ const BrotherStandings = async () => {
 
                         return (
                             <div
-                                key={stats.name}
+                                key={stats.id}
                                 className="grid grid-cols-4 items-center px-4 py-2 text-base-content"
                             >
                                 <p>{idx + 1}</p>

@@ -3,26 +3,39 @@ import DraftBoard from "@/components/draft/DraftBoard";
 import DraftHeader from "@/components/draft/DraftHeader";
 import React from "react";
 import { prisma } from "../../../prisma";
+import PickAnimation from "@/components/draft/PickAnimation";
 
 const DraftPage = async () => {
-    const year = String(new Date().getFullYear());
-    const teams = await prisma.team.findMany();
-    const draft = await prisma.draft.findUnique({ where: { id: year } });
+    const year = new Date().getFullYear().toString();
+
+    const [teams, draft] = await Promise.all([
+        prisma.team.findMany(),
+        prisma.draft.findUnique({ where: { id: year } }),
+    ]);
+
     const draftStatus = draft?.status;
+    const draftExists = !!draftStatus;
+    const draftOpen = draftStatus !== "COMPLETE";
 
     return (
         <main className="flex flex-col justify-evenly gap-5 items-center py-5">
+            <PickAnimation draftId={year} />
             <h1 className="font-extrabold text-4xl md:text-6xl text-center">
                 {year} Derby Days Draft
             </h1>
-            {(draftStatus && draftStatus === "NOT_STARTED") ||
-            draftStatus === "ONGOING" ? (
-                <DraftHeader draftId={year} teams={teams} />
+            {!draftExists ? (
+                <div className="text-info-content mt-65">
+                    DRAFT INFORMATION COMING SOON
+                </div>
             ) : (
-                <></>
+                <>
+                    {draftOpen && <DraftHeader draftId={year} teams={teams} />}
+                    <DraftBoard draftId={year} />
+                    {draftOpen && (
+                        <AvailableBrothers draftId={year} isAdmin={false} />
+                    )}
+                </>
             )}
-            <DraftBoard draftId={year} />
-            <AvailableBrothers draftId={year} isAdmin={false} />
         </main>
     );
 };

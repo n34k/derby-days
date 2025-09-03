@@ -11,6 +11,7 @@ const AdminDraftControl = async () => {
     const admin = await isAdmin();
     const year = String(new Date().getFullYear());
     const draftCreatedThisYear = await prisma.draft.findUnique({
+        //admin can only create draft once per year
         where: { id: year },
     });
 
