@@ -1,11 +1,9 @@
 import { isAdmin } from "@/lib/isAdmin";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../../prisma";
+import { emailP } from "@/models/routeParamsTypes";
 
-export async function DELETE(
-    req: NextRequest,
-    { params }: { params: { email: string } }
-) {
+export async function DELETE(req: NextRequest, { params }: { params: emailP }) {
     if (!(await isAdmin())) {
         return NextResponse.json(
             { error: "User needs to be admin to do this" },

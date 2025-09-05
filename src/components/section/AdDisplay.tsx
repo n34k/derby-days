@@ -38,20 +38,26 @@ const AdDisplay = ({ ads }: AdDisplayProps) => {
                         {title}
                     </h2>
 
-                    <div className="flex flex-wrap justify-center gap-5">
-                        {ads.map((ad) => (
-                            <div key={ad.id} className="max-w-full">
-                                <Image
-                                    src={ad.adUrl!}
-                                    alt="Ad"
-                                    className="object-contain rounded mx-auto cursor-pointer"
-                                    height={size}
-                                    width={size}
-                                    onClick={() => setLightboxSrc(ad.adUrl!)}
-                                />
-                            </div>
-                        ))}
-                    </div>
+                    {ads ? (
+                        <div className="flex flex-wrap justify-center gap-5">
+                            {ads.map((ad) => (
+                                <div key={ad.id} className="max-w-full">
+                                    <Image
+                                        src={ad.adUrl!}
+                                        alt="Ad"
+                                        className="object-contain rounded mx-auto cursor-pointer"
+                                        height={size}
+                                        width={size}
+                                        onClick={() =>
+                                            setLightboxSrc(ad.adUrl!)
+                                        }
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <></>
+                    )}
                 </div>
             ))}
 
