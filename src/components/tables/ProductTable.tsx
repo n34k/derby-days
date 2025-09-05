@@ -10,7 +10,7 @@ import {
     ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import { Product } from "@/generated/prisma";
-import CreateProductModal from "./CreateProductModal";
+import CreateProductModal from "../modals/CreateProductModal";
 
 export const ProductsTable = ({ products }: { products: Product[] }) => {
     const [expanded, setExpanded] = useState(false);

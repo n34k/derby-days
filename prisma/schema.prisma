@@ -110,6 +110,12 @@ model Stats {
   updatedAt   DateTime @updatedAt
 }
 
+model BrotherEmails {
+  email     String   @id
+  createdAt DateTime @default(now())
+  accountMade Boolean  @default(false)
+}
+
 model Team {
   id   String @id @default(cuid())
   name String

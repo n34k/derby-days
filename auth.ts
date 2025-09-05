@@ -7,22 +7,40 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: PrismaAdapter(prisma),
     providers: [Google],
     callbacks: {
-        async signIn({ account }) {
-            // Grab invite token passed via OAuth 'state' param
-            const inviteToken = account?.state;
-
+        async signIn({ user, profile }) {
             if (process.env.NODE_ENV === "development") {
                 return true;
             }
 
-            if (inviteToken !== "derby2025invite") {
+            const email = user?.email ?? profile?.email;
+            if (!email) return false;
+
+            const existing = await prisma.user.findUnique({
+                where: { email },
+            });
+
+            if (existing) return true;
+
+            const allowed = await prisma.brotherEmails.findUnique({
+                where: { email },
+            });
+
+            if (!allowed) {
                 console.log(
-                    "Blocked sign in — invalid or missing invite token"
+                    "Email not on allowlist, blocked sign in for: ",
+                    email
                 );
-                return false; // Reject sign-in
+                return false;
             }
 
-            return true; // Allow sign-in
+            if (!allowed.accountMade) {
+                await prisma.brotherEmails.update({
+                    where: { email },
+                    data: { accountMade: true },
+                });
+            }
+
+            return true;
         },
     },
 });

@@ -1,13 +1,14 @@
 // AdminPanel.tsx
-import { UsersTable } from "@/components/UsersTable";
-import { TeamsTable } from "@/components/TeamsTable";
+import { UsersTable } from "@/components/tables/UsersTable";
+import { TeamsTable } from "@/components/tables/TeamsTable";
 import { prisma } from "../../../prisma";
 import { auth } from "../../../auth";
 import { redirect } from "next/navigation";
 import { User } from "@/generated/prisma";
-import { ProductsTable } from "@/components/ProductTable";
 import { Cog6ToothIcon } from "@heroicons/react/24/solid";
-import AdTable from "@/components/AdTable";
+import AdTable from "@/components/tables/AdTable";
+import ProductsTable from "../tables/ProductTable";
+import EmailsTable from "../tables/EmailsTable";
 
 const AdminPanel = async () => {
     const session = await auth();
@@ -21,6 +22,7 @@ const AdminPanel = async () => {
     });
     const products = await prisma.product.findMany();
     const ads = await prisma.adPurchase.findMany();
+    const emails = await prisma.brotherEmails.findMany();
 
     return (
         <div className="flex flex-col bg-primary p-5 rounded-lg border-1 border-secondary gap-5 w-[90vw] h-[70vh] overflow-scroll ">
@@ -33,6 +35,7 @@ const AdminPanel = async () => {
                 <TeamsTable teams={teams} />
                 <ProductsTable products={products} />
                 <AdTable ads={ads} />
+                <EmailsTable emails={emails} />
             </div>
         </div>
     );

@@ -428,7 +428,9 @@ export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
                                                         }
                                                     >
                                                         <option value="">
-                                                            None
+                                                            {team.headCoach
+                                                                ? `${team.headCoach.name}`
+                                                                : "None"}
                                                         </option>
                                                         {coachOptions.map(
                                                             (opt) => (
