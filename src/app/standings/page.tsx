@@ -24,9 +24,9 @@ const StandingsPage = async () => {
     const moneyRaised = await getWeeklyRaised();
 
     return (
-        <main className="flex flex-col gap-15 py-15 items-center">
+        <main className="flex flex-col py-15 items-center">
             {points ? (
-                <div>
+                <div className="flex flex-col gap-15 items-center">
                     <div className="flex items-center gap-3">
                         <h1 className="text-4xl md:text-7xl font-bold">
                             Live Standings

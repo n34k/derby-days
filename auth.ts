@@ -21,6 +21,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
             if (existing) return true;
 
+            const draft = await prisma.draft.findUnique({
+                where: { id: new Date().getFullYear().toString() },
+                select: { status: true },
+            });
+
+            const canMakeAccount = !draft || draft.status === "NOT_CREATED";
+            if (!canMakeAccount) {
+                console.log(
+                    "Draft already created, blocked sign in for: ",
+                    email
+                );
+                return false;
+            }
+
             const allowed = await prisma.brotherEmails.findUnique({
                 where: { email },
             });

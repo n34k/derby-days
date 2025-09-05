@@ -9,10 +9,18 @@ import {
     PlusIcon,
     ChevronDownIcon,
 } from "@heroicons/react/24/outline";
-import { Product } from "@/generated/prisma";
+import { DraftStatus, Product } from "@/generated/prisma";
 import CreateProductModal from "../modals/CreateProductModal";
 
-export const ProductsTable = ({ products }: { products: Product[] }) => {
+interface ProductsTableProps {
+    products: Product[];
+    draftStatus: DraftStatus | undefined;
+}
+
+export const ProductsTable = ({
+    products,
+    draftStatus,
+}: ProductsTableProps) => {
     const [expanded, setExpanded] = useState(false);
     const [editing, setEditing] = useState(false);
     const [editedProducts, setEditedProducts] = useState<
@@ -20,6 +28,8 @@ export const ProductsTable = ({ products }: { products: Product[] }) => {
     >({});
     const [productsState, setProductsState] = useState<Product[]>(products);
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const changeAllowed = !draftStatus || draftStatus === "NOT_CREATED";
+    console.log("CHANGE ALLOWED", changeAllowed);
 
     const toggleEditing = () => setEditing((e) => !e);
 
@@ -112,22 +122,23 @@ export const ProductsTable = ({ products }: { products: Product[] }) => {
                     />
                 </button>
                 {expanded &&
+                    changeAllowed &&
                     (editing ? (
                         <>
                             <button
-                                className="btn btn-secondary w-1/6 md:w-28 self-center"
+                                className="btn btn-secondary btn-circle"
                                 onClick={toggleEditing}
                             >
                                 <XMarkIcon className="h-4 w-4" />
                             </button>
                             <button
-                                className="btn btn-secondary w-1/6 md:w-28 self-center"
+                                className="btn btn-secondary btn-circle"
                                 onClick={() => setShowCreateModal(true)}
                             >
                                 <PlusIcon className="h-4 w-4" />
                             </button>
                             <button
-                                className="btn btn-secondary w-1/6 md:w-28 self-center"
+                                className="btn btn-secondary btn-circle"
                                 onClick={handleSave}
                             >
                                 <CheckIcon className="h-4 w-4" />
@@ -135,10 +146,10 @@ export const ProductsTable = ({ products }: { products: Product[] }) => {
                         </>
                     ) : (
                         <button
-                            className="btn btn-secondary w-1/4 self-center md:w-28"
+                            className="btn btn-secondary btn-circle"
                             onClick={toggleEditing}
                         >
-                            Edit <PencilIcon className="h-4 w-4" />
+                            <PencilIcon className="h-4 w-4" />
                         </button>
                     ))}
             </div>
@@ -155,10 +166,8 @@ export const ProductsTable = ({ products }: { products: Product[] }) => {
                                     Stripe Price ID
                                 </th>
                                 <th className="border px-2 py-1">Product ID</th>
-                                {editing && (
-                                    <th className="border px-2 py-1">
-                                        Actions
-                                    </th>
+                                {editing && changeAllowed && (
+                                    <th className="border px-2 py-1">Delte</th>
                                 )}
                             </tr>
                         </thead>
@@ -257,18 +266,17 @@ export const ProductsTable = ({ products }: { products: Product[] }) => {
                                             <td className="border px-2 py-1">
                                                 {product.productId}
                                             </td>
-                                            {editing && (
-                                                <td className="border px-2 py-1">
+                                            {editing && changeAllowed && (
+                                                <td className="text-center border px-2 py-1">
                                                     <button
-                                                        className="btn btn-error btn-xs"
+                                                        className="btn btn-error btn-circle"
                                                         onClick={() =>
                                                             handleDelete(
                                                                 product.productId
                                                             )
                                                         }
                                                     >
-                                                        Delete{" "}
-                                                        <TrashIcon className="h-4 w-4 ml-1" />
+                                                        <TrashIcon className="h-4 w-4" />
                                                     </button>
                                                 </td>
                                             )}

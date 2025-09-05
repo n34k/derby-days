@@ -97,7 +97,7 @@ const EmailsTable = ({ emails }: EmailsTableProps) => {
 
             {expanded && (
                 <div className="overflow-x-auto w-full">
-                    <table className="w-full border border-base-content text-sm">
+                    <table className="w-full border border-base-content text-sm mb-5">
                         <thead className="bg-base-200">
                             <tr>
                                 <th className="border px-2 py-1">Email</th>
@@ -116,7 +116,7 @@ const EmailsTable = ({ emails }: EmailsTableProps) => {
                                         <td className="border px-2 py-1 text-center">
                                             {e.email}
                                         </td>
-                                        <td className="border px-2 py-1 text-center">
+                                        <td className="border px-2 py-1 text-center w-[50px]">
                                             {e.accountMade ? (
                                                 <CheckIcon className="h-8 w-8 inline-block text-success" />
                                             ) : (
@@ -124,7 +124,7 @@ const EmailsTable = ({ emails }: EmailsTableProps) => {
                                             )}
                                         </td>
                                         {editing && (
-                                            <td className="border px-2 py-1 text-center">
+                                            <td className="border px-2 py-1 text-center w-[50px]">
                                                 <button
                                                     className="btn btn-circle btn-error"
                                                     onClick={() =>

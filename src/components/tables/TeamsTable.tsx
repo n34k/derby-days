@@ -7,6 +7,7 @@ import {
     CheckIcon,
     TrashIcon,
     ChevronDownIcon,
+    PlusIcon,
 } from "@heroicons/react/24/outline";
 import {
     CldImage,
@@ -19,10 +20,20 @@ import {
     EditedTeam,
     TeamWithCoach,
 } from "@/models/teamTableTypes";
+import AddTeamModal from "../modals/AddTeamModal";
+import { MAX_TEAMS } from "@/lib/predefinedTeams";
+import { DraftStatus } from "@/generated/prisma";
 
-export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
+interface TeamsTableProps {
+    teams: TeamWithCoach[];
+    draftStatus: DraftStatus | undefined;
+}
+
+export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
     const router = useRouter();
-
+    console.log("STATUS", draftStatus);
+    const createOrDeleteAllowed = !draftStatus || draftStatus === "NOT_CREATED";
+    console.log("CREATE/DELETE ALLOWED?", createOrDeleteAllowed);
     const [expanded, setExpanded] = useState(false); // NEW: collapsed by default
     const [editing, setEditing] = useState(false);
     const [editedTeams, setEditedTeams] = useState<Record<string, EditedTeam>>(
@@ -34,11 +45,28 @@ export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
     const [coachOptions, setCoachOptions] = useState<CoachOption[]>([]);
     const [loadingCoaches, setLoadingCoaches] = useState(false);
     const [coachErr, setCoachErr] = useState<string | null>(null);
+    const [addOpen, setAddOpen] = useState(false);
 
     // Cloudinary upload in-flight state (per team)
     const [uploadingTeamId, setUploadingTeamId] = useState<string | null>(null);
 
+    const hasUnsavedChanges = Object.keys(editedTeams).length > 0; // to make sure no one leaves with unsaved changes
+
+    const existingIds = teamState.map((t) => t.id); // ensure Team has slug
+
     const toggleEditing = () => setEditing((e) => !e);
+
+    const cancelEditing = () => {
+        if (hasUnsavedChanges) {
+            const confirmed = window.confirm(
+                "You have unsaved changes, are you sure you want to cancel?"
+            );
+
+            if (!confirmed) return;
+        }
+        setEditing(false);
+        setEditedTeams({});
+    };
 
     const handleChange = (
         teamId: string,
@@ -198,6 +226,11 @@ export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
         })();
     }, []);
 
+    useEffect(() => {
+        //to make sure table updated after router.refresh() since this table store state for teams
+        setTeamState(teams);
+    }, [teams]);
+
     const uploadBtnLabel = useMemo(
         () => (id: string, hasImage: boolean) =>
             uploadingTeamId === id
@@ -211,6 +244,11 @@ export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
     return (
         <div>
             {/* Header / Controls */}
+            <AddTeamModal
+                isOpen={addOpen}
+                onClose={() => setAddOpen(false)}
+                existingIds={existingIds}
+            />
             <div className="flex flex-wrap items-center gap-2.5 pb-5">
                 <h2 className="text-2xl font-semibold">Teams</h2>
 
@@ -233,24 +271,33 @@ export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
                     (editing ? (
                         <>
                             <button
-                                className="btn btn-secondary w-1/4 md:w-28"
-                                onClick={toggleEditing}
+                                className="btn btn-secondary btn-circle"
+                                onClick={cancelEditing}
                             >
-                                Cancel <XMarkIcon className="h-4 w-4" />
+                                <XMarkIcon className="h-4 w-4" />
                             </button>
+                            {createOrDeleteAllowed &&
+                                teams.length !== MAX_TEAMS && (
+                                    <button
+                                        className="btn btn-secondary btn-circle"
+                                        onClick={() => setAddOpen(true)}
+                                    >
+                                        <PlusIcon className="h-4 w-4" />
+                                    </button>
+                                )}
                             <button
-                                className="btn btn-secondary w-1/4 md:w-28"
+                                className="btn btn-secondary btn-circle"
                                 onClick={handleSave}
                             >
-                                Save <CheckIcon className="h-4 w-4" />
+                                <CheckIcon className="h-4 w-4" />
                             </button>
                         </>
                     ) : (
                         <button
-                            className="btn btn-secondary w-1/4 md:w-28"
+                            className="btn btn-circle btn-secondary"
                             onClick={toggleEditing}
                         >
-                            Edit <PencilIcon className="h-4 w-4" />
+                            <PencilIcon className="h-4 w-4" />
                         </button>
                     ))}
             </div>
@@ -273,9 +320,9 @@ export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
                                 <th className="border px-2 py-1">
                                     Derby Darling Image
                                 </th>
-                                {editing && (
-                                    <th className="border px-2 py-1">
-                                        Actions
+                                {createOrDeleteAllowed && editing && (
+                                    <th className="border px-2 py-1 w-[60px]">
+                                        Delete
                                     </th>
                                 )}
                             </tr>
@@ -292,10 +339,10 @@ export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
                                 return (
                                     <tr key={team.id}>
                                         {/* Team Name */}
-                                        <td className="border px-2 py-1">
+                                        <td className="border px-2 py-1 text-center">
                                             {editing ? (
                                                 <input
-                                                    className="w-full max-w-[150px] truncate"
+                                                    className="w-full max-w-[150px] truncate text-center"
                                                     value={
                                                         isEdited?.name ??
                                                         team.name
@@ -314,11 +361,11 @@ export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
                                         </td>
 
                                         {/* T-Shirts */}
-                                        <td className="border px-2 py-1">
+                                        <td className="border px-2 py-1 text-center">
                                             {editing ? (
                                                 <input
                                                     type="number"
-                                                    className="w-full max-w-[80px]"
+                                                    className="w-full max-w-[80px] text-center"
                                                     value={
                                                         isEdited?.tshirtsSold ??
                                                         team.tshirtsSold ??
@@ -343,12 +390,12 @@ export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
                                         </td>
 
                                         {/* Money Raised */}
-                                        <td className="border px-2 py-1">
+                                        <td className="border px-2 py-1 text-center">
                                             {editing ? (
                                                 <input
                                                     type="number"
                                                     step="0.01"
-                                                    className="w-full max-w-[100px]"
+                                                    className="w-full max-w-[100px] text-center"
                                                     value={
                                                         isEdited?.moneyRaised ??
                                                         team.moneyRaised ??
@@ -374,11 +421,11 @@ export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
                                         </td>
 
                                         {/* Points */}
-                                        <td className="border px-2 py-1">
+                                        <td className="border px-2 py-1 text-center">
                                             {editing ? (
                                                 <input
                                                     type="number"
-                                                    className="w-full max-w-[80px]"
+                                                    className="w-full max-w-[80px] text-center"
                                                     value={
                                                         isEdited?.points ??
                                                         team.points ??
@@ -403,7 +450,7 @@ export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
                                         </td>
 
                                         {/* Head Coach (dropdown) */}
-                                        <td className="border px-2 py-1">
+                                        <td className="border px-2 py-1 text-center">
                                             {editing ? (
                                                 <div className="flex items-center gap-2">
                                                     <select
@@ -462,7 +509,7 @@ export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
                                         </td>
 
                                         {/* Derby Darling Name */}
-                                        <td className="border px-2 py-1">
+                                        <td className="border px-2 py-1 text-center">
                                             {editing ? (
                                                 <input
                                                     className="w-full max-w-[220px]"
@@ -562,8 +609,8 @@ export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
                                             </CldUploadWidget>
                                         </td>
 
-                                        {/* Actions */}
-                                        {editing && (
+                                        {/* Delete */}
+                                        {createOrDeleteAllowed && editing && (
                                             <td className="border px-2 py-1">
                                                 <div className="flex justify-center">
                                                     <button
@@ -572,10 +619,9 @@ export const TeamsTable = ({ teams }: { teams: TeamWithCoach[] }) => {
                                                                 team.id
                                                             )
                                                         }
-                                                        className="btn btn-error btn-xs text-white"
+                                                        className="btn btn-error btn-circle"
                                                     >
-                                                        Delete{" "}
-                                                        <TrashIcon className="h-4 w-4 ml-1" />
+                                                        <TrashIcon className="h-4 w-4" />
                                                     </button>
                                                 </div>
                                             </td>

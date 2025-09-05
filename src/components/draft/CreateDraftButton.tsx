@@ -9,7 +9,7 @@ const CreateDraftButton = () => {
 
     const onClick = async () => {
         const confirmed = window.confirm(
-            `Are you sure you want to create the ${year} draft? Only do this when all teams and users are made. This will stop you from creating or deleting teams and users. You can undo this later.`
+            `Are you sure you want to create the ${year} draft? Only do this if all uses are signed in and teams are set. This will stop you from creating or deleting teams, users, and prodcuts and stop people from creating a new account. You can undo this later.`
         );
         if (!confirmed) return;
 

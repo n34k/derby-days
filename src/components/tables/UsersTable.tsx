@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { User } from "@/generated/prisma";
+import { DraftStatus, User } from "@/generated/prisma";
 import {
     PencilIcon,
     XMarkIcon,
@@ -9,16 +9,36 @@ import {
     ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
+import greekLetters from "@/lib/greekLetters";
 
-export const UsersTable = ({ users }: { users: User[] }) => {
+interface UserTableProps {
+    users: User[];
+    draftStatus: DraftStatus | undefined;
+}
+
+export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
     const [expanded, setExpanded] = useState(false);
     const [editing, setEditing] = useState(false);
     const [editedUsers, setEditedUsers] = useState<
         Record<string, Partial<User>>
     >({});
     const [usersState, setUsersState] = useState<User[]>(users);
+    const deleteAllowed = !draftStatus || draftStatus === "NOT_CREATED";
+
+    const hasUnsavedChanges = Object.keys(editedUsers).length > 0; // to make sure no one leaves with unsaved changes
 
     const toggleEditing = () => setEditing((e) => !e);
+
+    const cancelEditing = () => {
+        if (hasUnsavedChanges) {
+            const confirmed = window.confirm(
+                "You have unsaved changes, are you sure you want to cancel?"
+            );
+            if (!confirmed) return;
+        }
+        setEditing(false);
+        setEditedUsers({});
+    };
 
     const handleChange = (
         userId: string,
@@ -107,24 +127,24 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                     (editing ? (
                         <>
                             <button
-                                className="btn btn-secondary w-1/4 md:w-28"
-                                onClick={toggleEditing}
+                                className="btn btn-secondary btn-circle"
+                                onClick={cancelEditing}
                             >
-                                Cancel <XMarkIcon className="h-4 w-4" />
+                                <XMarkIcon className="h-4 w-4" />
                             </button>
                             <button
-                                className="btn btn-secondary w-1/4 md:w-28"
+                                className="btn btn-secondary btn-circle"
                                 onClick={handleSave}
                             >
-                                Save <CheckIcon className="h-4 w-4" />
+                                <CheckIcon className="h-4 w-4" />
                             </button>
                         </>
                     ) : (
                         <button
-                            className="btn btn-secondary w-1/4 md:w-28"
+                            className="btn btn-secondary btn-circle"
                             onClick={toggleEditing}
                         >
-                            Edit <PencilIcon className="h-4 w-4" />
+                            <PencilIcon className="h-4 w-4" />
                         </button>
                     ))}
             </div>
@@ -136,22 +156,28 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                         <table className="md:table-fixed w-full border border-base-content text-sm">
                             <thead className="bg-base-200">
                                 <tr>
-                                    <th className="border px-2 py-1">Name</th>
+                                    <th className="border px-2 py-1 w-[140px]">
+                                        Name
+                                    </th>
                                     <th className="border px-2 py-1">Email</th>
-                                    <th className="border px-2 py-1 md:w-[55px]">
+                                    <th className="border px-2 py-1 w-[55px]">
                                         Image
                                     </th>
-                                    <th className="border px-2 py-1">
+                                    <th className="border px-2 py-1 w-[75px]">
                                         Money Raised
                                     </th>
                                     <th className="border px-2 py-1">
                                         Walkout Song
                                     </th>
-                                    <th className="border px-2 py-1">Role</th>
-                                    <th className="border px-2 py-1">Team</th>
-                                    {editing && (
-                                        <th className="border px-2 py-1">
-                                            Actions
+                                    <th className="border px-2 py-1 w-[120px]">
+                                        Role
+                                    </th>
+                                    <th className="border px-2 py-1 w-[55px]">
+                                        Team
+                                    </th>
+                                    {editing && deleteAllowed && (
+                                        <th className="border py-1 w-[55px] text-center">
+                                            Delete
                                         </th>
                                     )}
                                 </tr>
@@ -161,10 +187,10 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                                     const isUserEdited = editedUsers[user.id];
                                     return (
                                         <tr key={user.id}>
-                                            <td className="border px-2 py-1">
+                                            <td className="border px-2 py-1 text-center">
                                                 {editing ? (
                                                     <input
-                                                        className="w-full max-w-[150px] truncate"
+                                                        className="w-[120px] text-center"
                                                         value={
                                                             isUserEdited?.name ??
                                                             user.name ??
@@ -183,10 +209,8 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                                                 )}
                                             </td>
 
-                                            <td className="border px-2 py-1">
-                                                <div className="md:overflow-x-auto md:whitespace-nowrap">
-                                                    {user.email}
-                                                </div>
+                                            <td className="border px-2 py-1 text-center">
+                                                {user.email}
                                             </td>
 
                                             <td className="border px-2 py-1">
@@ -205,12 +229,12 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                                                 )}
                                             </td>
 
-                                            <td className="border px-2 py-1">
-                                                <div className="md:flex md:justify-center">
+                                            <td className="border px-2">
+                                                <div className="flex items-center justify-center">
                                                     {editing ? (
                                                         <input
-                                                            className="w-full max-w-[50px] truncate"
                                                             type="number"
+                                                            className="text-center w-[60px]"
                                                             value={
                                                                 isUserEdited?.moneyRaised ??
                                                                 user.moneyRaised
@@ -239,7 +263,7 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                                                 <div className="md:overflow-x-auto md:whitespace-nowrap">
                                                     {editing ? (
                                                         <input
-                                                            className="w-full max-w-[150px] truncate"
+                                                            className="w-full truncate"
                                                             value={
                                                                 isUserEdited?.walkoutSong ??
                                                                 user.walkoutSong ??
@@ -260,10 +284,10 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                                                 </div>
                                             </td>
 
-                                            <td className="border px-2 py-1">
+                                            <td className="border px-2 py-1 w-[120px] text-center">
                                                 {editing ? (
                                                     <select
-                                                        className="w-full max-w-[150px] truncate"
+                                                        className="truncate"
                                                         value={
                                                             isUserEdited?.globalRole ??
                                                             user.globalRole
@@ -298,25 +322,24 @@ export const UsersTable = ({ users }: { users: User[] }) => {
                                                 )}
                                             </td>
 
-                                            <td className="border px-2 py-1">
-                                                {user.teamId ?? "—"}
+                                            <td className="border px-2 py-1 text-center">
+                                                {user.teamId
+                                                    ? greekLetters(user.teamId)
+                                                    : "—"}
                                             </td>
 
-                                            {editing && (
-                                                <td className="border px-2 py-1">
-                                                    <div className="flex justify-center">
-                                                        <button
-                                                            onClick={() =>
-                                                                handleDelete(
-                                                                    user.id
-                                                                )
-                                                            }
-                                                            className="btn btn-error btn-xs text-white"
-                                                        >
-                                                            Delete
-                                                            <TrashIcon className="h-4 w-4 ml-1" />
-                                                        </button>
-                                                    </div>
+                                            {editing && deleteAllowed && (
+                                                <td className="border px-2 py-1 w-[55px]">
+                                                    <button
+                                                        onClick={() =>
+                                                            handleDelete(
+                                                                user.id
+                                                            )
+                                                        }
+                                                        className="btn btn-error btn-circle"
+                                                    >
+                                                        <TrashIcon className="h-4 w-4" />
+                                                    </button>
                                                 </td>
                                             )}
                                         </tr>

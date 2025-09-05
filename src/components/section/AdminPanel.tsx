@@ -9,10 +9,12 @@ import { Cog6ToothIcon } from "@heroicons/react/24/solid";
 import AdTable from "@/components/tables/AdTable";
 import ProductsTable from "../tables/ProductTable";
 import EmailsTable from "../tables/EmailsTable";
+import DonationTable from "../tables/DonationTable";
 
 const AdminPanel = async () => {
     const session = await auth();
     const user = session?.user as User;
+    const year = new Date().getFullYear().toString();
 
     if (user.globalRole !== "ADMIN") redirect("/");
 
@@ -23,6 +25,13 @@ const AdminPanel = async () => {
     const products = await prisma.product.findMany();
     const ads = await prisma.adPurchase.findMany();
     const emails = await prisma.brotherEmails.findMany();
+    const donations = await prisma.donation.findMany({
+        orderBy: { createdAt: "desc" },
+    });
+    const draft = await prisma.draft.findUnique({
+        where: { id: year },
+        select: { status: true },
+    });
 
     return (
         <div className="flex flex-col bg-primary p-5 rounded-lg border-1 border-secondary gap-5 w-[90vw] h-[70vh] overflow-scroll ">
@@ -31,10 +40,14 @@ const AdminPanel = async () => {
                 <Cog6ToothIcon className="w-10 h-10" />
             </div>
             <div className="flex flex-col justify-evenly h-full gap-5">
-                <UsersTable users={users} />
-                <TeamsTable teams={teams} />
-                <ProductsTable products={products} />
+                <UsersTable users={users} draftStatus={draft?.status} />
+                <TeamsTable teams={teams} draftStatus={draft?.status} />
+                <ProductsTable
+                    products={products}
+                    draftStatus={draft?.status}
+                />
                 <AdTable ads={ads} />
+                <DonationTable donations={donations} />
                 <EmailsTable emails={emails} />
             </div>
         </div>

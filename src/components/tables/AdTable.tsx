@@ -74,16 +74,16 @@ const AdTable: React.FC<Props> = ({ ads }) => {
                             <tbody>
                                 {ads.map((ad) => (
                                     <tr key={ad.id}>
-                                        <td className="border px-2 py-1">
+                                        <td className="border px-2 py-1 text-center">
                                             {ad.name}
                                         </td>
-                                        <td className="border px-2 py-1">
+                                        <td className="border px-2 py-1 text-center">
                                             {ad.email}
                                         </td>
-                                        <td className="border px-2 py-1">
+                                        <td className="border px-2 py-1 text-center">
                                             {ad.size}
                                         </td>
-                                        <td className="border px-2 py-1">
+                                        <td className="border px-2 py-1 text-center">
                                             <div className="flex flex-col items-center gap-2">
                                                 {ad.adUrl && (
                                                     <CldImage
@@ -113,7 +113,7 @@ const AdTable: React.FC<Props> = ({ ads }) => {
                                                     {({ open }) => (
                                                         <button
                                                             type="button"
-                                                            className={`btn btn-secondary md:w-1/2 transition ${
+                                                            className={`btn btn-secondary md:w-1/4 transition ${
                                                                 uploadingId ===
                                                                 ad.id
                                                                     ? "opacity-50 pointer-events-none"
@@ -131,8 +131,8 @@ const AdTable: React.FC<Props> = ({ ads }) => {
                                                             ad.id
                                                                 ? "Uploading..."
                                                                 : ad.adUrl
-                                                                ? "Replace Ad"
-                                                                : "Upload Ad"}
+                                                                ? "Replace"
+                                                                : "Upload"}
                                                         </button>
                                                     )}
                                                 </CldUploadWidget>
