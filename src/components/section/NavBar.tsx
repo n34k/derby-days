@@ -17,9 +17,10 @@ import { User } from "@/generated/prisma";
 
 interface NavBarProps {
     userData: User | null;
+    teamsMade: boolean;
 }
 
-const NavBar = ({ userData }: NavBarProps) => {
+const NavBar = ({ userData, teamsMade }: NavBarProps) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const userRole = userData?.globalRole || "NONE";
 
@@ -41,18 +42,22 @@ const NavBar = ({ userData }: NavBarProps) => {
 
                     {/* Desktop Navigation */}
                     <nav className="hidden md:flex gap-20 items-center">
-                        <Link
-                            href="/teams"
-                            className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
-                        >
-                            Teams
-                        </Link>
-                        <Link
-                            href="/standings"
-                            className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
-                        >
-                            Standings
-                        </Link>
+                        {teamsMade && (
+                            <Link
+                                href="/teams"
+                                className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
+                            >
+                                Teams
+                            </Link>
+                        )}
+                        {teamsMade && (
+                            <Link
+                                href="/standings"
+                                className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
+                            >
+                                Standings
+                            </Link>
+                        )}
                         <Link
                             href="/donors"
                             className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
@@ -119,22 +124,28 @@ const NavBar = ({ userData }: NavBarProps) => {
                 menuOpen ? "max-h-[60vh] py-3" : "max-h-0"
             } `}
                 >
-                    <Link
-                        className="flex flex-col items-center"
-                        href="/teams"
-                        onClick={() => setMenuOpen(false)}
-                    >
-                        <UserGroupIcon className="h-8 w-8 text-base-content" />
-                        <p className="text-base-content font-bold">Teams</p>
-                    </Link>
-                    <Link
-                        className="flex flex-col items-center"
-                        href="/standings"
-                        onClick={() => setMenuOpen(false)}
-                    >
-                        <TrophyIcon className="h-8 w-8 text-base-content" />
-                        <p className="text-base-content font-bold">Standings</p>
-                    </Link>
+                    {teamsMade && (
+                        <Link
+                            className="flex flex-col items-center"
+                            href="/teams"
+                            onClick={() => setMenuOpen(false)}
+                        >
+                            <UserGroupIcon className="h-8 w-8 text-base-content" />
+                            <p className="text-base-content font-bold">Teams</p>
+                        </Link>
+                    )}
+                    {teamsMade && (
+                        <Link
+                            className="flex flex-col items-center"
+                            href="/standings"
+                            onClick={() => setMenuOpen(false)}
+                        >
+                            <TrophyIcon className="h-8 w-8 text-base-content" />
+                            <p className="text-base-content font-bold">
+                                Standings
+                            </p>
+                        </Link>
+                    )}
                     <Link
                         className="flex flex-col items-center"
                         href="/donors"

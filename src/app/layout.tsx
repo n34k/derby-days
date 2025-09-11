@@ -7,6 +7,7 @@ import Footer from "@/components/section/Footer";
 import { getUserSessionData } from "@/lib/getUserSessionData";
 import { RealtimeProvider } from "@/components/providers/RealtimeProvider";
 import "yet-another-react-lightbox/styles.css";
+import { prisma } from "../../prisma";
 
 const poppins = Poppins({
     subsets: ["latin"],
@@ -27,10 +28,18 @@ export default async function RootLayout({
     if (session) {
         userData = await getUserSessionData();
     }
+
+    const teams = await prisma.team.findFirst();
+    let teamsMade = false;
+
+    if (teams) {
+        teamsMade = true;
+    }
+
     return (
         <html lang="en" data-theme="sigmachi">
             <body className={`min-h-screen flex flex-col ${poppins.variable}`}>
-                <NavBar userData={userData} />
+                <NavBar userData={userData} teamsMade={teamsMade} />
                 <main className="flex-1">
                     <RealtimeProvider>{children}</RealtimeProvider>
                 </main>

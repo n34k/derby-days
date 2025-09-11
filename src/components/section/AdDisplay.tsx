@@ -5,6 +5,7 @@ import Image from "next/image";
 import { AdPurchase } from "@/generated/prisma";
 import Lightbox from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import Link from "next/link";
 
 type AdDisplayProps = {
     ads: AdPurchase[];
@@ -56,7 +57,11 @@ const AdDisplay = ({ ads }: AdDisplayProps) => {
                             ))}
                         </div>
                     ) : (
-                        <></>
+                        <Link href="/donate">
+                            <p className="text-info-content cursor-pointer transition duration-300 transform hover:scale-110 hover:text-secondary">
+                                Be the first to purchase.
+                            </p>
+                        </Link>
                     )}
                 </div>
             ))}
