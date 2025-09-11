@@ -7,6 +7,7 @@ import {
 } from "@/models/donationTypes";
 import { useState } from "react";
 import { Donation } from "@/generated/prisma";
+import Link from "next/link";
 
 interface RecentDonationsProps {
     donations: {
@@ -62,17 +63,25 @@ const RecentDonations = ({ donations }: RecentDonationsProps) => {
                     />
                 </div>
             </div>
-            <div className="flex flex-col gap-10">
-                {displayedDontations.map((d) => (
-                    <div className="flex flex-col items-center" key={d.id}>
-                        <p className="text-success text-4xl">${d.amount}</p>
-                        <p className="text-3xl">{d.name}</p>
-                        {d.note && (
-                            <p className="text-3xl">&quot;{d.note}&quot;</p>
-                        )}
-                    </div>
-                ))}
-            </div>
+            {donations.amount.length !== 0 ? (
+                <div className="flex flex-col gap-10">
+                    {displayedDontations.map((d) => (
+                        <div className="flex flex-col items-center" key={d.id}>
+                            <p className="text-success text-4xl">${d.amount}</p>
+                            <p className="text-3xl">{d.name}</p>
+                            {d.note && (
+                                <p className="text-3xl">&quot;{d.note}&quot;</p>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <Link href="/donate" className="flex justify-center">
+                    <p className="text-info-content cursor-pointer transition duration-300 transform hover:scale-110 hover:text-secondary">
+                        No donations yet, be the first to donate!
+                    </p>
+                </Link>
+            )}
         </div>
     );
 };
