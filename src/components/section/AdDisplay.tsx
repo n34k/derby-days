@@ -19,6 +19,8 @@ const AdDisplay = ({ ads }: AdDisplayProps) => {
     const quarterPageAds = ads.filter((ad) => ad.size === "Quarter Page");
     const businessCardAds = ads.filter((ad) => ad.size === "Business Card");
 
+    console.log(businessCardAds);
+
     const adSections = [
         { title: "Full Page Ads", ads: fullPageAds, size: 400 },
         { title: "Half Page Ads", ads: halfPageAds, size: 300 },
@@ -39,7 +41,7 @@ const AdDisplay = ({ ads }: AdDisplayProps) => {
                         {title}
                     </h2>
 
-                    {ads ? (
+                    {ads.length !== 0 ? (
                         <div className="flex flex-wrap justify-center gap-5">
                             {ads.map((ad) => (
                                 <div key={ad.id} className="max-w-full">
