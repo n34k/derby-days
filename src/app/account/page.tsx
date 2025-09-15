@@ -5,9 +5,13 @@ import UserStats from "@/components/UserStats";
 import SignOutButton from "@/components/SignOutButton";
 import { getUserSessionData } from "@/lib/getUserSessionData";
 import BrotherStats from "@/components/BrotherStandings";
+import { redirect } from "next/navigation";
 
 async function AccountPage() {
     const userData = await getUserSessionData();
+    if (!userData) {
+        redirect("/");
+    }
 
     return (
         <div className="flex flex-col gap-10 items-center justify-evenly md:flex-row md:px-15 md:pt-15 p-5">
@@ -15,7 +19,7 @@ async function AccountPage() {
                 <UpdateUserForm
                     initialImage={userData.image}
                     initialName={userData.name}
-                    initialWalkoutSong={userData.walkoutSong}
+                    initialWalkoutSong={userData.walkoutSong ?? ""}
                     initialPublicId={userData.imagePublicId}
                 />
                 <SignOutButton />

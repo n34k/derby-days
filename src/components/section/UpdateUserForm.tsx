@@ -19,7 +19,7 @@ interface Props {
     initialName: string | null | undefined;
     initialImage: string | null | undefined;
     initialWalkoutSong: string;
-    initialPublicId: string | undefined;
+    initialPublicId: string | null | undefined;
 }
 
 const UpdateUserForm = ({

@@ -5,9 +5,9 @@ import NavBar from "@/components/section/NavBar";
 import { auth } from "../../auth";
 import Footer from "@/components/section/Footer";
 import { getUserSessionData } from "@/lib/getUserSessionData";
-import { RealtimeProvider } from "@/components/providers/RealtimeProvider";
 import "yet-another-react-lightbox/styles.css";
 import { prisma } from "../../prisma";
+import { DraftStatus } from "@/generated/prisma";
 
 const poppins = Poppins({
     subsets: ["latin"],
@@ -30,6 +30,19 @@ export default async function RootLayout({
     }
 
     const teams = await prisma.team.findFirst();
+
+    const draft = await prisma.draft.findUnique({
+        where: { id: String(new Date().getFullYear()) },
+    });
+
+    let draftStatus;
+
+    if (draft) {
+        draftStatus = draft.status;
+    } else {
+        draftStatus = DraftStatus.NOT_CREATED;
+    }
+
     let teamsMade = false;
 
     if (teams) {
@@ -39,10 +52,12 @@ export default async function RootLayout({
     return (
         <html lang="en" data-theme="sigmachi">
             <body className={`min-h-screen flex flex-col ${poppins.variable}`}>
-                <NavBar userData={userData} teamsMade={teamsMade} />
-                <main className="flex-1">
-                    <RealtimeProvider>{children}</RealtimeProvider>
-                </main>
+                <NavBar
+                    userData={userData}
+                    teamsMade={teamsMade}
+                    draftStatus={draftStatus}
+                />
+                <main className="flex-1">{children}</main>
                 <Footer />
             </body>
         </html>

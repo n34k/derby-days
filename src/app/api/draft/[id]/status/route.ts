@@ -7,6 +7,21 @@ import { pusher } from "@/lib/pusher/server";
 
 const DRAFT_TIMER = 10 * 60 * 1000;
 
+export async function GET() {
+    const year = new Date().getFullYear().toString();
+
+    const draft = await prisma.draft.findFirst({ where: { id: year } });
+
+    if (!draft) {
+        return NextResponse.json(
+            { error: "Draft not found for current year" },
+            { status: 404 }
+        );
+    }
+
+    return NextResponse.json(draft.status, { status: 200 });
+}
+
 export async function PATCH(req: NextRequest, { params }: { params: idP }) {
     const admin = await isAdmin();
     if (!admin) {

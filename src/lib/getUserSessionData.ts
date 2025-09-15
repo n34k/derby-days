@@ -1,24 +1,12 @@
-import { auth } from "../../auth"; // adjust import path if needed
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+// src/lib/getUserSessionData.ts
+import { auth } from "../../auth";
+import { prisma } from "../../prisma";
 
 export async function getUserSessionData() {
     const session = await auth();
-    if (!session) redirect("/");
+    if (!session) return null;
+    const userId = session.user?.id;
+    if (!userId) return null;
 
-    const cookie = await cookies();
-    const cookieHeader = cookie.toString();
-
-    const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/user/${session.user?.id}`,
-        { headers: { cookie: cookieHeader } }
-    );
-
-    if (!res.ok) {
-        console.error("Failed to fetch user");
-        return null;
-    }
-
-    const { user: userData } = await res.json();
-    return userData;
+    return prisma.user.findUnique({ where: { id: userId } });
 }

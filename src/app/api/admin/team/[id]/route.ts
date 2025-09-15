@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../../auth";
 import { prisma } from "../../../../../../prisma";
 import { AdminUpdateTeamSchema } from "../schema";
-import { User } from "@/generated/prisma";
 import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({
@@ -13,7 +12,7 @@ cloudinary.config({
 
 export async function PATCH(req: NextRequest) {
     const session = await auth();
-    const user = session?.user as User;
+    const user = session?.user;
 
     if (!user || user.globalRole !== "ADMIN") {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -169,7 +168,7 @@ export async function PATCH(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
     const session = await auth();
-    const user = session?.user as User;
+    const user = session?.user;
 
     if (!user || user.globalRole !== "ADMIN") {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -2,9 +2,6 @@
 import { UsersTable } from "@/components/tables/UsersTable";
 import { TeamsTable } from "@/components/tables/TeamsTable";
 import { prisma } from "../../../prisma";
-import { auth } from "../../../auth";
-import { redirect } from "next/navigation";
-import { User } from "@/generated/prisma";
 import { Cog6ToothIcon } from "@heroicons/react/24/solid";
 import AdTable from "@/components/tables/AdTable";
 import ProductsTable from "../tables/ProductTable";
@@ -12,11 +9,7 @@ import EmailsTable from "../tables/EmailsTable";
 import DonationTable from "../tables/DonationTable";
 
 const AdminPanel = async () => {
-    const session = await auth();
-    const user = session?.user as User;
     const year = new Date().getFullYear().toString();
-
-    if (user.globalRole !== "ADMIN") redirect("/");
 
     const users = await prisma.user.findMany({ include: { team: true } });
     const teams = await prisma.team.findMany({

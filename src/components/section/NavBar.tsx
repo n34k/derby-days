@@ -13,14 +13,15 @@ import {
     ArrowLeftEndOnRectangleIcon,
 } from "@heroicons/react/24/solid";
 import SignIn from "@/components/SignIn";
-import { User } from "@/generated/prisma";
+import { DraftStatus, User } from "@/generated/prisma";
 
 interface NavBarProps {
     userData: User | null;
     teamsMade: boolean;
+    draftStatus: DraftStatus;
 }
 
-const NavBar = ({ userData, teamsMade }: NavBarProps) => {
+const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const userRole = userData?.globalRole || "NONE";
 
@@ -64,12 +65,23 @@ const NavBar = ({ userData, teamsMade }: NavBarProps) => {
                         >
                             Donors
                         </Link>
-                        <Link
-                            href="/draft"
-                            className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
-                        >
-                            Draft
-                        </Link>
+                        {draftStatus === "ONGOING" ? (
+                            userRole === "ADMIN" && (
+                                <Link
+                                    href="/draft"
+                                    className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
+                                >
+                                    Draft
+                                </Link>
+                            )
+                        ) : (
+                            <Link
+                                href="/draft"
+                                className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
+                            >
+                                Draft
+                            </Link>
+                        )}
                         {userData ? (
                             <Link
                                 href="/account"
@@ -154,14 +166,29 @@ const NavBar = ({ userData, teamsMade }: NavBarProps) => {
                         <HeartIcon className="h-8 w-8 text-base-content" />
                         <p className="text-base-content font-bold">Donors</p>
                     </Link>
-                    <Link
-                        className="flex flex-col items-center"
-                        href="/draft"
-                        onClick={() => setMenuOpen(false)}
-                    >
-                        <ClipboardDocumentListIcon className="h-8 w-8 text-base-content" />
-                        <p className="text-base-content font-bold">Draft</p>
-                    </Link>
+                    {draftStatus === "ONGOING" ? (
+                        userRole === "ADMIN" && (
+                            <Link
+                                className="flex flex-col items-center"
+                                href="/draft"
+                                onClick={() => setMenuOpen(false)}
+                            >
+                                <ClipboardDocumentListIcon className="h-8 w-8 text-base-content" />
+                                <p className="text-base-content font-bold">
+                                    Draft
+                                </p>
+                            </Link>
+                        )
+                    ) : (
+                        <Link
+                            className="flex flex-col items-center"
+                            href="/draft"
+                            onClick={() => setMenuOpen(false)}
+                        >
+                            <ClipboardDocumentListIcon className="h-8 w-8 text-base-content" />
+                            <p className="text-base-content font-bold">Draft</p>
+                        </Link>
+                    )}
                     {userData ? (
                         <Link
                             className="flex flex-col items-center"
