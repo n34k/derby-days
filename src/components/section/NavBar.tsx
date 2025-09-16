@@ -11,6 +11,7 @@ import {
     UserIcon,
     Cog6ToothIcon,
     ArrowLeftEndOnRectangleIcon,
+    ScaleIcon,
 } from "@heroicons/react/24/solid";
 import SignIn from "@/components/SignIn";
 import { DraftStatus, User } from "@/generated/prisma";
@@ -82,6 +83,12 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                                 Draft
                             </Link>
                         )}
+                        <Link
+                            href="/judges"
+                            className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
+                        >
+                            Judges
+                        </Link>
                         {userData ? (
                             <Link
                                 href="/account"
@@ -189,6 +196,14 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                             <p className="text-base-content font-bold">Draft</p>
                         </Link>
                     )}
+                    <Link
+                        className="flex flex-col items-center"
+                        href="/judges"
+                        onClick={() => setMenuOpen(false)}
+                    >
+                        <ScaleIcon className="h-8 w-8 text-base-content" />
+                        <p className="text-base-content font-bold">Judges</p>
+                    </Link>
                     {userData ? (
                         <Link
                             className="flex flex-col items-center"
