@@ -11,7 +11,7 @@ const InfoBox = ({ title, info, saleInfo = [] }: InfoBoxProps) => {
     const hasItems = saleInfo.length > 0;
 
     return (
-        <div className="flex flex-col h-fit md:max-h-[17.5vh] overflow-scroll items-center bg-base-200 rounded-lg p-5 shadow">
+        <div className="flex flex-col h-fit md:max-h-[20vh] overflow-scroll items-center bg-base-200 rounded-lg p-5 shadow">
             <h2 className="text-2xl font-semibold text-center text-info-content mb-2">
                 {title}
             </h2>

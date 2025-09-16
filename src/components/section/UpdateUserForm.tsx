@@ -125,14 +125,14 @@ const UpdateUserForm = ({
 
     return (
         <form
-            className="w-[75vw] md:w-auto bg-primary rounded-lg border-1 border-secondary md:overflow-y-scroll"
+            className="w-[75vw] md:w-[275px] bg-primary rounded-lg border-1 border-secondary md:overflow-y-scroll"
             onSubmit={handleSubmit}
         >
             <div className="flex flex-col gap-1 items-center p-5">
                 <div className="rounded-full overflow-hidden shadow-lg self-center">
                     {imagePublicId ? (
                         <CldImage
-                            className="object-cover"
+                            className="object-cover h-[225px] w-[225px]"
                             src={image ?? ""}
                             alt="Profile Picture"
                             width={225}
@@ -140,7 +140,7 @@ const UpdateUserForm = ({
                         />
                     ) : (
                         <Image
-                            className="object-cover"
+                            className="object-cover h-[225px] w-[225px]"
                             src={image ?? ""}
                             alt="Profile Picture"
                             width={225}
@@ -204,11 +204,9 @@ const UpdateUserForm = ({
                                 type="button"
                                 onClick={handleCancel}
                             >
-                                Cancel
                                 <XMarkIcon className="h-4 w-4" />
                             </button>
                             <button className="btn btn-secondary" type="submit">
-                                Submit
                                 <CheckIcon className="h-4 w-4" />
                             </button>
                         </div>

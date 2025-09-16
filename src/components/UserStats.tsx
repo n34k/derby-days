@@ -58,7 +58,7 @@ const UserStats = async ({ user }: UserStatsProps) => {
             <h1 className="text-3xl font-bold mb-8 text-base-content">
                 Your Stats
             </h1>
-            <div className="flex flex-col md:grid grid-cols-2 grid-rows-2 gap-6 w-full">
+            <div className="flex flex-col md:grid grid-cols-2 grid-rows-2 gap-6 md:gap-3 w-full">
                 <InfoBox title="Role" info={displayRoleInfo} />
                 {user.globalRole === "BROTHER" ||
                 user.globalRole === "HEAD_COACH" ? (
