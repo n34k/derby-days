@@ -34,6 +34,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
     console.log("STATUS", draftStatus);
     const createOrDeleteAllowed = !draftStatus || draftStatus === "NOT_CREATED";
     console.log("CREATE/DELETE ALLOWED?", createOrDeleteAllowed);
+    console.log("ENVIRONMENT", process.env.NODE_ENV);
     const [expanded, setExpanded] = useState(false); // NEW: collapsed by default
     const [editing, setEditing] = useState(false);
     const [editedTeams, setEditedTeams] = useState<Record<string, EditedTeam>>(
