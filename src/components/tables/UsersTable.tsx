@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { DraftStatus, User } from "@/generated/prisma";
+import { DraftStatus, GlobalRole, User } from "@/generated/prisma";
 import {
     PencilIcon,
     XMarkIcon,
@@ -231,30 +231,9 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
 
                                             <td className="border px-2">
                                                 <div className="flex items-center justify-center">
-                                                    {editing ? (
-                                                        <input
-                                                            type="number"
-                                                            className="text-center w-[60px]"
-                                                            value={
-                                                                isUserEdited?.moneyRaised ??
-                                                                user.moneyRaised
-                                                            }
-                                                            onChange={(e) =>
-                                                                handleChange(
-                                                                    user.id,
-                                                                    "moneyRaised",
-                                                                    parseFloat(
-                                                                        e.target
-                                                                            .value ||
-                                                                            "0"
-                                                                    )
-                                                                )
-                                                            }
-                                                        />
-                                                    ) : (
-                                                        `$${user.moneyRaised.toFixed(
-                                                            2
-                                                        )}`
+                                                    $
+                                                    {user.moneyRaised.toFixed(
+                                                        2
                                                     )}
                                                 </div>
                                             </td>
@@ -285,7 +264,9 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                                             </td>
 
                                             <td className="border px-2 py-1 w-[120px] text-center">
-                                                {editing ? (
+                                                {editing &&
+                                                user.globalRole !==
+                                                    GlobalRole.HEAD_COACH ? (
                                                     <select
                                                         className="truncate"
                                                         value={
@@ -310,12 +291,6 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                                                         <option value="BROTHER">
                                                             BROTHER
                                                         </option>
-                                                        {user.globalRole ===
-                                                            "HEAD_COACH" && (
-                                                            <option value="HEAD_COACH">
-                                                                HEAD_COACH
-                                                            </option>
-                                                        )}
                                                     </select>
                                                 ) : (
                                                     user.globalRole

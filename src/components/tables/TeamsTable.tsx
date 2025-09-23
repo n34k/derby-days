@@ -34,6 +34,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
     console.log("STATUS", draftStatus);
     const createOrDeleteAllowed = !draftStatus || draftStatus === "NOT_CREATED";
     console.log("CREATE/DELETE ALLOWED?", createOrDeleteAllowed);
+    console.log("ENVIRONMENT", process.env.NODE_ENV);
     const [expanded, setExpanded] = useState(false); // NEW: collapsed by default
     const [editing, setEditing] = useState(false);
     const [editedTeams, setEditedTeams] = useState<Record<string, EditedTeam>>(
@@ -391,33 +392,8 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
 
                                         {/* Money Raised */}
                                         <td className="border px-2 py-1 text-center">
-                                            {editing ? (
-                                                <input
-                                                    type="number"
-                                                    step="0.01"
-                                                    className="w-full max-w-[100px] text-center"
-                                                    value={
-                                                        isEdited?.moneyRaised ??
-                                                        team.moneyRaised ??
-                                                        0
-                                                    }
-                                                    onChange={(e) =>
-                                                        handleChange(
-                                                            team.id,
-                                                            "moneyRaised",
-                                                            parseFloat(
-                                                                e.target
-                                                                    .value ||
-                                                                    "0"
-                                                            )
-                                                        )
-                                                    }
-                                                />
-                                            ) : (
-                                                `$${(
-                                                    team.moneyRaised ?? 0
-                                                ).toFixed(2)}`
-                                            )}
+                                            $
+                                            {(team.moneyRaised ?? 0).toFixed(2)}
                                         </td>
 
                                         {/* Points */}
@@ -536,10 +512,12 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                         <td className="border px-2 py-1">
                                             <CldUploadWidget
                                                 signatureEndpoint="/api/sign-cloudinary-params"
-                                                uploadPreset="profilepic"
+                                                uploadPreset="darlingpic"
                                                 options={{
                                                     sources: ["local"],
                                                     multiple: false,
+                                                    publicId: "",
+                                                    folder: `${process.env}/darling/${team.id}`,
                                                 }}
                                                 onSuccess={(results) => {
                                                     const info =

@@ -13,8 +13,7 @@ cloudinary.config({
 export async function PATCH(req: NextRequest) {
     const session = await auth();
     const user = session?.user;
-
-    if (!user || user.globalRole !== "ADMIN") {
+    if (!user || user.role !== "ADMIN") {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -170,7 +169,7 @@ export async function DELETE(req: NextRequest) {
     const session = await auth();
     const user = session?.user;
 
-    if (!user || user.globalRole !== "ADMIN") {
+    if (!user || user.role !== "ADMIN") {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

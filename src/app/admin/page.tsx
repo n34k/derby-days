@@ -11,7 +11,7 @@ const AdminPage = async () => {
     if (!admin) {
         redirect("/");
     }
-
+    console.log("ENVIRONMENT", process.env.NODE_ENV);
     return (
         <main className="flex justify-center py-15">
             <div className="flex flex-col gap-5 items-center">

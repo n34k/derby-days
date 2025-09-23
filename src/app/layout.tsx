@@ -8,7 +8,7 @@ import { getUserSessionData } from "@/lib/getUserSessionData";
 import "yet-another-react-lightbox/styles.css";
 import { prisma } from "../../prisma";
 import { DraftStatus } from "@/generated/prisma";
-
+//
 const poppins = Poppins({
     subsets: ["latin"],
     weight: ["400", "600", "700"], // adjust as needed
