@@ -33,7 +33,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
     const router = useRouter();
     console.log("DRAFT STATUS", draftStatus);
     const createOrDeleteAllowed = !draftStatus || draftStatus === "NOT_CREATED";
-    console.log("NODE_ENV", process.env.NODE_ENV);
+    console.log("VERCEL_ENV", process.env.NEXT_PUBLIC_VERCEL_ENV);
     const [expanded, setExpanded] = useState(false); // NEW: collapsed by default
     const [editing, setEditing] = useState(false);
     const [editedTeams, setEditedTeams] = useState<Record<string, EditedTeam>>(
