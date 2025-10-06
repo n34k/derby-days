@@ -7,7 +7,6 @@ export async function POST(request: Request) {
 
         const category = metadata?.category; // now always expected
         const isDonation = category === "donation";
-
         const session = await stripe.checkout.sessions.create({
             mode: "payment",
             ui_mode: "hosted",
@@ -33,6 +32,7 @@ export async function POST(request: Request) {
                 },
             ],
         });
+        console.log("Session", session);
 
         return NextResponse.json({ url: session.url });
     } catch (error) {

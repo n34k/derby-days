@@ -17,7 +17,6 @@ export default async function sendPurchaseEmail({
 }: PurchaseEmailParams) {
     let subject = "";
     let html = "";
-
     if (category === "donation") {
         subject = "Thank you for your donation to Valley Children's Hospital!";
         html = `
@@ -34,7 +33,7 @@ export default async function sendPurchaseEmail({
         html = `
     <p>Hi ${name},</p>
     <p>Thank you for purchasing an ad through our Derby Days fundraiser. Your support means a lot to us and directly contributes to our efforts to raise money for Valley Children’s Hospital.</p>
-    <p>To submit your ad, please email <strong>ndavis55862@gmail.com</strong> to send in your ad or if you have any questions.</p>
+    <p>To submit your ad, please email <strong>fresnoderbydays@gmail.com</strong> to send in your ad or if you have any questions.</p>
     <p>Best regards,<br/>The Derby Days Team</p>
     `;
     } else if (category === "shirt") {
@@ -46,9 +45,8 @@ export default async function sendPurchaseEmail({
     <p>Warmly,<br/>The Derby Days Team</p>
     `;
     }
-
     await resend.emails.send({
-        from: "Fresno State Derby Days <onboarding@resend.dev>",
+        from: "Fresno State Derby Days <no-reply@derbydays.org>",
         to,
         subject,
         html,

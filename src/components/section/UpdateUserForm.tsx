@@ -14,12 +14,14 @@ import {
 } from "@heroicons/react/24/outline";
 
 import TextInput from "../TextInput";
+import { allowedFileUploads } from "@/models/allowedFileUploads";
 
 interface Props {
     initialName: string | null | undefined;
     initialImage: string | null | undefined;
     initialWalkoutSong: string;
     initialPublicId: string | null | undefined;
+    userId: string;
 }
 
 const UpdateUserForm = ({
@@ -27,6 +29,7 @@ const UpdateUserForm = ({
     initialImage,
     initialWalkoutSong,
     initialPublicId,
+    userId,
 }: Props) => {
     const [name, setName] = useState<string | null | undefined>(initialName);
     const [walkoutSong, setWalkoutSong] = useState<string>(initialWalkoutSong);
@@ -83,7 +86,6 @@ const UpdateUserForm = ({
             if (res.ok) {
                 setSavedName(name);
                 setSavedWalkoutSong(walkoutSong);
-                toggleEditing();
             } else {
                 console.error("Update failed", data.error, data.details);
             }
@@ -151,7 +153,13 @@ const UpdateUserForm = ({
                 <CldUploadWidget
                     signatureEndpoint="/api/sign-cloudinary-params"
                     uploadPreset="profilepic"
-                    options={{ sources: ["local"], multiple: false }}
+                    options={{
+                        sources: ["local"],
+                        multiple: false,
+                        folder: `${process.env.NEXT_PUBLIC_VERCEL_ENV}/profilepics`,
+                        clientAllowedFormats: allowedFileUploads,
+                        publicId: `${userId}`,
+                    }}
                     onSuccess={(results) => {
                         const info = results.info as CloudinaryUploadWidgetInfo;
                         setPublicId(info.public_id);
