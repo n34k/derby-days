@@ -1,10 +1,11 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
+import getYear from "@/lib/getYear";
 
 const DraftStartButton = () => {
     const router = useRouter();
-    const year = String(new Date().getFullYear());
+    const year = getYear();
 
     const onClick = async () => {
         const confirmed = window.confirm(

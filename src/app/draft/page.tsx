@@ -5,9 +5,10 @@ import React from "react";
 import { prisma } from "../../../prisma";
 import PickAnimation from "@/components/draft/PickAnimation";
 import { RealtimeProvider } from "@/components/providers/RealtimeProvider";
+import getYear from "@/lib/getYear";
 
 const DraftPage = async () => {
-    const year = new Date().getFullYear().toString();
+    const year = getYear();
 
     const [teams, draft] = await Promise.all([
         prisma.team.findMany(),

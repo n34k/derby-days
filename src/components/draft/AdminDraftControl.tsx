@@ -6,10 +6,11 @@ import DraftDeleteButton from "./DraftDeleteButton";
 import DraftStartButton from "./DraftStartButton";
 import AvailableBrothersTable from "./AvailableBrothers";
 import { isAdmin } from "@/lib/isAdmin";
+import getYear from "@/lib/getYear";
 
 const AdminDraftControl = async () => {
     const admin = await isAdmin();
-    const year = String(new Date().getFullYear());
+    const year = getYear();
     const draftCreatedThisYear = await prisma.draft.findUnique({
         //admin can only create draft once per year
         where: { id: year },

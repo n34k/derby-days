@@ -8,6 +8,7 @@ import { getUserSessionData } from "@/lib/getUserSessionData";
 import "yet-another-react-lightbox/styles.css";
 import { prisma } from "../../prisma";
 import { DraftStatus } from "@/generated/prisma";
+import getYear from "@/lib/getYear";
 //
 const poppins = Poppins({
     subsets: ["latin"],
@@ -32,7 +33,7 @@ export default async function RootLayout({
     const teams = await prisma.team.findFirst();
 
     const draft = await prisma.draft.findUnique({
-        where: { id: String(new Date().getFullYear()) },
+        where: { id: getYear() },
     });
 
     let draftStatus;

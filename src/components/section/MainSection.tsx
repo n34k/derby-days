@@ -1,8 +1,9 @@
 import React from "react";
 import Image from "next/image";
+import getYear from "@/lib/getYear";
 
 const MainSection = () => {
-    const year = new Date().getFullYear();
+    const year = getYear();
     return (
         <section className="relative h-[92vh] w-full overflow-hidden">
             {/* Background Image */}

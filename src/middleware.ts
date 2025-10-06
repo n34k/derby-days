@@ -2,12 +2,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { DraftStatus } from "./generated/prisma";
+import { get } from "http";
 
 export async function middleware(req: NextRequest) {
     const { pathname, origin } = req.nextUrl;
     if (!pathname.startsWith("/draft")) return NextResponse.next();
 
-    const year = new Date().getFullYear().toString();
+    const year = getYear();
 
     //Get global draft status
     const statusRes = await fetch(`${origin}/api/draft/${year}/status`, {
