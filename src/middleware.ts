@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { DraftStatus } from "./generated/prisma";
-import { get } from "http";
+import getYear from "./lib/getYear";
 
 export async function middleware(req: NextRequest) {
     const { pathname, origin } = req.nextUrl;

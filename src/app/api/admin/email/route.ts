@@ -1,6 +1,7 @@
 import { isAdmin } from "@/lib/isAdmin";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../prisma";
+import { sendSignUpEmail } from "@/lib/emailService";
 
 export async function GET() {
     try {
@@ -48,6 +49,8 @@ export async function POST(req: NextRequest) {
         const emailAdded = await prisma.brotherEmails.create({
             data: { email },
         });
+
+        await sendSignUpEmail({ to: email });
 
         return NextResponse.json(emailAdded, { status: 200 });
     } catch (e) {
