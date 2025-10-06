@@ -23,6 +23,7 @@ import {
 import AddTeamModal from "../modals/AddTeamModal";
 import { MAX_TEAMS } from "@/lib/predefinedTeams";
 import { DraftStatus } from "@/generated/prisma";
+import { allowedFileUploads } from "@/models/allowedFileUploads";
 
 interface TeamsTableProps {
     teams: TeamWithCoach[];
@@ -515,12 +516,18 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                                 options={{
                                                     sources: ["local"],
                                                     multiple: false,
-                                                    publicId: "",
-                                                    folder: `${process.env}/darling/${team.id}`,
+                                                    folder: `${process.env.NEXT_PUBLIC_VERCEL_ENV}/darling/${team.id}`,
+                                                    publicId: `${team.id}`,
+                                                    clientAllowedFormats:
+                                                        allowedFileUploads,
                                                 }}
                                                 onSuccess={(results) => {
                                                     const info =
                                                         results.info as CloudinaryUploadWidgetInfo;
+                                                    console.log(
+                                                        "UPLOAD RESULTS",
+                                                        info
+                                                    );
                                                     handleUploadDerby(
                                                         info,
                                                         team.id

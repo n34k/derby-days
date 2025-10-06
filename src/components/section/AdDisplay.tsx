@@ -1,11 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import { NewspaperIcon } from "@heroicons/react/24/solid";
-import Image from "next/image";
 import { AdPurchase } from "@/generated/prisma";
 import Lightbox from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import Link from "next/link";
+import { CldImage } from "next-cloudinary";
 
 type AdDisplayProps = {
     ads: AdPurchase[];
@@ -45,7 +45,7 @@ const AdDisplay = ({ ads }: AdDisplayProps) => {
                         <div className="flex flex-wrap justify-center gap-5">
                             {ads.map((ad) => (
                                 <div key={ad.id} className="max-w-full">
-                                    <Image
+                                    <CldImage
                                         src={ad.adUrl!}
                                         alt="Ad"
                                         className="object-contain rounded mx-auto cursor-pointer"

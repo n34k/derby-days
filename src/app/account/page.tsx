@@ -21,6 +21,7 @@ async function AccountPage() {
                     initialName={userData.name}
                     initialWalkoutSong={userData.walkoutSong ?? ""}
                     initialPublicId={userData.imagePublicId}
+                    userId={userData.id}
                 />
                 <SignOutButton />
             </div>

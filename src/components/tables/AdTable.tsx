@@ -8,6 +8,7 @@ import {
 import { AdPurchase } from "@/generated/prisma";
 import { useRouter } from "next/navigation";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { allowedFileUploads } from "@/models/allowedFileUploads";
 
 type Props = {
     ads: AdPurchase[];
@@ -36,6 +37,13 @@ const AdTable: React.FC<Props> = ({ ads }) => {
         setUploadingId(null);
         if (res.ok) router.refresh();
     };
+
+    const sizeMapToPresetMap = new Map([
+        ["Business Card", "card"],
+        ["Quarter Page", "quarter"],
+        ["Half Page", "half"],
+        ["Full Page", "full"],
+    ]);
 
     return (
         <div>
@@ -96,14 +104,33 @@ const AdTable: React.FC<Props> = ({ ads }) => {
                                                 )}
                                                 <CldUploadWidget
                                                     signatureEndpoint="/api/sign-cloudinary-params"
-                                                    uploadPreset="ad"
+                                                    uploadPreset={sizeMapToPresetMap.get(
+                                                        ad.size
+                                                    )}
                                                     options={{
                                                         sources: ["local"],
                                                         multiple: false,
+                                                        uploadPreset:
+                                                            sizeMapToPresetMap.get(
+                                                                ad.size
+                                                            ),
+                                                        folder: `${
+                                                            process.env
+                                                                .NEXT_PUBLIC_VERCEL_ENV
+                                                        }/ads/${sizeMapToPresetMap.get(
+                                                            ad.size
+                                                        )}`,
+                                                        clientAllowedFormats:
+                                                            allowedFileUploads,
+                                                        publicId: `${ad.id}`,
                                                     }}
                                                     onSuccess={(results) => {
                                                         const info =
                                                             results.info as CloudinaryUploadWidgetInfo;
+                                                        console.log(
+                                                            "UPLOAD INFO",
+                                                            info
+                                                        );
                                                         handleUpload(
                                                             info,
                                                             ad.id
