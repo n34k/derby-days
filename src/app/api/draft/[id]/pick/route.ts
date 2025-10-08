@@ -117,6 +117,10 @@ export async function POST(req: NextRequest, { params }: { params: idP }) {
                     where: { id: draftId },
                     data: { status: "COMPLETE" },
                 });
+                await tx.derbyStats.update({
+                    where: { id: draftId },
+                    data: { status: "POST_DRAFT" },
+                });
                 completed = true;
                 console.log("UPDATED TO COMPLETE");
             }

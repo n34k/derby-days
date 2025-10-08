@@ -119,7 +119,7 @@ export async function POST(req: Request) {
             }
 
             //Update total money raised
-            await prisma.stats.update({
+            await prisma.derbyStats.update({
                 where: { id: "global" },
                 data: { totalRaised: { increment: amount } },
             });

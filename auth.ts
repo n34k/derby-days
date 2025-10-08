@@ -12,10 +12,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session: { strategy: "jwt" }, // ✅ use JWT so middleware can read without DB
     callbacks: {
         async signIn({ user, profile }) {
-            if (process.env.NODE_ENV === "development") {
-                return true;
-            }
-
             const email = user?.email ?? profile?.email;
             if (!email) return false;
 

@@ -32,9 +32,7 @@ interface TeamsTableProps {
 
 export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
     const router = useRouter();
-    console.log("DRAFT STATUS", draftStatus);
     const createOrDeleteAllowed = !draftStatus || draftStatus === "NOT_CREATED";
-    console.log("VERCEL_ENV", process.env.NEXT_PUBLIC_VERCEL_ENV);
     const [expanded, setExpanded] = useState(false); // NEW: collapsed by default
     const [editing, setEditing] = useState(false);
     const [editedTeams, setEditedTeams] = useState<Record<string, EditedTeam>>(
@@ -427,7 +425,8 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
 
                                         {/* Head Coach (dropdown) */}
                                         <td className="border px-2 py-1 text-center">
-                                            {editing ? (
+                                            {editing &&
+                                            draftStatus !== "COMPLETE" ? (
                                                 <div className="flex items-center gap-2">
                                                     <select
                                                         className="w-full max-w-[220px]"
@@ -486,7 +485,8 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
 
                                         {/* Derby Darling Name */}
                                         <td className="border px-2 py-1 text-center">
-                                            {editing ? (
+                                            {editing &&
+                                            draftStatus !== "COMPLETE" ? (
                                                 <input
                                                     className="w-full max-w-[220px]"
                                                     placeholder="Derby Darling name"

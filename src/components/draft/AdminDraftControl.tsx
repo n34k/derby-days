@@ -16,6 +16,21 @@ const AdminDraftControl = async () => {
         where: { id: year },
     });
 
+    const derbyCreatedThisYear = await prisma.derbyStats.findUnique({
+        where: { id: year },
+    });
+
+    const teams = await prisma.team.findMany();
+
+    let allTeamsHaveHeadCoachAndDd = true;
+
+    for (const team of teams) {
+        if (!team.headCoachId || !team.derbyDarlingName) {
+            allTeamsHaveHeadCoachAndDd = false;
+            break;
+        }
+    }
+
     let draftStatus;
 
     if (draftCreatedThisYear) {
@@ -23,24 +38,33 @@ const AdminDraftControl = async () => {
     }
 
     return (
-        <div className="flex justify-center items-center bg-primary border-1 border-secondary rounded-2xl p-5 w-[90vw]">
-            {!draftCreatedThisYear && <CreateDraftButton />}
-            {draftCreatedThisYear && draftStatus === "NOT_STARTED" ? (
-                <div className="flex flex-col items-center gap-5">
-                    <h1 className="font-bold text-4xl">Pre Draft Controls</h1>
-                    <DraftOrderEdit draft={draftCreatedThisYear} />
-                    <DraftStartButton />
-                    <DraftDeleteButton />
-                </div>
-            ) : (
-                <></>
-            )}
-            {draftCreatedThisYear && draftStatus === "ONGOING" ? (
-                <AvailableBrothersTable isAdmin={admin} draftId={year} />
-            ) : (
-                <></>
-            )}
-        </div>
+        draftStatus !== "COMPLETE" &&
+        derbyCreatedThisYear && (
+            <div className="flex justify-center items-center bg-primary border-1 border-secondary rounded-2xl p-5 w-[90vw]">
+                {!draftCreatedThisYear && (
+                    <CreateDraftButton
+                        ddAndCoach={allTeamsHaveHeadCoachAndDd}
+                    />
+                )}
+                {draftCreatedThisYear && draftStatus === "NOT_STARTED" ? (
+                    <div className="flex flex-col items-center gap-5">
+                        <h1 className="font-bold text-4xl">
+                            Pre Draft Controls
+                        </h1>
+                        <DraftOrderEdit draft={draftCreatedThisYear} />
+                        <DraftStartButton />
+                        <DraftDeleteButton />
+                    </div>
+                ) : (
+                    <></>
+                )}
+                {draftCreatedThisYear && draftStatus === "ONGOING" ? (
+                    <AvailableBrothersTable isAdmin={admin} draftId={year} />
+                ) : (
+                    <></>
+                )}
+            </div>
+        )
     );
 };
 

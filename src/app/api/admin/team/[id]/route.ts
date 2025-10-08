@@ -180,8 +180,18 @@ export async function DELETE(req: NextRequest) {
         return NextResponse.json({ error: "Missing team ID" }, { status: 400 });
     }
 
+    const teamToDelete = await prisma.team.findUnique({ where: { id } });
+
+    if (!teamToDelete) {
+        return NextResponse.json({ error: "Team not found" }, { status: 404 });
+    }
+
     try {
         // Transaction: first unset teamId for all users in this team, then delete the team
+        await cloudinary.uploader.destroy(
+            teamToDelete.derbyDarlingPublicId || ""
+        );
+
         await prisma.$transaction([
             prisma.user.updateMany({
                 where: { teamId: id },

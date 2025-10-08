@@ -4,9 +4,15 @@ import { HeartIcon } from "@heroicons/react/24/solid";
 import DonationWidget from "@/components/DonationWidget";
 import AdPurchaseWidget from "@/components/AdPurchaseWidget";
 import ShirtPurcahseWidget from "@/components/ShirtPurcahseWidget";
+import { prisma } from "../../../prisma";
+import getYear from "@/lib/getYear";
 
-const DonatePage = () => {
-    return (
+const DonatePage = async () => {
+    const year = getYear();
+    const derby = await prisma.derbyStats.findUnique({ where: { id: year } });
+    const derbyActive = derby?.status !== "COMPLETE";
+
+    return derbyActive ? (
         <div className="flex flex-col gap-10 py-7.5 items-center">
             <div className="flex items-center gap-3">
                 <h1 className="text-4xl md:text-7xl font-bold">
@@ -20,6 +26,16 @@ const DonatePage = () => {
                 <ShirtPurcahseWidget />
             </div>
         </div>
+    ) : (
+        <main className="flex items-center justify-center px-4 py-40 text-center">
+            <div className="flex flex-col gap-5 items-center justify-center rounded-lg border border-secondary bg-primary py-5 px-10">
+                <h1 className="font-semibold text-6xl">Derby Days Has Ended</h1>
+                <p className="text-lg text-info-content">
+                    Thanks for trying to donate. Check back next year around
+                    spring time to support the cause!
+                </p>
+            </div>
+        </main>
     );
 };
 

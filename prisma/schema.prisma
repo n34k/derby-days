@@ -104,10 +104,12 @@ model Authenticator {
   @@id([userId, credentialID])
 }
 
-model Stats {
-  id          String   @id @default("global")
-  totalRaised Float    @default(0)
-  updatedAt   DateTime @updatedAt
+model DerbyStats {
+  id             String   @id
+  status         DerbyStatus @default(CREATED)
+  totalRaised    Float    @default(0)
+  finalStandings String[]
+  updatedAt      DateTime @updatedAt
 }
 
 model BrotherEmails {
@@ -252,4 +254,10 @@ enum DraftStatus {
 enum PickStatus {
   ANNOUNCED
   VOIDED
+}
+
+enum DerbyStatus {
+  CREATED
+  POST_DRAFT
+  COMPLETE
 }

@@ -7,9 +7,10 @@ import AdTable from "@/components/tables/AdTable";
 import ProductsTable from "../tables/ProductTable";
 import EmailsTable from "../tables/EmailsTable";
 import DonationTable from "../tables/DonationTable";
+import getYear from "@/lib/getYear";
 
 const AdminPanel = async () => {
-    const year = new Date().getFullYear().toString();
+    const year = getYear();
 
     const users = await prisma.user.findMany({ include: { team: true } });
     const teams = await prisma.team.findMany({

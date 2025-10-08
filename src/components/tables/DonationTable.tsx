@@ -100,7 +100,7 @@ export default function DonationTable({ donations }: DonationTableProps) {
     return (
         <div>
             {/* Header / Controls */}
-            <div className="flex items-center gap-2 pb-4">
+            <div className="flex items-center gap-2 pb-2.5">
                 <h2 className="text-2xl font-semibold">Donations</h2>
 
                 {/* Chevron toggle */}

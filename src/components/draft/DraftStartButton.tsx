@@ -8,11 +8,15 @@ const DraftStartButton = () => {
     const year = getYear();
 
     const onClick = async () => {
-        const confirmed = window.confirm(
-            `Are you sure you want to start the draft? THIS CANT BE UNDONE.`
+        const phrase = `START DRAFT ${year}`;
+        const input = window.prompt(
+            `To confirm, type:\n\n${phrase}\n\nThis action cannot be undone.`
         );
 
-        if (!confirmed) return;
+        if (input !== phrase) {
+            alert("Derby Days not ended — confirmation phrase did not match.");
+            return;
+        }
 
         const res = await fetch(`/api/draft/${year}/status`, {
             method: "PATCH",

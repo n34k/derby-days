@@ -24,7 +24,6 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
     >({});
     const [usersState, setUsersState] = useState<User[]>(users);
     const deleteAllowed = !draftStatus || draftStatus === "NOT_CREATED";
-
     const hasUnsavedChanges = Object.keys(editedUsers).length > 0; // to make sure no one leaves with unsaved changes
 
     const toggleEditing = () => setEditing((e) => !e);
@@ -124,6 +123,7 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                     />
                 </button>
                 {expanded &&
+                    draftStatus !== "COMPLETE" &&
                     (editing ? (
                         <>
                             <button
@@ -266,7 +266,9 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                                             <td className="border px-2 py-1 w-[120px] text-center">
                                                 {editing &&
                                                 user.globalRole !==
-                                                    GlobalRole.HEAD_COACH ? (
+                                                    GlobalRole.HEAD_COACH &&
+                                                user.globalRole !==
+                                                    GlobalRole.ADMIN ? (
                                                     <select
                                                         className="truncate"
                                                         value={
@@ -282,9 +284,6 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                                                             )
                                                         }
                                                     >
-                                                        <option value="ADMIN">
-                                                            ADMIN
-                                                        </option>
                                                         <option value="JUDGE">
                                                             JUDGE
                                                         </option>

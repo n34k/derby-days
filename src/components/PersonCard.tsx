@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
-import { CldImage } from "next-cloudinary";
 import {
     ClipboardDocumentCheckIcon,
     SparklesIcon,
 } from "@heroicons/react/24/solid";
+import Image from "next/image";
 
 type PersonCardProps = {
     role: string;
@@ -31,11 +31,11 @@ const PersonCard = ({ role, person }: PersonCardProps) => {
             {hasPerson ? (
                 <>
                     {person?.image && (
-                        <CldImage
+                        <Image
                             src={person.image}
                             alt={`${person.name ?? "Profile"} photo`}
-                            width={350}
-                            height={350}
+                            width={320}
+                            height={320}
                             className="border-1 border-secondary rounded-sm"
                         />
                     )}
