@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import Image from "next/image";
+import { CldImage } from "next-cloudinary";
 
 type Coach = {
     name: string | null;
@@ -34,7 +34,7 @@ const CoachesCard: React.FC<CoachesCardProps> = ({ coaches }) => {
                                     className="flex flex-col items-center gap-2.5"
                                 >
                                     {coach.image ? (
-                                        <Image
+                                        <CldImage
                                             src={coach.image}
                                             alt={`${
                                                 coach.name ?? "Coach"

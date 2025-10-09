@@ -7,19 +7,30 @@ import {
     PencilIcon,
     XMarkIcon,
     ChevronDownIcon,
+    PlusIcon,
 } from "@heroicons/react/24/outline";
-import type { Donation } from "@/generated/prisma";
+import type { Donation, Team, User } from "@/generated/prisma";
 import greekLetters from "@/lib/greekLetters";
+import AddDonationModal from "../modals/AddDonationModal";
 
-type DonationTableProps = { donations: Donation[] };
+type DonationTableProps = {
+    donations: Donation[];
+    users: Pick<User, "id" | "name" | "email">[];
+    teams: Pick<Team, "id" | "name">[];
+};
 
-export default function DonationTable({ donations }: DonationTableProps) {
+export default function DonationTable({
+    donations,
+    users,
+    teams,
+}: DonationTableProps) {
     const router = useRouter();
     const [expanded, setExpanded] = useState(false);
     const [editing, setEditing] = useState(false);
     const [editedNotes, setEditedNotes] = useState<Record<string, string>>({});
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [showCreateModal, setShowCreateModal] = useState(false);
 
     // newest first
     const rows = useMemo(
@@ -31,6 +42,15 @@ export default function DonationTable({ donations }: DonationTableProps) {
             ),
         [donations]
     );
+
+    // Fast user lookup
+    const userNameById = useMemo(() => {
+        const m = new Map<string, string>();
+        for (const u of users) {
+            m.set(u.id, u.name ?? u.email ?? "Unnamed");
+        }
+        return m;
+    }, [users]);
 
     const handleNoteChange = (id: string, val: string) => {
         setEditedNotes((prev) => ({ ...prev, [id]: val }));
@@ -77,7 +97,6 @@ export default function DonationTable({ donations }: DonationTableProps) {
     };
 
     const onToggleExpanded = () => {
-        // Optional guard: prevent accidental collapse if editing with unsaved changes
         if (expanded && editing && hasUnsaved) {
             const ok = confirm("Discard unsaved changes and collapse?");
             if (!ok) return;
@@ -99,6 +118,14 @@ export default function DonationTable({ donations }: DonationTableProps) {
 
     return (
         <div>
+            {/* Create Donation Modal */}
+            <AddDonationModal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                teams={teams}
+                users={users}
+            />
+
             {/* Header / Controls */}
             <div className="flex items-center gap-2 pb-2.5">
                 <h2 className="text-2xl font-semibold">Donations</h2>
@@ -119,37 +146,47 @@ export default function DonationTable({ donations }: DonationTableProps) {
                     />
                 </button>
 
-                {expanded &&
-                    (editing ? (
-                        <>
+                {expanded && (
+                    <>
+                        {!editing ? (
                             <button
                                 className="btn btn-secondary btn-circle"
-                                onClick={cancelEditing}
-                                disabled={saving}
+                                onClick={toggleEditing}
                             >
-                                <XMarkIcon className="h-4 w-4" />
+                                <PencilIcon className="h-4 w-4" />
                             </button>
-                            <button
-                                className="btn btn-secondary btn-circle"
-                                onClick={handleSave}
-                                disabled={saving || !hasUnsaved}
-                                title={
-                                    !hasUnsaved
-                                        ? "No changes to save"
-                                        : undefined
-                                }
-                            >
-                                <CheckIcon className="h-4 w-4" />
-                            </button>
-                        </>
-                    ) : (
-                        <button
-                            className="btn btn-secondary btn-circle"
-                            onClick={toggleEditing}
-                        >
-                            <PencilIcon className="h-4 w-4" />
-                        </button>
-                    ))}
+                        ) : (
+                            <>
+                                <button
+                                    className="btn btn-secondary btn-circle"
+                                    onClick={cancelEditing}
+                                    disabled={saving}
+                                >
+                                    <XMarkIcon className="h-4 w-4" />
+                                </button>
+                                {/* Add donation button */}
+                                <button
+                                    className="btn btn-secondary btn-circle"
+                                    onClick={() => setShowCreateModal(true)}
+                                >
+                                    <PlusIcon className="h-4 w-4" />
+                                </button>
+                                <button
+                                    className="btn btn-secondary btn-circle"
+                                    onClick={handleSave}
+                                    disabled={saving || !hasUnsaved}
+                                    title={
+                                        !hasUnsaved
+                                            ? "No changes to save"
+                                            : undefined
+                                    }
+                                >
+                                    <CheckIcon className="h-4 w-4" />
+                                </button>
+                            </>
+                        )}
+                    </>
+                )}
             </div>
 
             {error && <p className="text-error text-sm mb-2">{error}</p>}
@@ -168,10 +205,11 @@ export default function DonationTable({ donations }: DonationTableProps) {
                                 <th className="border px-2 py-1">Date</th>
                                 <th className="border px-2 py-1">Name</th>
                                 <th className="border px-2 py-1">Email</th>
+                                {/* Team stays, displayed via greekLetters */}
                                 <th className="border px-2 py-1">Team</th>
-                                <th className="border px-2 py-1 text-right">
-                                    Amount
-                                </th>
+                                {/* NEW: User column */}
+                                <th className="border px-2 py-1">User</th>
+                                <th className="border px-2 py-1">Amount</th>
                                 <th className="border px-2 py-1">Note</th>
                             </tr>
                         </thead>
@@ -181,6 +219,11 @@ export default function DonationTable({ donations }: DonationTableProps) {
                                     d.id in editedNotes
                                         ? editedNotes[d.id]
                                         : d.note ?? "";
+                                const userName =
+                                    d.userId && userNameById.get(d.userId)
+                                        ? userNameById.get(d.userId)
+                                        : null;
+
                                 return (
                                     <tr key={d.id}>
                                         <td className="border px-2 py-1 whitespace-nowrap text-center">
@@ -197,7 +240,10 @@ export default function DonationTable({ donations }: DonationTableProps) {
                                                 ? greekLetters(d.teamId)
                                                 : "—"}
                                         </td>
-                                        <td className="border px-2 py-1 text-center ">
+                                        <td className="border px-2 py-1 text-center">
+                                            {userName ?? "—"}
+                                        </td>
+                                        <td className="border px-2 py-1 text-right">
                                             {formatAmount(d.amount)}
                                         </td>
                                         <td className="border px-2 py-1">
@@ -225,7 +271,7 @@ export default function DonationTable({ donations }: DonationTableProps) {
                                 <tr>
                                     <td
                                         className="border px-2 py-4 text-center"
-                                        colSpan={6}
+                                        colSpan={7}
                                     >
                                         No donations yet.
                                     </td>

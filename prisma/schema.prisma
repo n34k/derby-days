@@ -151,7 +151,7 @@ model Donation {
   name      String
   note      String?
   amount    Float
-  stripeId  String   @unique
+  stripeId  String?   @unique
   createdAt DateTime @default(now())
 
   user User? @relation(fields: [userId], references: [id])
@@ -167,7 +167,7 @@ model AdPurchase {
   note       String?
   size       String
   amount     Float
-  stripeId   String   @unique
+  stripeId   String?   @unique
   createdAt  DateTime @default(now())
   adUrl      String?
   adPublicId String?

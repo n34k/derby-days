@@ -3,8 +3,8 @@ import { useDraftChannel } from "@/app/hooks/useDraftChannel";
 import { useCallback, useEffect, useState } from "react";
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
 import greekLetters from "@/lib/greekLetters";
+import { CldImage } from "next-cloudinary";
 
 interface PickAnimationProps {
     draftId: string;
@@ -107,7 +107,7 @@ const PickAnimation = ({ draftId }: PickAnimationProps) => {
                         </div>
 
                         {pick.player.image && (
-                            <Image
+                            <CldImage
                                 src={pick.player.image}
                                 alt={pick.player.name ?? "Player"}
                                 className="h-56 w-56 mt-2 md:h-100 md:w-100 rounded-full object-cover border border-black"

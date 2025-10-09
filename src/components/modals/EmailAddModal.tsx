@@ -62,7 +62,7 @@ export default function EmailAddModal({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
             <div className="bg-primary p-6 rounded-xl shadow-xl w-full max-w-md">
                 <h2 className="text-xl font-bold mb-4">Add Email</h2>
                 <form onSubmit={submit} className="space-y-4">

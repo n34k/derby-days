@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DraftStatus, GlobalRole, User } from "@/generated/prisma";
 import {
     PencilIcon,
@@ -25,6 +25,11 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
     const [usersState, setUsersState] = useState<User[]>(users);
     const deleteAllowed = !draftStatus || draftStatus === "NOT_CREATED";
     const hasUnsavedChanges = Object.keys(editedUsers).length > 0; // to make sure no one leaves with unsaved changes
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        setUsersState(users);
+    }, [users]);
 
     const toggleEditing = () => setEditing((e) => !e);
 
@@ -54,6 +59,7 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
     };
 
     const handleSave = async () => {
+        setLoading(true);
         const updates = Object.entries(editedUsers);
         for (const [userId, updatedFields] of updates) {
             try {
@@ -80,6 +86,8 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                 );
             } catch (error) {
                 console.error(`Error updating user ${userId}:`, error);
+            } finally {
+                setLoading(false);
             }
         }
         setEditing(false);
@@ -126,18 +134,31 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                     draftStatus !== "COMPLETE" &&
                     (editing ? (
                         <>
-                            <button
-                                className="btn btn-secondary btn-circle"
-                                onClick={cancelEditing}
-                            >
-                                <XMarkIcon className="h-4 w-4" />
-                            </button>
-                            <button
-                                className="btn btn-secondary btn-circle"
-                                onClick={handleSave}
-                            >
-                                <CheckIcon className="h-4 w-4" />
-                            </button>
+                            {loading ? (
+                                <>
+                                    <button className="btn btn-primary btn-circle">
+                                        <XMarkIcon className="h-4 w-4" />
+                                    </button>
+                                    <button className="btn btn-primary btn-circle">
+                                        <CheckIcon className="h-4 w-4" />
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <button
+                                        className="btn btn-secondary btn-circle"
+                                        onClick={cancelEditing}
+                                    >
+                                        <XMarkIcon className="h-4 w-4" />
+                                    </button>
+                                    <button
+                                        className="btn btn-secondary btn-circle"
+                                        onClick={handleSave}
+                                    >
+                                        <CheckIcon className="h-4 w-4" />
+                                    </button>
+                                </>
+                            )}
                         </>
                     ) : (
                         <button

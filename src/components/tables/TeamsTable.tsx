@@ -49,6 +49,8 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
     // Cloudinary upload in-flight state (per team)
     const [uploadingTeamId, setUploadingTeamId] = useState<string | null>(null);
 
+    const [loading, setLoading] = useState(false);
+
     const hasUnsavedChanges = Object.keys(editedTeams).length > 0; // to make sure no one leaves with unsaved changes
 
     const existingIds = teamState.map((t) => t.id); // ensure Team has slug
@@ -83,7 +85,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
 
     const handleSave = async () => {
         const updates = Object.entries(editedTeams);
-
+        setLoading(true);
         for (const [teamId, updatedFields] of updates) {
             try {
                 const response = await fetch(`/api/admin/team/${teamId}`, {
@@ -114,9 +116,10 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                 );
             } catch (error) {
                 console.error(`Error updating team ${teamId}:`, error);
+            } finally {
+                setLoading(false);
             }
         }
-
         setEditing(false);
         setEditedTeams({});
         router.refresh();
@@ -269,27 +272,44 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                 {expanded &&
                     (editing ? (
                         <>
-                            <button
-                                className="btn btn-secondary btn-circle"
-                                onClick={cancelEditing}
-                            >
-                                <XMarkIcon className="h-4 w-4" />
-                            </button>
+                            {loading ? (
+                                <button className="btn btn-primary btn-circle">
+                                    <XMarkIcon className="h-4 w-4" />
+                                </button>
+                            ) : (
+                                <button
+                                    className="btn btn-secondary btn-circle"
+                                    onClick={cancelEditing}
+                                >
+                                    <XMarkIcon className="h-4 w-4" />
+                                </button>
+                            )}
                             {createOrDeleteAllowed &&
-                                teams.length !== MAX_TEAMS && (
+                                teams.length !== MAX_TEAMS &&
+                                (loading ? (
+                                    <button className="btn btn-primary btn-circle">
+                                        <PlusIcon className="h-4 w-4" />
+                                    </button>
+                                ) : (
                                     <button
                                         className="btn btn-secondary btn-circle"
                                         onClick={() => setAddOpen(true)}
                                     >
                                         <PlusIcon className="h-4 w-4" />
                                     </button>
-                                )}
-                            <button
-                                className="btn btn-secondary btn-circle"
-                                onClick={handleSave}
-                            >
-                                <CheckIcon className="h-4 w-4" />
-                            </button>
+                                ))}
+                            {loading ? (
+                                <button className="btn btn-primary btn-circle">
+                                    <CheckIcon className="h-4 w-4" />
+                                </button>
+                            ) : (
+                                <button
+                                    className="btn btn-secondary btn-circle"
+                                    onClick={handleSave}
+                                >
+                                    <CheckIcon className="h-4 w-4" />
+                                </button>
+                            )}
                         </>
                     ) : (
                         <button
@@ -613,6 +633,16 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                     </tr>
                                 );
                             })}
+                            {teams.length === 0 && (
+                                <tr>
+                                    <td
+                                        className="border px-2 py-4 text-center"
+                                        colSpan={6}
+                                    >
+                                        No teams yet.
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
