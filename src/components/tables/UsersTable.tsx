@@ -154,6 +154,7 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                                     <button
                                         className="btn btn-secondary btn-circle"
                                         onClick={handleSave}
+                                        disabled={!hasUnsavedChanges}
                                     >
                                         <CheckIcon className="h-4 w-4" />
                                     </button>

@@ -2,6 +2,7 @@ import React from "react";
 import { prisma } from "../../../prisma";
 import Image from "next/image";
 import getYear from "@/lib/getYear";
+import CloudOrNextImg from "@/components/CloudOrNextImg";
 
 const page = async () => {
     const derbyDaddy = await prisma.user.findFirst({
@@ -57,6 +58,15 @@ const page = async () => {
 
                 {/* Image side */}
                 <div className="flex justify-center items-center w-full md:w-1/2">
+                    <CloudOrNextImg
+                        alt="Derby Daddy Picture"
+                        cloud={
+                            derbyDaddy?.image?.includes("cloudinary") || false
+                        }
+                        src={derbyDaddy?.image ?? "none"}
+                        size={1000}
+                        className="object-cover rounded-lg md:h-[500px] md:w-[500px] border-1 border-info-content"
+                    />
                     <Image
                         alt="Derby Daddy Picture"
                         src={derbyDaddy?.image ?? "none"}

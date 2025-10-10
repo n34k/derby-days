@@ -26,6 +26,7 @@ export const ProductsTable = ({
     const [editedProducts, setEditedProducts] = useState<
         Record<string, Partial<Product>>
     >({});
+    const hasUnsavedChanges = Object.keys(editedProducts).length > 0;
     const [productsState, setProductsState] = useState<Product[]>(products);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const changeAllowed = !draftStatus || draftStatus === "NOT_CREATED";
@@ -139,6 +140,7 @@ export const ProductsTable = ({
                             <button
                                 className="btn btn-secondary btn-circle"
                                 onClick={handleSave}
+                                disabled={!hasUnsavedChanges}
                             >
                                 <CheckIcon className="h-4 w-4" />
                             </button>
