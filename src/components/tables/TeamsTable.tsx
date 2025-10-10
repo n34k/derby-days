@@ -32,9 +32,7 @@ interface TeamsTableProps {
 
 export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
     const router = useRouter();
-    console.log("DRAFT STATUS", draftStatus);
     const createOrDeleteAllowed = !draftStatus || draftStatus === "NOT_CREATED";
-    console.log("VERCEL_ENV", process.env.NEXT_PUBLIC_VERCEL_ENV);
     const [expanded, setExpanded] = useState(false); // NEW: collapsed by default
     const [editing, setEditing] = useState(false);
     const [editedTeams, setEditedTeams] = useState<Record<string, EditedTeam>>(
@@ -50,6 +48,8 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
 
     // Cloudinary upload in-flight state (per team)
     const [uploadingTeamId, setUploadingTeamId] = useState<string | null>(null);
+
+    const [loading, setLoading] = useState(false);
 
     const hasUnsavedChanges = Object.keys(editedTeams).length > 0; // to make sure no one leaves with unsaved changes
 
@@ -85,7 +85,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
 
     const handleSave = async () => {
         const updates = Object.entries(editedTeams);
-
+        setLoading(true);
         for (const [teamId, updatedFields] of updates) {
             try {
                 const response = await fetch(`/api/admin/team/${teamId}`, {
@@ -116,9 +116,10 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                 );
             } catch (error) {
                 console.error(`Error updating team ${teamId}:`, error);
+            } finally {
+                setLoading(false);
             }
         }
-
         setEditing(false);
         setEditedTeams({});
         router.refresh();
@@ -271,27 +272,44 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                 {expanded &&
                     (editing ? (
                         <>
-                            <button
-                                className="btn btn-secondary btn-circle"
-                                onClick={cancelEditing}
-                            >
-                                <XMarkIcon className="h-4 w-4" />
-                            </button>
+                            {loading ? (
+                                <button className="btn btn-primary btn-circle">
+                                    <XMarkIcon className="h-4 w-4" />
+                                </button>
+                            ) : (
+                                <button
+                                    className="btn btn-secondary btn-circle"
+                                    onClick={cancelEditing}
+                                >
+                                    <XMarkIcon className="h-4 w-4" />
+                                </button>
+                            )}
                             {createOrDeleteAllowed &&
-                                teams.length !== MAX_TEAMS && (
+                                teams.length !== MAX_TEAMS &&
+                                (loading ? (
+                                    <button className="btn btn-primary btn-circle">
+                                        <PlusIcon className="h-4 w-4" />
+                                    </button>
+                                ) : (
                                     <button
                                         className="btn btn-secondary btn-circle"
                                         onClick={() => setAddOpen(true)}
                                     >
                                         <PlusIcon className="h-4 w-4" />
                                     </button>
-                                )}
-                            <button
-                                className="btn btn-secondary btn-circle"
-                                onClick={handleSave}
-                            >
-                                <CheckIcon className="h-4 w-4" />
-                            </button>
+                                ))}
+                            {loading ? (
+                                <button className="btn btn-primary btn-circle">
+                                    <CheckIcon className="h-4 w-4" />
+                                </button>
+                            ) : (
+                                <button
+                                    className="btn btn-secondary btn-circle"
+                                    onClick={handleSave}
+                                >
+                                    <CheckIcon className="h-4 w-4" />
+                                </button>
+                            )}
                         </>
                     ) : (
                         <button
@@ -427,7 +445,8 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
 
                                         {/* Head Coach (dropdown) */}
                                         <td className="border px-2 py-1 text-center">
-                                            {editing ? (
+                                            {editing &&
+                                            draftStatus !== "COMPLETE" ? (
                                                 <div className="flex items-center gap-2">
                                                     <select
                                                         className="w-full max-w-[220px]"
@@ -486,7 +505,8 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
 
                                         {/* Derby Darling Name */}
                                         <td className="border px-2 py-1 text-center">
-                                            {editing ? (
+                                            {editing &&
+                                            draftStatus !== "COMPLETE" ? (
                                                 <input
                                                     className="w-full max-w-[220px]"
                                                     placeholder="Derby Darling name"
@@ -613,6 +633,16 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                     </tr>
                                 );
                             })}
+                            {teams.length === 0 && (
+                                <tr>
+                                    <td
+                                        className="border px-2 py-4 text-center"
+                                        colSpan={6}
+                                    >
+                                        No teams yet.
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

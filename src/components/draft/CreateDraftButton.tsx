@@ -1,33 +1,44 @@
 "use client";
+import getYear from "@/lib/getYear";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-const CreateDraftButton = () => {
+interface CreateDraftButtonProps {
+    ddAndCoach: boolean;
+}
+
+const CreateDraftButton = ({ ddAndCoach }: CreateDraftButtonProps) => {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-    const year = String(new Date().getFullYear());
+    const year = getYear();
 
     const onClick = async () => {
-        const confirmed = window.confirm(
-            `Are you sure you want to create the ${year} draft? Only do this if all uses are signed in and teams are set. This will stop you from creating or deleting teams, users, and prodcuts and stop people from creating a new account. You can undo this later.`
-        );
-        if (!confirmed) return;
+        if (ddAndCoach) {
+            const confirmed = window.confirm(
+                `Are you sure you want to create the ${year} draft? Only do this if all uses are signed in and teams are set. This will stop you from creating or deleting teams, users, and prodcuts and stop people from creating a new account. You can undo this later.`
+            );
+            if (!confirmed) return;
 
-        setIsLoading(true);
+            setIsLoading(true);
 
-        const res = await fetch(`/api/draft/${year}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ year }),
-        });
+            const res = await fetch(`/api/draft/${year}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ year }),
+            });
 
-        if (!res.ok) {
-            console.error("Failed to create draft", await res.json());
-            return;
+            if (!res.ok) {
+                console.error("Failed to create draft", await res.json());
+                return;
+            }
+
+            router.refresh();
+            setIsLoading(false);
+        } else {
+            alert(
+                "All teams must have a head coach and derby darling before creating a draft."
+            );
         }
-
-        router.refresh();
-        setIsLoading(false);
     };
 
     return (

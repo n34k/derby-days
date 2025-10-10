@@ -2,7 +2,8 @@ import { prisma } from "../../../../../prisma";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { headers } from "next/headers";
-import sendPurchaseEmail from "@/lib/emailService";
+import { sendPurchaseEmail } from "@/lib/emailService";
+import getYear from "@/lib/getYear";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: "2025-06-30.basil",
@@ -12,6 +13,7 @@ const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 export async function POST(req: Request) {
     console.log("IN POST REQ", req);
+    const year = getYear();
     const rawBody = await req.text();
     const headersList = await headers();
     const signature = headersList.get("stripe-signature");
@@ -119,8 +121,8 @@ export async function POST(req: Request) {
             }
 
             //Update total money raised
-            await prisma.stats.update({
-                where: { id: "global" },
+            await prisma.derbyStats.update({
+                where: { id: year },
                 data: { totalRaised: { increment: amount } },
             });
         } catch (err) {

@@ -1,4 +1,3 @@
-// AdminPanel.tsx
 import { UsersTable } from "@/components/tables/UsersTable";
 import { TeamsTable } from "@/components/tables/TeamsTable";
 import { prisma } from "../../../prisma";
@@ -7,20 +6,34 @@ import AdTable from "@/components/tables/AdTable";
 import ProductsTable from "../tables/ProductTable";
 import EmailsTable from "../tables/EmailsTable";
 import DonationTable from "../tables/DonationTable";
+import getYear from "@/lib/getYear";
 
 const AdminPanel = async () => {
-    const year = new Date().getFullYear().toString();
+    const year = getYear();
 
-    const users = await prisma.user.findMany({ include: { team: true } });
+    const users = await prisma.user.findMany({
+        orderBy: { globalRole: "asc" },
+        include: { team: true },
+    });
     const teams = await prisma.team.findMany({
         include: { headCoach: { select: { id: true, name: true } } },
+        orderBy: { name: "asc" },
     });
+
     const products = await prisma.product.findMany();
-    const ads = await prisma.adPurchase.findMany();
-    const emails = await prisma.brotherEmails.findMany();
+
+    const ads = await prisma.adPurchase.findMany({
+        orderBy: { createdAt: "desc" },
+    });
+
+    const emails = await prisma.brotherEmails.findMany({
+        orderBy: { email: "asc" },
+    });
+
     const donations = await prisma.donation.findMany({
         orderBy: { createdAt: "desc" },
     });
+
     const draft = await prisma.draft.findUnique({
         where: { id: year },
         select: { status: true },
@@ -39,8 +52,12 @@ const AdminPanel = async () => {
                     products={products}
                     draftStatus={draft?.status}
                 />
-                <AdTable ads={ads} />
-                <DonationTable donations={donations} />
+                <AdTable ads={ads} users={users} teams={teams} />
+                <DonationTable
+                    donations={donations}
+                    users={users}
+                    teams={teams}
+                />
                 <EmailsTable emails={emails} />
             </div>
         </div>

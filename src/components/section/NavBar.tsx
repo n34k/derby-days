@@ -13,7 +13,6 @@ import {
     ArrowLeftEndOnRectangleIcon,
     ScaleIcon,
 } from "@heroicons/react/24/solid";
-import SignIn from "@/components/SignIn";
 import { DraftStatus, User } from "@/generated/prisma";
 
 interface NavBarProps {
@@ -97,14 +96,12 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                                 Account
                             </Link>
                         ) : (
-                            <SignIn callbackUrl="/account">
-                                <button
-                                    className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
-                                    type="submit"
-                                >
-                                    Sign In
-                                </button>
-                            </SignIn>
+                            <Link
+                                href="/signin"
+                                className="p-3 text-base-content transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
+                            >
+                                Sign In
+                            </Link>
                         )}
                         {userRole === "ADMIN" && (
                             <Link
@@ -216,7 +213,7 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                             </p>
                         </Link>
                     ) : (
-                        <SignIn callbackUrl="/account">
+                        <Link href="/signin">
                             <button
                                 type="submit"
                                 className="flex flex-col items-center"
@@ -227,7 +224,7 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                                     Sign In
                                 </p>
                             </button>
-                        </SignIn>
+                        </Link>
                     )}
                     {userRole === "ADMIN" && (
                         <Link

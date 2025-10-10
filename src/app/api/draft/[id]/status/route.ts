@@ -4,11 +4,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../../prisma";
 import { idP } from "@/models/routeParamsTypes";
 import { pusher } from "@/lib/pusher/server";
+import getYear from "@/lib/getYear";
 
 const DRAFT_TIMER = 10 * 60 * 1000;
 
 export async function GET() {
-    const year = new Date().getFullYear().toString();
+    const year = getYear();
 
     const draft = await prisma.draft.findFirst({ where: { id: year } });
 

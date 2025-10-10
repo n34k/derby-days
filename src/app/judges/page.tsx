@@ -1,6 +1,7 @@
 import React from "react";
 import { prisma } from "../../../prisma";
 import Image from "next/image";
+import getYear from "@/lib/getYear";
 
 const page = async () => {
     const derbyDaddy = await prisma.user.findFirst({
@@ -11,7 +12,7 @@ const page = async () => {
         where: { globalRole: "JUDGE" },
     });
 
-    const year = new Date().getFullYear();
+    const year = getYear();
 
     return (
         <main className="flex flex-col items-center justify-evenly py-10 px-10 gap-10">

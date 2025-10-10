@@ -3,6 +3,7 @@ import { auth } from "../../../../../../auth";
 import { prisma } from "../../../../../../prisma";
 import { AdminUpdateTeamSchema } from "../schema";
 import { v2 as cloudinary } from "cloudinary";
+import { revalidatePath } from "next/cache";
 
 cloudinary.config({
     cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -103,7 +104,7 @@ export async function PATCH(req: NextRequest) {
                     if (oldCoachId) {
                         await tx.user.update({
                             where: { id: oldCoachId },
-                            data: { globalRole: "BROTHER" },
+                            data: { globalRole: "BROTHER", teamId: null },
                         });
                     }
 
@@ -158,6 +159,8 @@ export async function PATCH(req: NextRequest) {
             });
         });
 
+        revalidatePath("/admin");
+
         return NextResponse.json({ success: true, team: updated });
     } catch (err) {
         console.error("Update failed", err);
@@ -180,8 +183,18 @@ export async function DELETE(req: NextRequest) {
         return NextResponse.json({ error: "Missing team ID" }, { status: 400 });
     }
 
+    const teamToDelete = await prisma.team.findUnique({ where: { id } });
+
+    if (!teamToDelete) {
+        return NextResponse.json({ error: "Team not found" }, { status: 404 });
+    }
+
     try {
         // Transaction: first unset teamId for all users in this team, then delete the team
+        await cloudinary.uploader.destroy(
+            teamToDelete.derbyDarlingPublicId || ""
+        );
+
         await prisma.$transaction([
             prisma.user.updateMany({
                 where: { teamId: id },

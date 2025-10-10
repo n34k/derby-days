@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DraftStatus, GlobalRole, User } from "@/generated/prisma";
 import {
     PencilIcon,
@@ -8,8 +8,8 @@ import {
     TrashIcon,
     ChevronDownIcon,
 } from "@heroicons/react/24/outline";
-import Image from "next/image";
 import greekLetters from "@/lib/greekLetters";
+import CloudOrNextImg from "../CloudOrNextImg";
 
 interface UserTableProps {
     users: User[];
@@ -24,8 +24,12 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
     >({});
     const [usersState, setUsersState] = useState<User[]>(users);
     const deleteAllowed = !draftStatus || draftStatus === "NOT_CREATED";
-
     const hasUnsavedChanges = Object.keys(editedUsers).length > 0; // to make sure no one leaves with unsaved changes
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        setUsersState(users);
+    }, [users]);
 
     const toggleEditing = () => setEditing((e) => !e);
 
@@ -55,6 +59,7 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
     };
 
     const handleSave = async () => {
+        setLoading(true);
         const updates = Object.entries(editedUsers);
         for (const [userId, updatedFields] of updates) {
             try {
@@ -81,6 +86,8 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                 );
             } catch (error) {
                 console.error(`Error updating user ${userId}:`, error);
+            } finally {
+                setLoading(false);
             }
         }
         setEditing(false);
@@ -124,20 +131,34 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                     />
                 </button>
                 {expanded &&
+                    draftStatus !== "COMPLETE" &&
                     (editing ? (
                         <>
-                            <button
-                                className="btn btn-secondary btn-circle"
-                                onClick={cancelEditing}
-                            >
-                                <XMarkIcon className="h-4 w-4" />
-                            </button>
-                            <button
-                                className="btn btn-secondary btn-circle"
-                                onClick={handleSave}
-                            >
-                                <CheckIcon className="h-4 w-4" />
-                            </button>
+                            {loading ? (
+                                <>
+                                    <button className="btn btn-primary btn-circle">
+                                        <XMarkIcon className="h-4 w-4" />
+                                    </button>
+                                    <button className="btn btn-primary btn-circle">
+                                        <CheckIcon className="h-4 w-4" />
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <button
+                                        className="btn btn-secondary btn-circle"
+                                        onClick={cancelEditing}
+                                    >
+                                        <XMarkIcon className="h-4 w-4" />
+                                    </button>
+                                    <button
+                                        className="btn btn-secondary btn-circle"
+                                        onClick={handleSave}
+                                    >
+                                        <CheckIcon className="h-4 w-4" />
+                                    </button>
+                                </>
+                            )}
                         </>
                     ) : (
                         <button
@@ -216,13 +237,14 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                                             <td className="border px-2 py-1">
                                                 {/* Image renders ONLY when expanded because table is conditionally mounted */}
                                                 {user.image ? (
-                                                    <Image
+                                                    <CloudOrNextImg
                                                         src={user.image}
-                                                        alt="User"
-                                                        width={40}
-                                                        height={40}
-                                                        className="rounded-full"
-                                                        loading="lazy"
+                                                        cloud={user.image.includes(
+                                                            "cloudinary"
+                                                        )}
+                                                        alt={`${user.name} Picture`}
+                                                        size={500}
+                                                        className="rounded-full w-[40px] h-[40px] border-1 border-info-content"
                                                     />
                                                 ) : (
                                                     "—"
@@ -266,7 +288,9 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                                             <td className="border px-2 py-1 w-[120px] text-center">
                                                 {editing &&
                                                 user.globalRole !==
-                                                    GlobalRole.HEAD_COACH ? (
+                                                    GlobalRole.HEAD_COACH &&
+                                                user.globalRole !==
+                                                    GlobalRole.ADMIN ? (
                                                     <select
                                                         className="truncate"
                                                         value={
@@ -282,9 +306,6 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                                                             )
                                                         }
                                                     >
-                                                        <option value="ADMIN">
-                                                            ADMIN
-                                                        </option>
                                                         <option value="JUDGE">
                                                             JUDGE
                                                         </option>

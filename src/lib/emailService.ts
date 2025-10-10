@@ -9,7 +9,9 @@ interface PurchaseEmailParams {
     amount: number;
 }
 
-export default async function sendPurchaseEmail({
+const from = "Fresno State Derby Days <no-reply@derbydays.org>";
+
+export async function sendPurchaseEmail({
     to,
     name,
     category,
@@ -46,7 +48,26 @@ export default async function sendPurchaseEmail({
     `;
     }
     await resend.emails.send({
-        from: "Fresno State Derby Days <no-reply@derbydays.org>",
+        from,
+        to,
+        subject,
+        html,
+    });
+}
+
+interface SignUpEmailParams {
+    to: string;
+}
+
+export async function sendSignUpEmail({ to }: SignUpEmailParams) {
+    const subject = "Create your Derby Days account";
+    const html = `
+    <p>Hi, ${to}</p>
+    <p>You've been invited to create an account for Derby Days! Click the link below to get started:</p>
+    <p><a href="${process.env.DOMAIN}/signin">Create your account</a></p>`;
+
+    await resend.emails.send({
+        from,
         to,
         subject,
         html,

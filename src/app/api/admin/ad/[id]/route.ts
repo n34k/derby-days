@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../../prisma";
 import { v2 as cloudinary } from "cloudinary";
 import { AdUploadSchema } from "./schema";
+import { isAdmin } from "@/lib/isAdmin";
 
 cloudinary.config({
     cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -10,6 +11,9 @@ cloudinary.config({
 });
 
 export async function PATCH(req: NextRequest) {
+    if (!isAdmin())
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     let body;
     try {
         body = await req.json();

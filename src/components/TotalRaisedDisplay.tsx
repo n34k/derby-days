@@ -6,7 +6,7 @@ import Link from "next/link";
 import { formatUSD } from "@/lib/formatUSD";
 
 const TotalRaisedDisplay = async () => {
-    const stats = await prisma.stats.findFirst({
+    const stats = await prisma.derbyStats.findFirst({
         select: { totalRaised: true },
     });
 

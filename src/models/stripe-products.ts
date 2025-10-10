@@ -27,3 +27,10 @@ export const PRODUCTS = {
         priceId: "price_1RoaQTJV1UZkzYN0pNhGL0rV",
     },
 };
+
+export const adPriceMap = new Map<string, number>([
+    ["Business Card", 50],
+    ["Quarter Page", 100],
+    ["Half Page", 250],
+    ["Full Page", 500],
+]);

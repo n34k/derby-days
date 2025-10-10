@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import Image from "next/image";
+import CloudOrNextImg from "./CloudOrNextImg";
 
 type Coach = {
     name: string | null;
@@ -34,14 +34,14 @@ const CoachesCard: React.FC<CoachesCardProps> = ({ coaches }) => {
                                     className="flex flex-col items-center gap-2.5"
                                 >
                                     {coach.image ? (
-                                        <Image
+                                        <CloudOrNextImg
                                             src={coach.image}
-                                            alt={`${
-                                                coach.name ?? "Coach"
-                                            }'s profile photo`}
-                                            width={80}
-                                            height={80}
-                                            className="rounded-full [80px] h-[80px]"
+                                            cloud={coach.image.includes(
+                                                "cloudinary"
+                                            )}
+                                            alt={`${coach.name} Picture`}
+                                            size={500}
+                                            className="rounded-full w-[80px] h-[80px] border-1 border-info-content"
                                         />
                                     ) : (
                                         <p className="w-[80px] h-[80px] rounded-full bg-secondary/20 flex items-center justify-center text-sm">

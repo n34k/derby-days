@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../../auth";
 import { prisma } from "../../../../../../prisma";
 import { AdminUpdateUserSchema } from "../schema";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 function extractIdFromUrl(url: string): string | null {
     const segments = url.split("/");
@@ -69,7 +76,19 @@ export async function DELETE(req: NextRequest) {
         return NextResponse.json({ error: "Missing user ID" }, { status: 400 });
     }
 
+    const userToDelete = await prisma.user.findUnique({ where: { id } });
+
+    if (!userToDelete) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
     try {
+        await prisma.brotherEmails.delete({
+            where: { email: userToDelete.email },
+        });
+
+        await cloudinary.uploader.destroy(userToDelete.imagePublicId || "");
+
         await prisma.user.delete({
             where: { id },
         });

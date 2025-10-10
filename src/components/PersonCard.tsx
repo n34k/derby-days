@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
-import { CldImage } from "next-cloudinary";
 import {
     ClipboardDocumentCheckIcon,
     SparklesIcon,
 } from "@heroicons/react/24/solid";
+import CloudOrNextImg from "./CloudOrNextImg";
 
 type PersonCardProps = {
     role: string;
@@ -31,12 +31,12 @@ const PersonCard = ({ role, person }: PersonCardProps) => {
             {hasPerson ? (
                 <>
                     {person?.image && (
-                        <CldImage
+                        <CloudOrNextImg
                             src={person.image}
                             alt={`${person.name ?? "Profile"} photo`}
-                            width={350}
-                            height={350}
-                            className="border-1 border-secondary rounded-sm"
+                            cloud={person.image.includes("cloudinary")}
+                            size={1000}
+                            className="border-1 border-secondary rounded-sm w-[350px] h-[350px]"
                         />
                     )}
                     <h2 className="text-3xl text-info-content">

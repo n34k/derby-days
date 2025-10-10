@@ -29,7 +29,6 @@ export const ProductsTable = ({
     const [productsState, setProductsState] = useState<Product[]>(products);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const changeAllowed = !draftStatus || draftStatus === "NOT_CREATED";
-    console.log("CHANGE ALLOWED", changeAllowed);
 
     const toggleEditing = () => setEditing((e) => !e);
 
@@ -103,7 +102,7 @@ export const ProductsTable = ({
             />
 
             {/* Header / Controls */}
-            <div className="flex gap-2 items-center pb-5">
+            <div className="flex gap-2 items-center pb-2.5">
                 <h2 className="text-2xl font-semibold">Products</h2>
 
                 {/* Chevron toggle */}
