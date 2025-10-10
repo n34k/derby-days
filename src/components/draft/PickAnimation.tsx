@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import greekLetters from "@/lib/greekLetters";
-import { CldImage } from "next-cloudinary";
+import CloudOrNextImg from "../CloudOrNextImg";
 
 interface PickAnimationProps {
     draftId: string;
@@ -107,12 +107,12 @@ const PickAnimation = ({ draftId }: PickAnimationProps) => {
                         </div>
 
                         {pick.player.image && (
-                            <CldImage
+                            <CloudOrNextImg
                                 src={pick.player.image}
+                                cloud={pick.player.image.includes("cloudinary")}
                                 alt={pick.player.name ?? "Player"}
                                 className="h-56 w-56 mt-2 md:h-100 md:w-100 rounded-full object-cover border border-black"
-                                width={500}
-                                height={500}
+                                size={500}
                             />
                         )}
 

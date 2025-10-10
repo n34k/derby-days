@@ -8,8 +8,8 @@ import {
     TrashIcon,
     ChevronDownIcon,
 } from "@heroicons/react/24/outline";
-import Image from "next/image";
 import greekLetters from "@/lib/greekLetters";
+import CloudOrNextImg from "../CloudOrNextImg";
 
 interface UserTableProps {
     users: User[];
@@ -237,13 +237,14 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                                             <td className="border px-2 py-1">
                                                 {/* Image renders ONLY when expanded because table is conditionally mounted */}
                                                 {user.image ? (
-                                                    <Image
+                                                    <CloudOrNextImg
                                                         src={user.image}
-                                                        alt="User"
-                                                        width={40}
-                                                        height={40}
-                                                        className="rounded-full"
-                                                        loading="lazy"
+                                                        cloud={user.image.includes(
+                                                            "cloudinary"
+                                                        )}
+                                                        alt={`${user.name} Picture`}
+                                                        size={500}
+                                                        className="rounded-full w-[40px] h-[40px] border-1 border-info-content"
                                                     />
                                                 ) : (
                                                     "—"

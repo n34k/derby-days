@@ -1,11 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Image from "next/image";
-import {
-    CldUploadWidget,
-    CldImage,
-    CloudinaryUploadWidgetInfo,
-} from "next-cloudinary";
+import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import {
     PencilIcon,
     XMarkIcon,
@@ -15,10 +10,11 @@ import {
 
 import TextInput from "../TextInput";
 import { allowedFileUploads } from "@/models/allowedFileUploads";
+import CloudOrNextImg from "../CloudOrNextImg";
 
 interface Props {
     initialName: string | null | undefined;
-    initialImage: string | null | undefined;
+    initialImage: string;
     initialWalkoutSong: string;
     initialPublicId: string | null | undefined;
     userId: string;
@@ -34,7 +30,7 @@ const UpdateUserForm = ({
     const [name, setName] = useState<string | null | undefined>(initialName);
     const [walkoutSong, setWalkoutSong] = useState<string>(initialWalkoutSong);
     const [imagePublicId, setPublicId] = useState(initialPublicId);
-    const [image, setImage] = useState<string | null | undefined>(initialImage);
+    const [image, setImage] = useState<string>(initialImage);
 
     const [savedName, setSavedName] = useState<string | null | undefined>(
         initialName
@@ -132,23 +128,13 @@ const UpdateUserForm = ({
         >
             <div className="flex flex-col gap-1 items-center p-5">
                 <div className="rounded-full overflow-hidden shadow-lg self-center">
-                    {imagePublicId ? (
-                        <CldImage
-                            className="object-cover h-[225px] w-[225px]"
-                            src={image ?? ""}
-                            alt="Profile Picture"
-                            width={225}
-                            height={225}
-                        />
-                    ) : (
-                        <Image
-                            className="object-cover h-[225px] w-[225px]"
-                            src={image ?? ""}
-                            alt="Profile Picture"
-                            width={225}
-                            height={225}
-                        />
-                    )}
+                    <CloudOrNextImg
+                        className="object-cover h-[225px] w-[225px]"
+                        src={image}
+                        cloud={image.includes("cloudinary")}
+                        alt="Profile Picture"
+                        size={500}
+                    />
                 </div>
                 <CldUploadWidget
                     signatureEndpoint="/api/sign-cloudinary-params"
