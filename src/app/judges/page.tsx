@@ -1,6 +1,5 @@
 import React from "react";
 import { prisma } from "../../../prisma";
-import Image from "next/image";
 import getYear from "@/lib/getYear";
 import CloudOrNextImg from "@/components/CloudOrNextImg";
 
@@ -67,13 +66,6 @@ const page = async () => {
                         size={1000}
                         className="object-cover rounded-lg md:h-[500px] md:w-[500px] border-1 border-info-content"
                     />
-                    <Image
-                        alt="Derby Daddy Picture"
-                        src={derbyDaddy?.image ?? "none"}
-                        width={500}
-                        height={500}
-                        className="object-cover rounded-lg md:h-[500px] md:w-[500px] border-1 border-info-content"
-                    />
                 </div>
             </div>
             <div className="flex flex-col items-center justify-center gap-5 p-5 bg-primary rounded-lg border-1 border-secondary w-[85vw]">
@@ -89,13 +81,17 @@ const page = async () => {
                                     className="flex flex-col items-center gap-2.5"
                                 >
                                     {judge.image ? (
-                                        <Image
+                                        <CloudOrNextImg
+                                            cloud={
+                                                judge?.image?.includes(
+                                                    "cloudinary"
+                                                ) || false
+                                            }
                                             src={judge.image}
                                             alt={`${
                                                 judge.name ?? "judge"
                                             }'s profile photo`}
-                                            width={300}
-                                            height={300}
+                                            size={300}
                                             className="rounded-full h-[150px] w-[150px] md:w-[300px] md:h-[300px]"
                                         />
                                     ) : (

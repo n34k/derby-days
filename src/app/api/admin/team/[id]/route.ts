@@ -44,29 +44,6 @@ export async function PATCH(req: NextRequest) {
     console.log("DATA", data);
 
     try {
-        const existing = await prisma.team.findUnique({
-            //if existing derby darling public id is present, delete it
-            where: { id: teamId },
-            select: { derbyDarlingPublicId: true },
-        });
-
-        if (
-            existing?.derbyDarlingPublicId &&
-            existing.derbyDarlingPublicId !== data.derbyDarlingPublicId
-        ) {
-            try {
-                await cloudinary.uploader.destroy(
-                    existing.derbyDarlingPublicId,
-                    {
-                        invalidate: true,
-                    }
-                );
-            } catch (e) {
-                console.error("Cloudinary destroy failed:", e);
-                // don't fail the request; proceed with DB update
-            }
-        }
-
         const updated = await prisma.$transaction(async (tx) => {
             const existingTeam = await tx.team.findUnique({
                 where: { id: teamId },
