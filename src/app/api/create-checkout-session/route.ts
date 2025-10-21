@@ -1,4 +1,3 @@
-import { Product } from "@/generated/prisma";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "../../../../prisma";
 import { NextResponse } from "next/server";
@@ -34,7 +33,7 @@ export async function POST(request: Request) {
             // Build Stripe line items for each shirt + quantity
             const line_items = items.map((item) => {
                 const p = dbProducts.find(
-                    (x: Product) => x.productId === item.productId
+                    (x) => x.productId === item.productId
                 );
                 if (!p) throw new Error(`Product not found: ${item.productId}`);
 
