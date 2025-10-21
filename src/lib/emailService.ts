@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY!);
 interface PurchaseEmailParams {
     to: string;
     name: string;
-    category: "donation" | "ad" | "shirt";
+    category: string;
     amount: number;
 }
 
@@ -42,7 +42,7 @@ export async function sendPurchaseEmail({
         subject = "Your Derby Days shirt order is confirmed!";
         html = `
     <p>Hi ${name},</p>
-    <p>Thank you for purchasing a Derby Days shirt! Your order has been received, and we’ll notify you as soon as your shirt is ready for pickup or delivery.</p>
+    <p>Thank you for purchasing a Derby Days shirt! Your order has been received. Your shirt will be given to you Derby Darling when they come in.</p>
     <p>Your support helps us raise money for Valley Children’s Hospital — thank you for being part of this cause.</p>
     <p>Warmly,<br/>The Derby Days Team</p>
     `;

@@ -306,6 +306,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                 <button
                                     className="btn btn-secondary btn-circle"
                                     onClick={handleSave}
+                                    disabled={!hasUnsavedChanges}
                                 >
                                     <CheckIcon className="h-4 w-4" />
                                 </button>

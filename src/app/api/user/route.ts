@@ -47,19 +47,6 @@ export async function PATCH(req: NextRequest) {
     const { name, image, walkoutSong, imagePublicId } = result.data;
 
     try {
-        // Fetch current user to get their existing imagePublicId
-        const existingUser = await prisma.user.findUnique({
-            where: { id: session.user?.id },
-        });
-
-        if (
-            existingUser?.imagePublicId &&
-            existingUser.imagePublicId !== imagePublicId
-        ) {
-            // Delete the old image from Cloudinary
-            await cloudinary.uploader.destroy(existingUser.imagePublicId);
-        }
-
         // Update the user with the new data
         console.log("Setting image public Id", imagePublicId);
         await prisma.user.update({

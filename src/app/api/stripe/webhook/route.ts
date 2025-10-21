@@ -51,7 +51,8 @@ export async function POST(req: Request) {
         const size = session.metadata?.size;
         const referredById = session.metadata?.referredBy || null;
         const teamId = session.metadata?.teamId || null;
-        const category = session.metadata?.category || null;
+        const category = session.metadata.category;
+        const shirtItems = session.metadata?.items || null;
 
         try {
             if (category === "donation") {
@@ -84,14 +85,63 @@ export async function POST(req: Request) {
                     },
                 });
             } else if (category === "shirt") {
-                //TODO add shirt logic
-            } else {
-                return new NextResponse("Invalid product category", {
-                    status: 404,
-                });
-            }
+                // Parse items from metadata (sent as a JSON string)
+                let parsedItems: Array<{
+                    productId: string;
+                    quantity: number;
+                }> = [];
+                try {
+                    parsedItems = JSON.parse(shirtItems || "[]");
+                } catch {
+                    console.error("Failed to parse shirt items JSON");
+                }
 
-            //TODO, EMAIL THE PURCHASER AN EMAIL DEPENDING ON THE TRANSACTION TYPE
+                // Get all productIds to look up names
+                const productIds = parsedItems.map((i) => i.productId);
+
+                // Fetch product names from your DB
+                const dbProducts = await prisma.product.findMany({
+                    where: { productId: { in: productIds } },
+                    select: { productId: true, name: true },
+                });
+
+                // Build { name: quantity } object
+                const itemsJson: Record<string, number> = {};
+                for (const item of parsedItems) {
+                    const product = dbProducts.find(
+                        (p) => p.productId === item.productId
+                    );
+                    if (product && item.quantity > 0) {
+                        itemsJson[product.name] = item.quantity;
+                    }
+                }
+
+                // Optionally calculate total shirts
+                const totalQty = Object.values(itemsJson).reduce(
+                    (sum, q) => sum + q,
+                    0
+                );
+
+                await prisma.tshirtPurchase.create({
+                    data: {
+                        email,
+                        name,
+                        team: teamId ? { connect: { id: teamId } } : undefined,
+                        stripeId: session.id,
+                        sizeQty: itemsJson,
+                    },
+                });
+                if (teamId) {
+                    await prisma.team.update({
+                        where: {
+                            id: teamId,
+                        },
+                        data: { tshirtsSold: { increment: totalQty } },
+                    });
+                }
+                //TODO: raise the total money raised for derby and team by our profit from tshirt, or i could make
+                //amount in metadata be the profit from tshirt
+            }
 
             // Update logic for user and team money raised
             if (referredById) {
