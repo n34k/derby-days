@@ -15,7 +15,7 @@ const PurchasePage = () => {
         setLoading(true);
         const metadata = {
             ...formValues,
-            category: product.category, // Inject the product's category here
+            category: "ad", // Inject the product's category here
             size: product.name,
         };
 

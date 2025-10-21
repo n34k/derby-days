@@ -63,7 +63,7 @@ const page = async () => {
                             derbyDaddy?.image?.includes("cloudinary") || false
                         }
                         src={derbyDaddy?.image ?? "none"}
-                        size={1000}
+                        size={1500}
                         className="object-cover rounded-lg md:h-[500px] md:w-[500px] border-1 border-info-content"
                     />
                 </div>

@@ -27,6 +27,17 @@ const CreateProductModal: React.FC<Props> = ({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    const resetState = () => {
+        setFormData({
+            productId: "",
+            name: "",
+            price: 0,
+            category: "",
+            priceId: "",
+        });
+        setLoading(false);
+    };
+
     const handleChange = (field: keyof Product, value: ProductValue) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
@@ -57,6 +68,7 @@ const CreateProductModal: React.FC<Props> = ({
             const created = await res.json(); // only called if res.ok is true
             if (created) {
                 onProductCreated(formData);
+                resetState();
                 onClose();
             }
             // now update state with `created`
@@ -117,14 +129,17 @@ const CreateProductModal: React.FC<Props> = ({
 
                     <div className="form-control">
                         <label className="label">Category</label>
-                        <input
+                        <select
                             className="input input-bordered w-full"
                             value={formData.category}
                             onChange={(e) =>
                                 handleChange("category", e.target.value)
                             }
                             required
-                        />
+                        >
+                            <option value="ad">Ad</option>
+                            <option value="shirt">Shirt</option>
+                        </select>
                     </div>
 
                     <div className="form-control">
@@ -145,7 +160,10 @@ const CreateProductModal: React.FC<Props> = ({
                         <button
                             type="button"
                             className="btn"
-                            onClick={onClose}
+                            onClick={() => {
+                                onClose();
+                                resetState();
+                            }}
                             disabled={loading}
                         >
                             Cancel

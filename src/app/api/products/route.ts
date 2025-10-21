@@ -1,19 +1,22 @@
 import { prisma } from "../../../../prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
-    try {
-        const products = await prisma.product.findMany({
-            orderBy: { price: "asc" },
-        });
-        return NextResponse.json(products);
-    } catch (error) {
-        console.error("[GET /api/products]", error);
-        return NextResponse.json(
-            { error: "Failed to fetch products" },
-            { status: 500 }
-        );
-    }
+export async function GET(req: NextRequest) {
+    const { searchParams } = new URL(req.url);
+    const category = searchParams.get("category") ?? undefined;
+
+    const products = await prisma.product.findMany({
+        where: category ? { category } : undefined,
+        select: {
+            productId: true,
+            name: true,
+            price: true,
+            priceId: true,
+        },
+        orderBy: { name: "asc" },
+    });
+
+    return NextResponse.json(products);
 }
 
 export async function POST(req: NextRequest) {

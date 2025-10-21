@@ -182,8 +182,7 @@ model TshirtPurchase {
   teamId    String?
   email     String
   name      String?
-  quantity  Int      @default(1)
-  size      String
+  sizeQty   Json
   stripeId  String   @unique
   createdAt DateTime @default(now())
 
@@ -261,3 +260,4 @@ enum DerbyStatus {
   POST_DRAFT
   COMPLETE
 }
+
