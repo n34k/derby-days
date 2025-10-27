@@ -63,7 +63,9 @@ export async function sendSignUpEmail({ to }: SignUpEmailParams) {
     const subject = "Create your Derby Days account";
     const html = `
     <p>Hi, ${to}</p>
-    <p>You've been invited to create an account for Derby Days! Click the link below to get started:</p>
+    <p>You've been invited to create an account for Derby Days!</p>
+    <p>Make sure to sign in with the account you are receiving this email with.</p>
+    <p>Please make a Google Account with it as well if you haven't already Click the link below to get started:</p>
     <p><a href="${process.env.DOMAIN}/signin">Create your account</a></p>`;
 
     await resend.emails.send({

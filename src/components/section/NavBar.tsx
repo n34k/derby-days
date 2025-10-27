@@ -25,6 +25,13 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const userRole = userData?.globalRole || "NONE";
 
+    const canShowDraft =
+        draftStatus === "NOT_STARTED" ||
+        draftStatus === "COMPLETE" ||
+        userRole === "ADMIN";
+
+    console.log("STAUTS", draftStatus);
+
     return (
         <header className="sticky top-0 w-full z-50 bg-base border-b-1 border-info-content backdrop-blur-md shadow-lg">
             <div className="relative">
@@ -46,7 +53,7 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                         {teamsMade && (
                             <Link
                                 href="/teams"
-                                className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
+                                className="p-3 text-base-content font-semibold transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
                             >
                                 Teams
                             </Link>
@@ -54,51 +61,42 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                         {teamsMade && (
                             <Link
                                 href="/standings"
-                                className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
+                                className="p-3 text-base-content font-semibold transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
                             >
                                 Standings
                             </Link>
                         )}
                         <Link
                             href="/donors"
-                            className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
+                            className="p-3 text-base-content font-semibold transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
                         >
                             Donors
                         </Link>
-                        {draftStatus === "ONGOING" ? (
-                            userRole === "ADMIN" && (
-                                <Link
-                                    href="/draft"
-                                    className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
-                                >
-                                    Draft
-                                </Link>
-                            )
-                        ) : (
+                        {canShowDraft && (
                             <Link
                                 href="/draft"
-                                className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
+                                className="p-3 text-base-content font-semibold transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
                             >
                                 Draft
                             </Link>
                         )}
                         <Link
                             href="/judges"
-                            className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
+                            className="p-3 text-base-content font-semibold transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
                         >
                             Judges
                         </Link>
                         {userData ? (
                             <Link
                                 href="/account"
-                                className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
+                                className="p-3 text-base-content font-semibold transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
                             >
                                 Account
                             </Link>
                         ) : (
                             <Link
                                 href="/signin"
-                                className="p-3 text-base-content transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
+                                className="p-3 text-base-content font-semibold transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
                             >
                                 Sign In
                             </Link>
@@ -106,7 +104,7 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                         {userRole === "ADMIN" && (
                             <Link
                                 href="/admin"
-                                className="p-3 text-base-content  transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
+                                className="p-3 text-base-content font-semibold transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
                             >
                                 Admin
                             </Link>
@@ -170,20 +168,7 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                         <HeartIcon className="h-8 w-8 text-base-content" />
                         <p className="text-base-content font-bold">Donors</p>
                     </Link>
-                    {draftStatus === "ONGOING" ? (
-                        userRole === "ADMIN" && (
-                            <Link
-                                className="flex flex-col items-center"
-                                href="/draft"
-                                onClick={() => setMenuOpen(false)}
-                            >
-                                <ClipboardDocumentListIcon className="h-8 w-8 text-base-content" />
-                                <p className="text-base-content font-bold">
-                                    Draft
-                                </p>
-                            </Link>
-                        )
-                    ) : (
+                    {canShowDraft && (
                         <Link
                             className="flex flex-col items-center"
                             href="/draft"

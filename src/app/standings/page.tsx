@@ -34,8 +34,8 @@ const StandingsPage = async () => {
                 </div>
                 <div className="flex flex-col gap-30 items-center">
                     <LeaderBoard metric="points" data={points} />
-                    <LeaderBoard metric="tshirtsSold" data={tshirtsSold} />
                     <LeaderBoard metric="moneyRaised" data={moneyRaised} />
+                    <LeaderBoard metric="tshirtsSold" data={tshirtsSold} />
                 </div>
             </div>
         </main>
