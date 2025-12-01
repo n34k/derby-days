@@ -12,12 +12,15 @@ const AdPurchaseWidget = async () => {
     return (
         <div className="w-[320px] h-[450px] flex flex-col items-center justify-evenly bg-primary p-5 rounded-2xl border-1 border-secondary shadow-lg">
             <div className="flex flex-col text-center">
-                <h1 className="text-4xl font-bold text-secondary">
-                    Purchase Ad
-                </h1>
-                <p className="text-info-content text-sm md:text-base">
-                    CHOOSE SIZE
-                </p>
+                <h1 className="text-4xl font-bold text-secondary">Purchase Ad</h1>
+                <p className="text-info-content text-sm md:text-base">CHOOSE SIZE</p>
+                <a
+                    className="text-blue-600 underline"
+                    href="https://drive.google.com/file/d/1SAJET5ydK-mcOxIEEmGiK8j58JbLk_T9/view?usp=sharing"
+                    target="_blank"
+                >
+                    See Past Ad Book
+                </a>
             </div>
             <div className="flex flex-col gap-7.5">
                 {Object.values(ads).map((ad) => (
