@@ -2,6 +2,7 @@ import React from "react";
 import { prisma } from "../../../prisma";
 import getYear from "@/lib/getYear";
 import CloudOrNextImg from "@/components/CloudOrNextImg";
+import InfoCircle from "@/components/modals/InfoCircle";
 
 const page = async () => {
     const derbyDaddy = await prisma.user.findFirst({
@@ -19,39 +20,27 @@ const page = async () => {
             <div className="flex flex-col md:flex-row items-center justify-center gap-5 p-5 bg-primary rounded-lg border-1 border-secondary w-[85vw]">
                 {/* Text side */}
                 <div className="flex flex-col gap-3 w-full md:max-w-1/2 text-center">
-                    <h1 className="text-5xl text-base-content font-bold">
-                        {year} Derby Daddy
-                    </h1>
-                    <h2 className="text-3xl text-info-content">
-                        {derbyDaddy?.name}
-                    </h2>
+                    <h1 className="text-5xl text-base-content font-bold">{year} Derby Daddy</h1>
+                    <h2 className="text-3xl text-info-content">{derbyDaddy?.name}</h2>
                     <p className="text-base-content">
-                        Hello everyone, my name is Nick Davis, and I am proud to
-                        serve as the Sigma Chi Epsilon Eta 2026 Philanthropy
-                        Chair and the leader of this year’s Derby Days. Derby
-                        Days is one of the most fun, impactful, and rewarding
-                        events I have ever had the privilege of being a part of,
-                        and it has shown me the true power of community when
-                        people come together for a cause bigger than themselves.
+                        Hello everyone, my name is Nick Davis, and I am proud to serve as the Sigma Chi Epsilon Eta 2026
+                        Philanthropy Chair and the leader of this year’s Derby Days. Derby Days is one of the most fun,
+                        impactful, and rewarding events I have ever had the privilege of being a part of, and it has
+                        shown me the true power of community when people come together for a cause bigger than
+                        themselves.
                     </p>
                     <p>
-                        This year, I’ve poured countless hours of time and
-                        dedication not only into planning Derby Days but also
-                        into creating this website as a way to leave a lasting
-                        impact on our chapter’s philanthropy. My goal was to
-                        build a space that not only showcases the spirit of
-                        Derby Days but also makes it easier for everyone to get
-                        involved, support our mission, and see the difference we
-                        are making together.
+                        This year, I’ve poured countless hours of time and dedication not only into planning Derby Days
+                        but also into creating this website as a way to leave a lasting impact on our chapter’s
+                        philanthropy. My goal was to build a space that not only showcases the spirit of Derby Days but
+                        also makes it easier for everyone to get involved, support our mission, and see the difference
+                        we are making together.
                     </p>
                     <p>
-                        For me, Derby Days is more than just a tradition—it’s an
-                        opportunity to make a meaningful contribution to Valley
-                        Children’s Hospital and to ensure that our chapter’s
-                        efforts live on in a way that inspires future brothers,
-                        sisters, and supporters. I hope this site helps capture
-                        that passion and continues to grow the legacy of giving
-                        back through Sigma Chi.
+                        For me, Derby Days is more than just a tradition—it’s an opportunity to make a meaningful
+                        contribution to Valley Children’s Hospital and to ensure that our chapter’s efforts live on in a
+                        way that inspires future brothers, sisters, and supporters. I hope this site helps capture that
+                        passion and continues to grow the legacy of giving back through Sigma Chi.
                     </p>
                 </div>
 
@@ -59,9 +48,7 @@ const page = async () => {
                 <div className="flex justify-center items-center w-full md:w-1/2">
                     <CloudOrNextImg
                         alt="Derby Daddy Picture"
-                        cloud={
-                            derbyDaddy?.image?.includes("cloudinary") || false
-                        }
+                        cloud={derbyDaddy?.image?.includes("cloudinary") || false}
                         src={derbyDaddy?.image ?? "none"}
                         size={1500}
                         className="object-cover rounded-lg md:h-[500px] md:w-[500px] border-1 border-info-content"
@@ -69,9 +56,13 @@ const page = async () => {
                 </div>
             </div>
             <div className="flex flex-col items-center justify-center gap-5 p-5 bg-primary rounded-lg border-1 border-secondary w-[85vw]">
-                <h1 className="text-5xl text-base-content font-bold mb-5">
-                    Judges
-                </h1>
+                <div className="flex flex-row gap-1 mb-5">
+                    <h1 className="text-5xl text-base-content font-bold">Judges</h1>
+                    <InfoCircle>
+                        Judges are brothers of Sigma Chi that are seniors. These are the guys who decide which team wins
+                        each event.
+                    </InfoCircle>
+                </div>
                 {judges.length > 0 ? (
                     <div className="w-full flex-1 overflow-y-auto">
                         <ul className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -82,15 +73,9 @@ const page = async () => {
                                 >
                                     {judge.image ? (
                                         <CloudOrNextImg
-                                            cloud={
-                                                judge?.image?.includes(
-                                                    "cloudinary"
-                                                ) || false
-                                            }
+                                            cloud={judge?.image?.includes("cloudinary") || false}
                                             src={judge.image}
-                                            alt={`${
-                                                judge.name ?? "judge"
-                                            }'s profile photo`}
+                                            alt={`${judge.name ?? "judge"}'s profile photo`}
                                             size={300}
                                             className="rounded-full h-[150px] w-[150px] md:w-[300px] md:h-[300px]"
                                         />
@@ -99,9 +84,7 @@ const page = async () => {
                                             X
                                         </p>
                                     )}
-                                    <h3 className="text-lg text-info-content text-center">
-                                        {judge.name}
-                                    </h3>
+                                    <h3 className="text-lg text-info-content text-center">{judge.name}</h3>
                                 </li>
                             ))}
                         </ul>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import React from "react";
 
 import { prisma } from "../../prisma";
+import InfoCircle from "./modals/InfoCircle";
 
 const AdPurchaseWidget = async () => {
     const ads = await prisma.product.findMany({
@@ -12,7 +13,13 @@ const AdPurchaseWidget = async () => {
     return (
         <div className="w-[320px] h-[450px] flex flex-col items-center justify-evenly bg-primary p-5 rounded-2xl border-1 border-secondary shadow-lg">
             <div className="flex flex-col text-center">
-                <h1 className="text-4xl font-bold text-secondary">Purchase Ad</h1>
+                <div className="flex flex-row items-center gap-1">
+                    <h1 className="text-4xl font-bold text-secondary">Purchase Ad</h1>
+                    <InfoCircle>
+                        Ads will be displayed in the Derby Days Ad book and the Donors page. Email fresnoderbydays
+                        @gmail.com for questions.
+                    </InfoCircle>
+                </div>
                 <p className="text-info-content text-sm md:text-base">CHOOSE SIZE</p>
                 <a
                     className="text-blue-600 underline"
