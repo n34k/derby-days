@@ -1,9 +1,6 @@
 "use client";
 import React from "react";
-import {
-    ClipboardDocumentCheckIcon,
-    SparklesIcon,
-} from "@heroicons/react/24/solid";
+import { ClipboardDocumentCheckIcon, SparklesIcon } from "@heroicons/react/24/solid";
 import CloudOrNextImg from "./CloudOrNextImg";
 
 type PersonCardProps = {
@@ -18,7 +15,7 @@ const PersonCard = ({ role, person }: PersonCardProps) => {
     const hasPerson = !!person && (person.name || person.image);
 
     return (
-        <div className="flex items-center justify-center flex-col gap-6 h-[60vh] md:w-[30vw] bg-primary rounded-lg border-1 border-secondary p-5">
+        <div className="flex items-center justify-center flex-col gap-3 h-[50vh] md:h-[60vh] md:w-[30vw] bg-primary rounded-lg border-1 border-secondary p-5">
             <div className="flex gap-3">
                 <h2 className="text-4xl font-semibold">{role}</h2>
                 {role === "Derby Darling" ? (
@@ -36,12 +33,10 @@ const PersonCard = ({ role, person }: PersonCardProps) => {
                             alt={`${person.name ?? "Profile"} photo`}
                             cloud={person.image.includes("cloudinary")}
                             size={1000}
-                            className="border-1 border-secondary rounded-sm w-[350px] h-[350px]"
+                            className="border-1 border-secondary rounded-sm w-80 h-80"
                         />
                     )}
-                    <h2 className="text-3xl text-info-content">
-                        {person?.name}
-                    </h2>
+                    <h2 className="text-3xl text-info-content">{person?.name}</h2>
                 </>
             ) : (
                 <p className="text-2xl opacity-70">Coming soon</p>
