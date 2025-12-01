@@ -33,6 +33,9 @@ export const MetadataForm = ({
     const [referredBy, setReferredBy] = useState("");
     const [teamId, setTeamId] = useState("");
 
+    const donation = productName.includes("Donation");
+    console.log("DONATION", donation);
+
     useEffect(() => {
         fetch("/api/teams")
             .then((res) => res.json())
@@ -90,18 +93,6 @@ export const MetadataForm = ({
 
             <div className="form-control w-full max-w-md">
                 <label className="label">
-                    <span className="label-text">Email</span>
-                </label>
-                <input
-                    type="email"
-                    name="email"
-                    className="input input-bordered text-black bg-white rounded-sm w-full"
-                    required
-                />
-            </div>
-
-            <div className="form-control w-full max-w-md">
-                <label className="label">
                     <span className="label-text">Name</span>
                 </label>
                 <input
@@ -114,21 +105,35 @@ export const MetadataForm = ({
 
             <div className="form-control w-full max-w-md">
                 <label className="label">
-                    <span className="label-text">Note (optional)</span>
-                    <InformationCircleIcon
-                        onClick={() =>
-                            alert(
-                                "This will be displayed on the donors page along with your name"
-                            )
-                        }
-                        className="h-4 w-4 label-text hover:text-accent"
-                    />
+                    <span className="label-text">Email</span>
                 </label>
-                <textarea
-                    name="note"
-                    className="textarea textarea-bordered text-black bg-white rounded-sm w-full"
+                <input
+                    type="email"
+                    name="email"
+                    className="input input-bordered text-black bg-white rounded-sm w-full"
+                    required
                 />
             </div>
+
+            {donation && (
+                <div className="form-control w-full max-w-md">
+                    <label className="label">
+                        <span className="label-text">Note (optional)</span>
+                        <InformationCircleIcon
+                            onClick={() =>
+                                alert(
+                                    "If you choose to leave a note, you can see this on the donors page along with your name and dontation."
+                                )
+                            }
+                            className="h-4 w-4 label-text hover:text-accent"
+                        />
+                    </label>
+                    <textarea
+                        name="note"
+                        className="textarea textarea-bordered text-black bg-white rounded-sm w-full"
+                    />
+                </div>
+            )}
 
             <div className="form-control w-full max-w-md">
                 <label className="label flex items-center gap-1">

@@ -168,14 +168,16 @@ export async function DELETE(req: NextRequest) {
 
     try {
         // Transaction: first unset teamId for all users in this team, then delete the team
-        await cloudinary.uploader.destroy(
-            teamToDelete.derbyDarlingPublicId || ""
-        );
+        if (teamToDelete.derbyDarlingPublicId) {
+            await cloudinary.uploader.destroy(
+                teamToDelete.derbyDarlingPublicId || ""
+            );
+        }
 
         await prisma.$transaction([
             prisma.user.updateMany({
                 where: { teamId: id },
-                data: { teamId: null },
+                data: { teamId: null, globalRole: "BROTHER" },
             }),
             prisma.team.delete({
                 where: { id },

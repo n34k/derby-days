@@ -24,6 +24,7 @@ import AddTeamModal from "../modals/AddTeamModal";
 import { MAX_TEAMS } from "@/lib/predefinedTeams";
 import { DraftStatus } from "@/generated/prisma";
 import { allowedFileUploads } from "@/models/allowedFileUploads";
+import greekLetters from "@/lib/greekLetters";
 
 interface TeamsTableProps {
     teams: TeamWithCoach[];
@@ -327,7 +328,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                     <table className="md:table-fixed w-full border border-base-content text-sm">
                         <thead className="bg-base-200">
                             <tr>
-                                <th className="border px-2 py-1">Name</th>
+                                <th className="border px-2 py-1">Team</th>
                                 <th className="border px-2 py-1">T-Shirts</th>
                                 <th className="border px-2 py-1">
                                     Money Raised
@@ -360,24 +361,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                     <tr key={team.id}>
                                         {/* Team Name */}
                                         <td className="border px-2 py-1 text-center">
-                                            {editing ? (
-                                                <input
-                                                    className="w-full max-w-[150px] truncate text-center"
-                                                    value={
-                                                        isEdited?.name ??
-                                                        team.name
-                                                    }
-                                                    onChange={(e) =>
-                                                        handleChange(
-                                                            team.id,
-                                                            "name",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                />
-                                            ) : (
-                                                team.name
-                                            )}
+                                            {greekLetters(team.id)}
                                         </td>
 
                                         {/* T-Shirts */}

@@ -18,7 +18,7 @@ const SignIn: React.FC<SignInProps> = ({
 }) => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        await signIn(provider, { callbackUrl });
+        await signIn(provider, { callbackUrl }, { prompt: "select_account" });
     };
 
     return <form onSubmit={handleSubmit}>{children}</form>;
