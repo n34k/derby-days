@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { formatUSD } from "@/lib/formatUSD";
 import { Product } from "@/generated/prisma";
 import InfoCircle from "@/components/modals/InfoCircle";

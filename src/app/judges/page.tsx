@@ -37,7 +37,7 @@ const page = async () => {
                         we are making together.
                     </p>
                     <p>
-                        For me, Derby Days is more than just a tradition—it’s an opportunity to make a meaningful
+                        For me, Derby Days is more than just a tradition, it’s an opportunity to make a meaningful
                         contribution to Valley Children’s Hospital and to ensure that our chapter’s efforts live on in a
                         way that inspires future brothers, sisters, and supporters. I hope this site helps capture that
                         passion and continues to grow the legacy of giving back through Sigma Chi.

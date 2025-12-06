@@ -14,6 +14,16 @@ const InfoCircle = ({ children }: InfoCircleProps) => {
         setIsTouch("ontouchstart" in window || navigator.maxTouchPoints > 0);
     }, []);
 
+    useEffect(() => {
+        if (isTouch && open) {
+            const handleOutsideClick = () => setOpen(false);
+            document.addEventListener("click", handleOutsideClick);
+            return () => {
+                document.removeEventListener("click", handleOutsideClick);
+            };
+        }
+    }, [isTouch, open]);
+
     return (
         <div className="relative inline-flex items-center justify-center">
             {/* Circle */}

@@ -1,15 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { DraftStatus, GlobalRole, User } from "@/generated/prisma";
-import {
-    PencilIcon,
-    XMarkIcon,
-    CheckIcon,
-    TrashIcon,
-    ChevronDownIcon,
-} from "@heroicons/react/24/outline";
+import { PencilIcon, XMarkIcon, CheckIcon, TrashIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import greekLetters from "@/lib/greekLetters";
 import CloudOrNextImg from "../CloudOrNextImg";
+import Lightbox from "yet-another-react-lightbox";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
 
 interface UserTableProps {
     users: User[];
@@ -17,11 +13,10 @@ interface UserTableProps {
 }
 
 export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
+    const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
     const [expanded, setExpanded] = useState(false);
     const [editing, setEditing] = useState(false);
-    const [editedUsers, setEditedUsers] = useState<
-        Record<string, Partial<User>>
-    >({});
+    const [editedUsers, setEditedUsers] = useState<Record<string, Partial<User>>>({});
     const [usersState, setUsersState] = useState<User[]>(users);
     const deleteAllowed = !draftStatus || draftStatus === "NOT_CREATED";
     const hasUnsavedChanges = Object.keys(editedUsers).length > 0; // to make sure no one leaves with unsaved changes
@@ -35,20 +30,14 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
 
     const cancelEditing = () => {
         if (hasUnsavedChanges) {
-            const confirmed = window.confirm(
-                "You have unsaved changes, are you sure you want to cancel?"
-            );
+            const confirmed = window.confirm("You have unsaved changes, are you sure you want to cancel?");
             if (!confirmed) return;
         }
         setEditing(false);
         setEditedUsers({});
     };
 
-    const handleChange = (
-        userId: string,
-        field: keyof User,
-        value: User[keyof User]
-    ) => {
+    const handleChange = (userId: string, field: keyof User, value: User[keyof User]) => {
         setEditedUsers((prev) => ({
             ...prev,
             [userId]: {
@@ -70,20 +59,11 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                 });
                 if (!response.ok) {
                     const errorData = await response.json();
-                    console.error(
-                        `Failed to update user ${userId}:`,
-                        errorData
-                    );
+                    console.error(`Failed to update user ${userId}:`, errorData);
                     continue;
                 }
                 await response.json();
-                setUsersState((prev) =>
-                    prev.map((u) =>
-                        u.id === userId
-                            ? ({ ...u, ...updatedFields } as User)
-                            : u
-                    )
-                );
+                setUsersState((prev) => prev.map((u) => (u.id === userId ? ({ ...u, ...updatedFields } as User) : u)));
             } catch (error) {
                 console.error(`Error updating user ${userId}:`, error);
             } finally {
@@ -124,11 +104,7 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                     className="p-1 rounded hover:bg-base-200 transition"
                     title={expanded ? "Collapse" : "Expand"}
                 >
-                    <ChevronDownIcon
-                        className={`w-7 h-7 transition-transform ${
-                            expanded ? "rotate-180" : ""
-                        }`}
-                    />
+                    <ChevronDownIcon className={`w-7 h-7 transition-transform ${expanded ? "rotate-180" : ""}`} />
                 </button>
                 {expanded &&
                     draftStatus !== "COMPLETE" &&
@@ -178,29 +154,15 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                         <table className="md:table-fixed w-full border border-base-content text-sm">
                             <thead className="bg-base-200">
                                 <tr>
-                                    <th className="border px-2 py-1 w-[140px]">
-                                        Name
-                                    </th>
+                                    <th className="border px-2 py-1 w-[140px]">Name</th>
                                     <th className="border px-2 py-1">Email</th>
-                                    <th className="border px-2 py-1 w-[55px]">
-                                        Image
-                                    </th>
-                                    <th className="border px-2 py-1 w-[75px]">
-                                        Money Raised
-                                    </th>
-                                    <th className="border px-2 py-1">
-                                        Walkout Song
-                                    </th>
-                                    <th className="border px-2 py-1 w-[120px]">
-                                        Role
-                                    </th>
-                                    <th className="border px-2 py-1 w-[55px]">
-                                        Team
-                                    </th>
+                                    <th className="border px-2 py-1 w-[55px]">Image</th>
+                                    <th className="border px-2 py-1 w-[75px]">Money Raised</th>
+                                    <th className="border px-2 py-1">Walkout Song</th>
+                                    <th className="border px-2 py-1 w-[120px]">Role</th>
+                                    <th className="border px-2 py-1 w-[55px]">Team</th>
                                     {editing && deleteAllowed && (
-                                        <th className="border py-1 w-[55px] text-center">
-                                            Delete
-                                        </th>
+                                        <th className="border py-1 w-[55px] text-center">Delete</th>
                                     )}
                                 </tr>
                             </thead>
@@ -213,40 +175,28 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                                                 {editing ? (
                                                     <input
                                                         className="w-[120px] text-center"
-                                                        value={
-                                                            isUserEdited?.name ??
-                                                            user.name ??
-                                                            ""
-                                                        }
-                                                        onChange={(e) =>
-                                                            handleChange(
-                                                                user.id,
-                                                                "name",
-                                                                e.target.value
-                                                            )
-                                                        }
+                                                        value={isUserEdited?.name ?? user.name ?? ""}
+                                                        onChange={(e) => handleChange(user.id, "name", e.target.value)}
                                                     />
                                                 ) : (
                                                     user.name ?? "—"
                                                 )}
                                             </td>
 
-                                            <td className="border px-2 py-1 text-center">
-                                                {user.email}
-                                            </td>
+                                            <td className="border px-2 py-1 text-center">{user.email}</td>
 
                                             <td className="border px-2 py-1">
                                                 {/* Image renders ONLY when expanded because table is conditionally mounted */}
                                                 {user.image ? (
-                                                    <CloudOrNextImg
-                                                        src={user.image}
-                                                        cloud={user.image.includes(
-                                                            "cloudinary"
-                                                        )}
-                                                        alt={`${user.name} Picture`}
-                                                        size={500}
-                                                        className="rounded-full w-[40px] h-[40px] border-1 border-info-content"
-                                                    />
+                                                    <div onClick={() => setLightboxSrc(user.image!)}>
+                                                        <CloudOrNextImg
+                                                            src={user.image}
+                                                            cloud={user.image.includes("cloudinary")}
+                                                            alt={`${user.name} Picture`}
+                                                            size={500}
+                                                            className="rounded-full w-[40px] h-[40px] border-1 border-info-content"
+                                                        />
+                                                    </div>
                                                 ) : (
                                                     "—"
                                                 )}
@@ -254,10 +204,7 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
 
                                             <td className="border px-2">
                                                 <div className="flex items-center justify-center">
-                                                    $
-                                                    {user.moneyRaised.toFixed(
-                                                        2
-                                                    )}
+                                                    ${user.moneyRaised.toFixed(2)}
                                                 </div>
                                             </td>
 
@@ -266,18 +213,9 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                                                     {editing ? (
                                                         <input
                                                             className="w-full truncate"
-                                                            value={
-                                                                isUserEdited?.walkoutSong ??
-                                                                user.walkoutSong ??
-                                                                ""
-                                                            }
+                                                            value={isUserEdited?.walkoutSong ?? user.walkoutSong ?? ""}
                                                             onChange={(e) =>
-                                                                handleChange(
-                                                                    user.id,
-                                                                    "walkoutSong",
-                                                                    e.target
-                                                                        .value
-                                                                )
+                                                                handleChange(user.id, "walkoutSong", e.target.value)
                                                             }
                                                         />
                                                     ) : (
@@ -288,31 +226,21 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
 
                                             <td className="border px-2 py-1 w-[120px] text-center">
                                                 {editing &&
-                                                user.globalRole !==
-                                                    GlobalRole.HEAD_COACH &&
-                                                user.globalRole !==
-                                                    GlobalRole.ADMIN ? (
+                                                user.globalRole !== GlobalRole.HEAD_COACH &&
+                                                user.globalRole !== GlobalRole.ADMIN ? (
                                                     <select
                                                         className="truncate"
-                                                        value={
-                                                            isUserEdited?.globalRole ??
-                                                            user.globalRole
-                                                        }
+                                                        value={isUserEdited?.globalRole ?? user.globalRole}
                                                         onChange={(e) =>
                                                             handleChange(
                                                                 user.id,
                                                                 "globalRole",
-                                                                e.target
-                                                                    .value as User["globalRole"]
+                                                                e.target.value as User["globalRole"]
                                                             )
                                                         }
                                                     >
-                                                        <option value="JUDGE">
-                                                            JUDGE
-                                                        </option>
-                                                        <option value="BROTHER">
-                                                            BROTHER
-                                                        </option>
+                                                        <option value="JUDGE">JUDGE</option>
+                                                        <option value="BROTHER">BROTHER</option>
                                                     </select>
                                                 ) : (
                                                     user.globalRole
@@ -320,19 +248,13 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                                             </td>
 
                                             <td className="border px-2 py-1 text-center">
-                                                {user.teamId
-                                                    ? greekLetters(user.teamId)
-                                                    : "—"}
+                                                {user.teamId ? greekLetters(user.teamId) : "—"}
                                             </td>
 
                                             {editing && deleteAllowed && (
                                                 <td className="border px-2 py-1 w-[55px]">
                                                     <button
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                user.id
-                                                            )
-                                                        }
+                                                        onClick={() => handleDelete(user.id)}
                                                         className="btn btn-error btn-circle"
                                                     >
                                                         <TrashIcon className="h-4 w-4" />
@@ -347,6 +269,15 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                     </div>
                 </div>
             )}
+            <Lightbox
+                open={!!lightboxSrc}
+                close={() => setLightboxSrc(null)}
+                slides={lightboxSrc ? [{ src: lightboxSrc }] : []}
+                plugins={[Zoom]}
+                zoom={{ maxZoomPixelRatio: 2.5, scrollToZoom: true }}
+                carousel={{ finite: true }}
+                render={{ buttonPrev: () => null, buttonNext: () => null }}
+            />
         </div>
     );
 };
