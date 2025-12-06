@@ -2,6 +2,7 @@
 import React from "react";
 import { ClipboardDocumentCheckIcon, SparklesIcon } from "@heroicons/react/24/solid";
 import CloudOrNextImg from "./CloudOrNextImg";
+import InfoCircle from "./modals/InfoCircle";
 
 type PersonCardProps = {
     role: string;
@@ -19,7 +20,12 @@ const PersonCard = ({ role, person }: PersonCardProps) => {
             <div className="flex gap-3">
                 <h2 className="text-4xl font-semibold">{role}</h2>
                 {role === "Derby Darling" ? (
-                    <SparklesIcon className="h-10 w-10" />
+                    <div className="flex flex-row gap-1 items-center">
+                        <SparklesIcon className="h-10 w-10" />
+                        <InfoCircle>
+                            The Derby Darling is elected by her sorority to represent and lead them through Derby Days.
+                        </InfoCircle>
+                    </div>
                 ) : (
                     <ClipboardDocumentCheckIcon className="h-10 w-10" />
                 )}

@@ -1,35 +1,22 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { formatUSD } from "@/lib/formatUSD";
+import InfoCircle from "./modals/InfoCircle";
 
 type Team = { id: string; name: string };
 type Brother = { id: string; name: string; teamId: string };
 
 type MetadataFormProps = {
-    onSubmit: (metadata: {
-        email: string;
-        name: string;
-        note: string;
-        referredBy: string;
-        teamId: string;
-    }) => void;
+    onSubmit: (metadata: { email: string; name: string; note: string; referredBy: string; teamId: string }) => void;
     loading?: boolean;
     productName: string;
     productCost: number;
 };
 
-export const MetadataForm = ({
-    onSubmit,
-    loading,
-    productName,
-    productCost,
-}: MetadataFormProps) => {
+export const MetadataForm = ({ onSubmit, loading, productName, productCost }: MetadataFormProps) => {
     const [teams, setTeams] = useState<Team[]>([]);
     const [users, setUsers] = useState<Brother[]>([]);
-    const [referrerType, setReferrerType] = useState<"brother" | "team" | "">(
-        ""
-    );
+    const [referrerType, setReferrerType] = useState<"brother" | "team" | "">("");
     const [referredBy, setReferredBy] = useState("");
     const [teamId, setTeamId] = useState("");
 
@@ -48,12 +35,9 @@ export const MetadataForm = ({
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.currentTarget;
-        const email = (form.elements.namedItem("email") as HTMLInputElement)
-            .value;
-        const name = (form.elements.namedItem("name") as HTMLInputElement)
-            .value;
-        const note = (form.elements.namedItem("note") as HTMLInputElement)
-            .value;
+        const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+        const name = (form.elements.namedItem("name") as HTMLInputElement).value;
+        const note = (form.elements.namedItem("note") as HTMLInputElement).value;
 
         if (referrerType === "") {
             alert("Please select a referrer (Brother or Team).");
@@ -119,14 +103,9 @@ export const MetadataForm = ({
                 <div className="form-control w-full max-w-md">
                     <label className="label">
                         <span className="label-text">Note (optional)</span>
-                        <InformationCircleIcon
-                            onClick={() =>
-                                alert(
-                                    "If you choose to leave a note, you can see this on the donors page along with your name and dontation."
-                                )
-                            }
-                            className="h-4 w-4 label-text hover:text-accent"
-                        />
+                        <InfoCircle>
+                            Leave a message that will be seen with your donation on the donors page.
+                        </InfoCircle>
                     </label>
                     <textarea
                         name="note"
@@ -137,15 +116,12 @@ export const MetadataForm = ({
 
             <div className="form-control w-full max-w-md">
                 <label className="label flex items-center gap-1">
-                    <span className="label-text">Referred By</span>
-                    <InformationCircleIcon
-                        onClick={() =>
-                            alert(
-                                "Choose who brought you here. If you choose a team, this will add to their total. If you choose a brother, it will add to his total and his team's total"
-                            )
-                        }
-                        className="h-4 w-4 label-text hover:text-accent"
-                    />
+                    <span className="label-text">Donation Credit</span>
+                    <InfoCircle>
+                        Choose who brought you here. If you are a member of a sorority or you were brought here by one,
+                        choose the sorority under the team dropdown. If you are a brother of Sigma Chi or were brought
+                        here by one choose the brother dropdown.
+                    </InfoCircle>
                 </label>
                 <div className="flex flex-row gap-4">
                     <div className="flex-1">
@@ -161,11 +137,18 @@ export const MetadataForm = ({
                                 setTeamId("");
                             }}
                         >
-                            <option value="" disabled hidden>
+                            <option
+                                value=""
+                                disabled
+                                hidden
+                            >
                                 -
                             </option>
                             {users.map((bro) => (
-                                <option key={bro.id} value={bro.id}>
+                                <option
+                                    key={bro.id}
+                                    value={bro.id}
+                                >
                                     {bro.name}
                                 </option>
                             ))}
@@ -185,11 +168,18 @@ export const MetadataForm = ({
                                 setReferredBy("");
                             }}
                         >
-                            <option value="" disabled hidden>
+                            <option
+                                value=""
+                                disabled
+                                hidden
+                            >
                                 -
                             </option>
                             {teams.map((team) => (
-                                <option key={team.id} value={team.id}>
+                                <option
+                                    key={team.id}
+                                    value={team.id}
+                                >
                                     {team.name}
                                 </option>
                             ))}
@@ -203,11 +193,7 @@ export const MetadataForm = ({
                 className="btn btn-secondary w-full max-w-md"
                 disabled={loading}
             >
-                {loading ? (
-                    <span className="loading loading-spinner" />
-                ) : (
-                    "Continue to Payment"
-                )}
+                {loading ? <span className="loading loading-spinner" /> : "Continue to Payment"}
             </button>
         </form>
     );

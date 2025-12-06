@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { formatUSD } from "@/lib/formatUSD";
 import { Product } from "@/generated/prisma";
+import InfoCircle from "@/components/modals/InfoCircle";
 
 type Team = { id: string; name: string };
 
@@ -42,10 +42,7 @@ const ShirtsOrder = () => {
         }));
     }, [products, qty]);
 
-    const totalCents = useMemo(
-        () => lineSubtotals.reduce((s, li) => s + li.subtotalCents, 0),
-        [lineSubtotals]
-    );
+    const totalCents = useMemo(() => lineSubtotals.reduce((s, li) => s + li.subtotalCents, 0), [lineSubtotals]);
 
     const canCheckout = totalCents > 0 && !!teamId;
 
@@ -84,9 +81,7 @@ const ShirtsOrder = () => {
             const data = await res.json();
             if (!res.ok || !data.url) {
                 console.error("Checkout failed:", data);
-                alert(
-                    data.error ?? "Unable to start checkout. Please try again."
-                );
+                alert(data.error ?? "Unable to start checkout. Please try again.");
                 setLoading(false);
                 return;
             }
@@ -106,9 +101,7 @@ const ShirtsOrder = () => {
                 className="flex flex-col rounded-2xl border-1 border-secondary gap-4 items-center bg-primary p-8 md:w-[720px] mt-10 mx-5"
                 onSubmit={handleSubmit}
             >
-                <h1 className="text-3xl font-bold text-primary-content">
-                    T-Shirts Purchase
-                </h1>
+                <h1 className="text-3xl font-bold text-primary-content">T-Shirts Purchase</h1>
                 {/* Name */}
                 <div className="form-control w-full max-w-md">
                     <label className="label">
@@ -139,14 +132,7 @@ const ShirtsOrder = () => {
                 <div className="form-control w-full max-w-md">
                     <label className="label flex items-center gap-1">
                         <span className="label-text">Team for credit</span>
-                        <InformationCircleIcon
-                            onClick={() =>
-                                alert(
-                                    "Your purchase will add to this team's total in the standings."
-                                )
-                            }
-                            className="h-4 w-4 label-text hover:text-accent cursor-pointer"
-                        />
+                        <InfoCircle>Your purchase will add to this teams total in the standings.</InfoCircle>
                     </label>
                     <select
                         className="select select-bordered bg-white text-black rounded-sm w-full"
@@ -154,11 +140,18 @@ const ShirtsOrder = () => {
                         onChange={(e) => setTeamId(e.target.value)}
                         required
                     >
-                        <option value="" disabled hidden>
+                        <option
+                            value=""
+                            disabled
+                            hidden
+                        >
                             -
                         </option>
                         {teams.map((t) => (
-                            <option key={t.id} value={t.id}>
+                            <option
+                                key={t.id}
+                                value={t.id}
+                            >
                                 {t.name}
                             </option>
                         ))}
@@ -166,9 +159,7 @@ const ShirtsOrder = () => {
                 </div>
                 {/* Products grid */}
                 <div className="w-full max-w-md mt-2">
-                    <h2 className="text-xl font-semibold text-primary-content mb-2">
-                        Choose sizes
-                    </h2>
+                    <h2 className="text-xl font-semibold text-primary-content mb-2">Choose sizes</h2>
                     <ul className="flex flex-col gap-3">
                         {products.map((p) => (
                             <li
@@ -176,12 +167,8 @@ const ShirtsOrder = () => {
                                 className="flex items-center justify-between bg-base-100 rounded-lg px-3 py-2"
                             >
                                 <div className="flex flex-col">
-                                    <span className="text-primary-content font-medium">
-                                        {p.name}
-                                    </span>
-                                    <span className="text-sm opacity-80">
-                                        {formatUSD(p.price / 100)}
-                                    </span>
+                                    <span className="text-primary-content font-medium">{p.name}</span>
+                                    <span className="text-sm opacity-80">{formatUSD(p.price / 100)}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <input
@@ -190,13 +177,7 @@ const ShirtsOrder = () => {
                                         max={10}
                                         value={qty[p.productId] ?? 0}
                                         onChange={(e) => {
-                                            const val = Math.max(
-                                                0,
-                                                Math.min(
-                                                    10,
-                                                    Number(e.target.value || 0)
-                                                )
-                                            );
+                                            const val = Math.max(0, Math.min(10, Number(e.target.value || 0)));
                                             setQty((prev) => ({
                                                 ...prev,
                                                 [p.productId]: val,
@@ -212,12 +193,8 @@ const ShirtsOrder = () => {
                 {/* Totals */}
                 <div className="w-full max-w-md mt-4">
                     <div className="flex items-center justify-between">
-                        <span className="text-primary-content font-semibold">
-                            Total
-                        </span>
-                        <span className="text-primary-content font-bold">
-                            {formatUSD(totalCents / 100)}
-                        </span>
+                        <span className="text-primary-content font-semibold">Total</span>
+                        <span className="text-primary-content font-bold">{formatUSD(totalCents / 100)}</span>
                     </div>
                 </div>
                 <button
@@ -225,16 +202,10 @@ const ShirtsOrder = () => {
                     className="btn btn-secondary w-full max-w-md mt-2"
                     disabled={loading || !canCheckout}
                 >
-                    {loading ? (
-                        <span className="loading loading-spinner" />
-                    ) : (
-                        "Continue to Payment"
-                    )}
+                    {loading ? <span className="loading loading-spinner" /> : "Continue to Payment"}
                 </button>
                 {!canCheckout && (
-                    <p className="text-sm opacity-80 mt-1">
-                        Select a team and at least one shirt to continue.
-                    </p>
+                    <p className="text-sm opacity-80 mt-1">Select a team and at least one shirt to continue.</p>
                 )}
             </form>
         </main>
