@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import CloudOrNextImg from "./CloudOrNextImg";
+import InfoCircle from "./modals/InfoCircle";
 
 type Coach = {
     name: string | null;
@@ -19,12 +20,22 @@ const CoachesCard: React.FC<CoachesCardProps> = ({ coaches }) => {
             {isEmpty ? (
                 // empty state: center everything
                 <div className="flex-1 flex flex-col items-center justify-center gap-4">
-                    <h2 className="text-4xl font-semibold">Coaches</h2>
+                    <div className="flex items-center gap-1 flex-row">
+                        <h2 className="text-4xl font-semibold">Coaches</h2>
+                        <InfoCircle>
+                            Coaches are brothers of Sigma Chi who are not judges who will be drafted by a sorority to
+                            assist them through the events of Derby Days.
+                        </InfoCircle>
+                    </div>
                     <p className="text-2xl opacity-70">Coming soon</p>
                 </div>
             ) : (
                 <>
                     <h2 className="text-4xl font-semibold">Coaches</h2>
+                    <InfoCircle>
+                        These are brothers of Sigma Chi who are not judges who have been drafted by a sorority to assist
+                        them through the events of Derby Days.
+                    </InfoCircle>
                     {/* scrolling list */}
                     <div className="w-full flex-1 overflow-y-auto">
                         <ul className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -36,9 +47,7 @@ const CoachesCard: React.FC<CoachesCardProps> = ({ coaches }) => {
                                     {coach.image ? (
                                         <CloudOrNextImg
                                             src={coach.image}
-                                            cloud={coach.image.includes(
-                                                "cloudinary"
-                                            )}
+                                            cloud={coach.image.includes("cloudinary")}
                                             alt={`${coach.name} Picture`}
                                             size={500}
                                             className="rounded-full w-[80px] h-[80px] border-1 border-info-content"
@@ -48,9 +57,7 @@ const CoachesCard: React.FC<CoachesCardProps> = ({ coaches }) => {
                                             X
                                         </p>
                                     )}
-                                    <h3 className="text-lg text-info-content text-center">
-                                        {coach.name}
-                                    </h3>
+                                    <h3 className="text-lg text-info-content text-center">{coach.name}</h3>
                                 </li>
                             ))}
                         </ul>

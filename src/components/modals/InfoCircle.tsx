@@ -18,23 +18,22 @@ const InfoCircle = ({ children }: InfoCircleProps) => {
         <div className="relative inline-flex items-center justify-center">
             {/* Circle */}
             <div
-                className="border border-primary-content w-4 h-4 rounded-full cursor-pointer flex items-center justify-center peer"
+                className="border border-info-content w-4 h-4 rounded-full cursor-pointer flex items-center justify-center peer"
                 onClick={isTouch ? () => setOpen((prev) => !prev) : undefined}
             >
-                <p className="text-[10px] leading-none">i</p>
+                <p className="text-[10px] leading-none text-info-content">i</p>
             </div>
 
             {/* Tooltip */}
             <div
-                className={`
-                    absolute bottom-full mb-1 left-1/2 -translate-x-1/2
-                    text-xs z-50 bg-white text-black rounded-md p-1
-                    transition-opacity duration-200 pointer-events-none w-36
-                    ${isTouch && open ? "opacity-100" : "opacity-0"}
-                    ${!isTouch ? "peer-hover:opacity-100" : ""}
-                `}
+                className={`absolute bottom-full mb-1 left-1/2 -translate-x-1/2
+                        text-xs z-50 bg-white text-black border rounded-md p-1
+                        transition-opacity duration-200 pointer-events-none
+                        w-36 max-w-xs whitespace-normal break-words
+                        ${isTouch && open ? "opacity-100" : "opacity-0"}
+                        ${!isTouch ? "peer-hover:opacity-100" : ""}`}
             >
-                {children}
+                <p className="whitespace-normal break-words">{children}</p>
             </div>
         </div>
     );
