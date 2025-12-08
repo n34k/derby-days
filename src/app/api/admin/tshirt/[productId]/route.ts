@@ -2,15 +2,13 @@ import { NextResponse } from "next/server";
 import { prisma } from "../../../../../../prisma";
 import { isAdmin } from "@/lib/isAdmin";
 import { Tshirt } from "@/generated/prisma";
-interface Params {
-    params: { productId: string };
-}
+import { productIdP } from "@/models/routeParamsTypes";
 
-export async function GET(_req: Request, { params }: Params) {
+export async function GET(_req: Request, { params }: { params: productIdP }) {
     if (!isAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { productId } = params;
-
+    const p = await params;
+    const { productId } = p;
     try {
         const tshirt = await prisma.tshirt.findUnique({
             where: { productId },
@@ -28,10 +26,11 @@ export async function GET(_req: Request, { params }: Params) {
 }
 
 // PATCH /api/admin/tshirt/:productId  -> update tshirt (admin only)
-export async function PATCH(request: Request, { params }: Params) {
+export async function PATCH(request: Request, { params }: { params: productIdP }) {
     if (!isAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { productId } = params;
+    const p = await params;
+    const { productId } = p;
 
     try {
         const body = await request.json();
@@ -60,10 +59,11 @@ export async function PATCH(request: Request, { params }: Params) {
     }
 }
 
-export async function DELETE(_req: Request, { params }: Params) {
+export async function DELETE(_req: Request, { params }: { params: productIdP }) {
     if (!isAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { productId } = params;
+    const p = await params;
+    const { productId } = p;
 
     try {
         await prisma.tshirt.delete({

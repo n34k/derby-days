@@ -3,17 +3,15 @@ import { NextResponse } from "next/server";
 import { prisma } from "../../../../../../prisma";
 import { isAdmin } from "@/lib/isAdmin";
 import { Ad } from "@/generated/prisma";
+import { productIdP } from "@/models/routeParamsTypes";
 
-interface Params {
-    params: { productId: string };
-}
-
-export async function GET(_req: Request, { params }: Params) {
+export async function GET(_req: Request, { params }: { params: productIdP }) {
     if (!(await isAdmin())) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const { productId } = params;
+    const p = await params;
+    const { productId } = p;
 
     try {
         const ad = await prisma.ad.findUnique({
@@ -31,12 +29,13 @@ export async function GET(_req: Request, { params }: Params) {
     }
 }
 
-export async function PATCH(request: Request, { params }: Params) {
+export async function PATCH(request: Request, { params }: { params: productIdP }) {
     if (!(await isAdmin())) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const { productId } = params;
+    const p = await params;
+    const { productId } = p;
 
     try {
         const body = await request.json();
@@ -65,12 +64,13 @@ export async function PATCH(request: Request, { params }: Params) {
     }
 }
 
-export async function DELETE(_req: Request, { params }: Params) {
+export async function DELETE(_req: Request, { params }: { params: productIdP }) {
     if (!(await isAdmin())) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const { productId } = params;
+    const p = await params;
+    const { productId } = p;
 
     try {
         await prisma.ad.delete({
