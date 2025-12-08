@@ -1,62 +1,61 @@
 "use client";
-
 import React, { useState } from "react";
 import { TrashIcon, PlusIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
-import { DraftStatus, Ad } from "@/generated/prisma";
-import CreateAdModal from "../modals/CreateAdModal";
+import { DraftStatus, Tshirt } from "@/generated/prisma";
+import CreateTshirtModal from "../modals/AddTshirtModal";
 
-interface AdsTableProps {
-    ads: Ad[];
+interface TshirtsTableProps {
+    tshirts: Tshirt[];
     draftStatus: DraftStatus | undefined;
 }
 
-export const AdsTable = ({ ads, draftStatus }: AdsTableProps) => {
+export const TshirtsTable = ({ tshirts, draftStatus }: TshirtsTableProps) => {
     const [expanded, setExpanded] = useState(false);
-    const [adsState, setAdsState] = useState<Ad[]>(ads);
+    const [tshirtsState, setTshirtsState] = useState<Tshirt[]>(tshirts);
     const [showCreateModal, setShowCreateModal] = useState(false);
 
     const changeAllowed = !draftStatus || draftStatus === "NOT_CREATED";
 
     const handleDelete = async (productId: string) => {
-        if (!confirm("Are you sure you want to delete this ad?")) return;
+        if (!confirm("Are you sure you want to delete this t-shirt?")) return;
 
         try {
-            const res = await fetch(`/api/admin/ad/${productId}`, {
+            const res = await fetch(`/api/admin/tshirt/${productId}`, {
                 method: "DELETE",
             });
 
             if (!res.ok) return;
 
-            setAdsState((prev) => prev.filter((a) => a.productId !== productId));
+            setTshirtsState((prev) => prev.filter((t) => t.productId !== productId));
         } catch (err) {
-            console.error("Error deleting ad:", err);
+            console.error("Error deleting t-shirt:", err);
         }
     };
 
-    const handleAdCreated = (newAd: Ad) => {
-        setAdsState((prev) => [...prev, newAd]);
+    const handleTshirtCreated = (newTshirt: Tshirt) => {
+        setTshirtsState((prev) => [...prev, newTshirt]);
     };
 
     const colCount = changeAllowed ? 7 : 6;
 
     return (
         <div>
-            <CreateAdModal
+            <CreateTshirtModal
                 isOpen={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
-                onAdCreated={handleAdCreated}
+                onTshirtCreated={handleTshirtCreated}
             />
 
             {/* Header / Controls */}
             <div className="flex gap-2 items-center pb-2.5">
-                <h2 className="text-2xl font-semibold">Ads</h2>
+                <h2 className="text-2xl font-semibold">T-Shirts</h2>
 
                 {/* Chevron toggle */}
                 <button
                     type="button"
                     onClick={() => setExpanded((v) => !v)}
                     aria-expanded={expanded}
-                    aria-controls="ads-table-panel"
+                    aria-controls="tshirts-table-panel"
                     className="p-1 rounded hover:bg-base-200 transition"
                     title={expanded ? "Collapse" : "Expand"}
                 >
@@ -73,49 +72,61 @@ export const AdsTable = ({ ads, draftStatus }: AdsTableProps) => {
                 )}
             </div>
 
-            {/* Only render table when expanded */}
+            {/* Table */}
             {expanded && (
                 <div
-                    id="ads-table-panel"
+                    id="tshirts-table-panel"
                     className="overflow-x-auto w-full"
                 >
                     <table className="w-full border border-base-content text-sm">
                         <thead className="bg-base-200">
                             <tr>
                                 <th className="border px-2 py-1">Product ID</th>
+                                <th
+                                    className="border
+                                    px-2
+                                    py-1"
+                                >
+                                    {" "}
+                                    Name
+                                </th>
                                 <th className="border px-2 py-1">Size</th>
                                 <th className="border px-2 py-1">Price</th>
                                 <th className="border px-2 py-1">Stripe Price ID</th>
-                                <th className="border px-2 py-1">Size (inches)</th>
                                 <th className="border px-2 py-1">Quantity Available</th>
                                 {changeAllowed && <th className="border px-2 py-1">Delete</th>}
                             </tr>
                         </thead>
                         <tbody>
-                            {adsState.length > 0 ? (
-                                adsState
+                            {tshirtsState.length > 0 ? (
+                                tshirtsState
                                     .slice()
                                     .sort((a, b) => a.price - b.price)
-                                    .map((ad) => (
-                                        <tr key={ad.productId}>
+                                    .map((tshirt) => (
+                                        <tr
+                                            key={tshirt.productId}
+                                            className="hover:bg-base-200"
+                                        >
                                             {/* Product ID */}
-                                            <td className="border px-2 py-1">{ad.productId}</td>
+                                            <td className="border px-2 py-1">{tshirt.productId}</td>
 
-                                            {/* Size (enum) */}
-                                            <td className="border px-2 py-1">{ad.size.replace(/_/g, " ")}</td>
+                                            {/* Name */}
+                                            <td className="border px-2 py-1">{tshirt.name}</td>
 
-                                            {/* Price (in cents) */}
-                                            <td className="border px-2 py-1">{`$${(ad.price / 100).toFixed(2)}`}</td>
+                                            {/* Size */}
+                                            <td className="border px-2 py-1">{tshirt.size ?? "-"}</td>
+
+                                            {/* Price */}
+                                            <td className="border px-2 py-1">
+                                                {`$${(tshirt.price / 100).toFixed(2)}`}
+                                            </td>
 
                                             {/* Stripe Price ID */}
-                                            <td className="border px-2 py-1">{ad.priceId}</td>
+                                            <td className="border px-2 py-1">{tshirt.priceId}</td>
 
-                                            {/* Size in inches string, e.g. "8.5 x 11" */}
-                                            <td className="border px-2 py-1">{ad.sizeInches}</td>
-
-                                            {/* Quantity available (nullable) */}
+                                            {/* Quantity Available */}
                                             <td className="border px-2 py-1 text-center">
-                                                {ad.quantityAvailable ?? "-"}
+                                                {tshirt.quantityAvailable ?? "-"}
                                             </td>
 
                                             {/* Delete */}
@@ -123,7 +134,7 @@ export const AdsTable = ({ ads, draftStatus }: AdsTableProps) => {
                                                 <td className="text-center border px-2 py-1">
                                                     <button
                                                         className="btn btn-error btn-circle"
-                                                        onClick={() => handleDelete(ad.productId)}
+                                                        onClick={() => handleDelete(tshirt.productId)}
                                                     >
                                                         <TrashIcon className="h-4 w-4" />
                                                     </button>
@@ -137,7 +148,7 @@ export const AdsTable = ({ ads, draftStatus }: AdsTableProps) => {
                                         className="px-2 py-4 text-center"
                                         colSpan={colCount}
                                     >
-                                        No ads added yet.
+                                        No t-shirts added yet.
                                     </td>
                                 </tr>
                             )}
@@ -149,4 +160,4 @@ export const AdsTable = ({ ads, draftStatus }: AdsTableProps) => {
     );
 };
 
-export default AdsTable;
+export default TshirtsTable;

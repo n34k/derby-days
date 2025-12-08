@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { NewspaperIcon } from "@heroicons/react/24/solid";
-import { AdPurchase } from "@/generated/prisma";
+import { $Enums, AdPurchase } from "@/generated/prisma";
 import Lightbox from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import Link from "next/link";
@@ -14,10 +14,10 @@ type AdDisplayProps = {
 const AdDisplay = ({ ads }: AdDisplayProps) => {
     const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
-    const fullPageAds = ads.filter((ad) => ad.size === "Full Page");
-    const halfPageAds = ads.filter((ad) => ad.size === "Half Page");
-    const quarterPageAds = ads.filter((ad) => ad.size === "Quarter Page");
-    const businessCardAds = ads.filter((ad) => ad.size === "Business Card");
+    const fullPageAds = ads.filter((ad) => ad.size === $Enums.AdSize.FULL_PAGE);
+    const halfPageAds = ads.filter((ad) => ad.size === $Enums.AdSize.HALF_PAGE);
+    const quarterPageAds = ads.filter((ad) => ad.size === $Enums.AdSize.QUARTER_PAGE);
+    const businessCardAds = ads.filter((ad) => ad.size === $Enums.AdSize.BUSINESS_CARD);
 
     console.log(businessCardAds);
 
@@ -36,24 +36,26 @@ const AdDisplay = ({ ads }: AdDisplayProps) => {
             </div>
 
             {adSections.map(({ title, ads, size }) => (
-                <div key={title} className="text-center mb-10 w-full">
-                    <h2 className="text-info-content text-2xl md:text-4xl mb-4">
-                        {title}
-                    </h2>
+                <div
+                    key={title}
+                    className="text-center mb-10 w-full"
+                >
+                    <h2 className="text-info-content text-2xl md:text-4xl mb-4">{title}</h2>
 
                     {ads.length !== 0 ? (
                         <div className="flex flex-wrap justify-center gap-5">
                             {ads.map((ad) => (
-                                <div key={ad.id} className="max-w-full">
+                                <div
+                                    key={ad.id}
+                                    className="max-w-full"
+                                >
                                     <CldImage
                                         src={ad.adUrl!}
                                         alt="Ad"
                                         className="object-contain rounded mx-auto cursor-pointer"
                                         height={size}
                                         width={size}
-                                        onClick={() =>
-                                            setLightboxSrc(ad.adUrl!)
-                                        }
+                                        onClick={() => setLightboxSrc(ad.adUrl!)}
                                     />
                                 </div>
                             ))}

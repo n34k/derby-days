@@ -1,14 +1,14 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 import { formatUSD } from "@/lib/formatUSD";
-import { Product } from "@/generated/prisma";
+import { Tshirt } from "@/generated/prisma";
 import InfoCircle from "@/components/modals/InfoCircle";
 
 type Team = { id: string; name: string };
 
 const ShirtsOrder = () => {
     const [teams, setTeams] = useState<Team[]>([]);
-    const [products, setProducts] = useState<Product[]>([]);
+    const [shirts, setShirts] = useState<Tshirt[]>([]);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [qty, setQty] = useState<Record<string, number>>({});
@@ -21,10 +21,10 @@ const ShirtsOrder = () => {
             .then((r) => r.json())
             .then(setTeams);
         // fetch only shirts
-        fetch("/api/products?category=shirt")
+        fetch("/api/tshirt")
             .then((r) => r.json())
-            .then((items: Product[]) => {
-                setProducts(items);
+            .then((items: Tshirt[]) => {
+                setShirts(items);
                 // init quantities to 0
                 const init: Record<string, number> = {};
                 items.forEach((p) => (init[p.productId] = 0));
@@ -33,14 +33,14 @@ const ShirtsOrder = () => {
     }, []);
 
     const lineSubtotals = useMemo(() => {
-        return products.map((p) => ({
+        return shirts.map((p) => ({
             id: p.productId,
             name: p.name,
             priceCents: p.price,
             qty: qty[p.productId] ?? 0,
             subtotalCents: (qty[p.productId] ?? 0) * p.price,
         }));
-    }, [products, qty]);
+    }, [shirts, qty]);
 
     const totalCents = useMemo(() => lineSubtotals.reduce((s, li) => s + li.subtotalCents, 0), [lineSubtotals]);
 
@@ -157,11 +157,11 @@ const ShirtsOrder = () => {
                         ))}
                     </select>
                 </div>
-                {/* Products grid */}
+                {/* shirts grid */}
                 <div className="w-full max-w-md mt-2">
                     <h2 className="text-xl font-semibold text-primary-content mb-2">Choose sizes</h2>
                     <ul className="flex flex-col gap-3">
-                        {products.map((p) => (
+                        {shirts.map((p) => (
                             <li
                                 key={p.productId}
                                 className="flex items-center justify-between bg-base-100 rounded-lg px-3 py-2"

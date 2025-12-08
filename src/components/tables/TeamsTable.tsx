@@ -1,25 +1,10 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import {
-    PencilIcon,
-    XMarkIcon,
-    CheckIcon,
-    TrashIcon,
-    ChevronDownIcon,
-    PlusIcon,
-} from "@heroicons/react/24/outline";
-import {
-    CldImage,
-    CldUploadWidget,
-    CloudinaryUploadWidgetInfo,
-} from "next-cloudinary";
+import { PencilIcon, XMarkIcon, CheckIcon, TrashIcon, ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { CldImage, CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import { useRouter } from "next/navigation";
-import {
-    CoachOption,
-    EditedTeam,
-    TeamWithCoach,
-} from "@/models/teamTableTypes";
+import { CoachOption, EditedTeam, TeamWithCoach } from "@/models/teamTableTypes";
 import AddTeamModal from "../modals/AddTeamModal";
 import { MAX_TEAMS } from "@/lib/predefinedTeams";
 import { DraftStatus } from "@/generated/prisma";
@@ -36,9 +21,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
     const createOrDeleteAllowed = !draftStatus || draftStatus === "NOT_CREATED";
     const [expanded, setExpanded] = useState(false); // NEW: collapsed by default
     const [editing, setEditing] = useState(false);
-    const [editedTeams, setEditedTeams] = useState<Record<string, EditedTeam>>(
-        {}
-    );
+    const [editedTeams, setEditedTeams] = useState<Record<string, EditedTeam>>({});
     const [teamState, setTeamState] = useState<TeamWithCoach[]>(teams);
 
     // Head coach dropdown options
@@ -60,9 +43,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
 
     const cancelEditing = () => {
         if (hasUnsavedChanges) {
-            const confirmed = window.confirm(
-                "You have unsaved changes, are you sure you want to cancel?"
-            );
+            const confirmed = window.confirm("You have unsaved changes, are you sure you want to cancel?");
 
             if (!confirmed) return;
         }
@@ -70,11 +51,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
         setEditedTeams({});
     };
 
-    const handleChange = (
-        teamId: string,
-        field: keyof TeamWithCoach,
-        value: TeamWithCoach[keyof TeamWithCoach]
-    ) => {
+    const handleChange = (teamId: string, field: keyof TeamWithCoach, value: TeamWithCoach[keyof TeamWithCoach]) => {
         setEditedTeams((prev) => ({
             ...prev,
             [teamId]: {
@@ -97,23 +74,15 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
-                    console.error(
-                        `Failed to update team ${teamId}:`,
-                        errorData
-                    );
+                    console.error(`Failed to update team ${teamId}:`, errorData);
                     continue;
                 }
 
                 const resJson = await response.json();
-                const freshTeam = (resJson?.team ??
-                    null) as TeamWithCoach | null;
+                const freshTeam = (resJson?.team ?? null) as TeamWithCoach | null;
 
                 setTeamState((prev) =>
-                    prev.map((t) =>
-                        t.id === teamId
-                            ? freshTeam ?? { ...t, ...updatedFields }
-                            : t
-                    )
+                    prev.map((t) => (t.id === teamId ? freshTeam ?? { ...t, ...updatedFields } : t))
                 );
             } catch (error) {
                 console.error(`Error updating team ${teamId}:`, error);
@@ -146,10 +115,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
     };
 
     // --- Cloudinary: upload/replace Derby Darling image immediately ---
-    const handleUploadDerby = async (
-        info: CloudinaryUploadWidgetInfo,
-        teamId: string
-    ) => {
+    const handleUploadDerby = async (info: CloudinaryUploadWidgetInfo, teamId: string) => {
         try {
             setUploadingTeamId(teamId);
             const body = {
@@ -209,15 +175,11 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                 });
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
-                const brothers = Array.isArray(data?.brothers)
-                    ? data.brothers
-                    : [];
-                const options: CoachOption[] = brothers.map(
-                    (u: { id: string; name?: string | null }) => ({
-                        id: u.id,
-                        name: u.name ?? "Unnamed",
-                    })
-                );
+                const brothers = Array.isArray(data?.brothers) ? data.brothers : [];
+                const options: CoachOption[] = brothers.map((u: { id: string; name?: string | null }) => ({
+                    id: u.id,
+                    name: u.name ?? "Unnamed",
+                }));
                 options.sort((a, b) => a.name.localeCompare(b.name));
                 setCoachOptions(options);
             } catch (e) {
@@ -236,11 +198,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
 
     const uploadBtnLabel = useMemo(
         () => (id: string, hasImage: boolean) =>
-            uploadingTeamId === id
-                ? "Uploading..."
-                : hasImage
-                ? "Replace"
-                : "Upload",
+            uploadingTeamId === id ? "Uploading..." : hasImage ? "Replace" : "Upload",
         [uploadingTeamId]
     );
 
@@ -252,7 +210,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                 onClose={() => setAddOpen(false)}
                 existingIds={existingIds}
             />
-            <div className="flex flex-wrap items-center gap-2.5 pb-5">
+            <div className="flex flex-wrap items-center gap-2.5 pb-2.5">
                 <h2 className="text-2xl font-semibold">Teams</h2>
 
                 {/* Chevron toggle */}
@@ -264,11 +222,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                     className="p-1 rounded hover:bg-base-200 transition"
                     title={expanded ? "Collapse" : "Expand"}
                 >
-                    <ChevronDownIcon
-                        className={`w-7 h-7 transition-transform ${
-                            expanded ? "rotate-180" : ""
-                        }`}
-                    />
+                    <ChevronDownIcon className={`w-7 h-7 transition-transform ${expanded ? "rotate-180" : ""}`} />
                 </button>
                 {expanded &&
                     (editing ? (
@@ -330,21 +284,13 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                             <tr>
                                 <th className="border px-2 py-1">Team</th>
                                 <th className="border px-2 py-1">T-Shirts</th>
-                                <th className="border px-2 py-1">
-                                    Money Raised
-                                </th>
+                                <th className="border px-2 py-1">Money Raised</th>
                                 <th className="border px-2 py-1">Points</th>
                                 <th className="border px-2 py-1">Head Coach</th>
-                                <th className="border px-2 py-1">
-                                    Derby Darling Name
-                                </th>
-                                <th className="border px-2 py-1">
-                                    Derby Darling Image
-                                </th>
+                                <th className="border px-2 py-1">Derby Darling Name</th>
+                                <th className="border px-2 py-1">Derby Darling Image</th>
                                 {createOrDeleteAllowed && editing && (
-                                    <th className="border px-2 py-1 w-[60px]">
-                                        Delete
-                                    </th>
+                                    <th className="border px-2 py-1 w-[60px]">Delete</th>
                                 )}
                             </tr>
                         </thead>
@@ -352,17 +298,13 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                             {teamState.map((team) => {
                                 const isEdited = editedTeams[team.id];
                                 const currentImageUrl =
-                                    (isEdited?.derbyDarlingImageUrl ??
-                                        team.derbyDarlingImageUrl) ||
-                                    "";
+                                    (isEdited?.derbyDarlingImageUrl ?? team.derbyDarlingImageUrl) || "";
                                 const hasImage = Boolean(currentImageUrl);
 
                                 return (
                                     <tr key={team.id}>
                                         {/* Team Name */}
-                                        <td className="border px-2 py-1 text-center">
-                                            {greekLetters(team.id)}
-                                        </td>
+                                        <td className="border px-2 py-1 text-center">{greekLetters(team.id)}</td>
 
                                         {/* T-Shirts */}
                                         <td className="border px-2 py-1 text-center">
@@ -370,21 +312,12 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                                 <input
                                                     type="number"
                                                     className="w-full max-w-[80px] text-center"
-                                                    value={
-                                                        isEdited?.tshirtsSold ??
-                                                        team.tshirtsSold ??
-                                                        0
-                                                    }
+                                                    value={isEdited?.tshirtsSold ?? team.tshirtsSold ?? 0}
                                                     onChange={(e) =>
                                                         handleChange(
                                                             team.id,
                                                             "tshirtsSold",
-                                                            parseInt(
-                                                                e.target
-                                                                    .value ||
-                                                                    "0",
-                                                                10
-                                                            )
+                                                            parseInt(e.target.value || "0", 10)
                                                         )
                                                     }
                                                 />
@@ -395,8 +328,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
 
                                         {/* Money Raised */}
                                         <td className="border px-2 py-1 text-center">
-                                            $
-                                            {(team.moneyRaised ?? 0).toFixed(2)}
+                                            ${(team.moneyRaised ?? 0).toFixed(2)}
                                         </td>
 
                                         {/* Points */}
@@ -405,21 +337,12 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                                 <input
                                                     type="number"
                                                     className="w-full max-w-[80px] text-center"
-                                                    value={
-                                                        isEdited?.points ??
-                                                        team.points ??
-                                                        0
-                                                    }
+                                                    value={isEdited?.points ?? team.points ?? 0}
                                                     onChange={(e) =>
                                                         handleChange(
                                                             team.id,
                                                             "points",
-                                                            parseInt(
-                                                                e.target
-                                                                    .value ||
-                                                                    "0",
-                                                                10
-                                                            )
+                                                            parseInt(e.target.value || "0", 10)
                                                         )
                                                     }
                                                 />
@@ -430,58 +353,33 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
 
                                         {/* Head Coach (dropdown) */}
                                         <td className="border px-2 py-1 text-center">
-                                            {editing &&
-                                            draftStatus !== "COMPLETE" ? (
+                                            {editing && draftStatus !== "COMPLETE" ? (
                                                 <div className="flex items-center gap-2">
                                                     <select
                                                         className="w-full max-w-[220px]"
-                                                        value={
-                                                            isEdited?.headCoachId ??
-                                                            team.headCoachId ??
-                                                            ""
-                                                        }
+                                                        value={isEdited?.headCoachId ?? team.headCoachId ?? ""}
                                                         onChange={(e) => {
-                                                            const val =
-                                                                e.target.value; // "" means clear
-                                                            handleChange(
-                                                                team.id,
-                                                                "headCoachId",
-                                                                val
-                                                            );
+                                                            const val = e.target.value; // "" means clear
+                                                            handleChange(team.id, "headCoachId", val);
                                                         }}
-                                                        disabled={
-                                                            loadingCoaches ||
-                                                            Boolean(coachErr)
-                                                        }
+                                                        disabled={loadingCoaches || Boolean(coachErr)}
                                                     >
                                                         <option value="">
-                                                            {team.headCoach
-                                                                ? `${team.headCoach.name}`
-                                                                : "None"}
+                                                            {team.headCoach ? `${team.headCoach.name}` : "None"}
                                                         </option>
-                                                        {coachOptions.map(
-                                                            (opt) => (
-                                                                <option
-                                                                    key={opt.id}
-                                                                    value={
-                                                                        opt.id
-                                                                    }
-                                                                >
-                                                                    {opt.name}
-                                                                </option>
-                                                            )
-                                                        )}
+                                                        {coachOptions.map((opt) => (
+                                                            <option
+                                                                key={opt.id}
+                                                                value={opt.id}
+                                                            >
+                                                                {opt.name}
+                                                            </option>
+                                                        ))}
                                                     </select>
                                                     {loadingCoaches && (
-                                                        <span className="text-xs opacity-70">
-                                                            loading…
-                                                        </span>
+                                                        <span className="text-xs opacity-70">loading…</span>
                                                     )}
-                                                    {coachErr && (
-                                                        <span className="text-xs text-error">
-                                                            {coachErr}
-                                                        </span>
-                                                    )}
+                                                    {coachErr && <span className="text-xs text-error">{coachErr}</span>}
                                                 </div>
                                             ) : (
                                                 team.headCoach?.name ?? "—"
@@ -490,22 +388,13 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
 
                                         {/* Derby Darling Name */}
                                         <td className="border px-2 py-1 text-center">
-                                            {editing &&
-                                            draftStatus !== "COMPLETE" ? (
+                                            {editing && draftStatus !== "COMPLETE" ? (
                                                 <input
                                                     className="w-full max-w-[220px]"
                                                     placeholder="Derby Darling name"
-                                                    value={
-                                                        isEdited?.derbyDarlingName ??
-                                                        team.derbyDarlingName ??
-                                                        ""
-                                                    }
+                                                    value={isEdited?.derbyDarlingName ?? team.derbyDarlingName ?? ""}
                                                     onChange={(e) =>
-                                                        handleChange(
-                                                            team.id,
-                                                            "derbyDarlingName",
-                                                            e.target.value
-                                                        )
+                                                        handleChange(team.id, "derbyDarlingName", e.target.value)
                                                     }
                                                 />
                                             ) : (
@@ -523,20 +412,12 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                                     multiple: false,
                                                     folder: `${process.env.NEXT_PUBLIC_VERCEL_ENV}/darling/${team.id}`,
                                                     publicId: `${team.id}`,
-                                                    clientAllowedFormats:
-                                                        allowedFileUploads,
+                                                    clientAllowedFormats: allowedFileUploads,
                                                 }}
                                                 onSuccess={(results) => {
-                                                    const info =
-                                                        results.info as CloudinaryUploadWidgetInfo;
-                                                    console.log(
-                                                        "UPLOAD RESULTS",
-                                                        info
-                                                    );
-                                                    handleUploadDerby(
-                                                        info,
-                                                        team.id
-                                                    );
+                                                    const info = results.info as CloudinaryUploadWidgetInfo;
+                                                    console.log("UPLOAD RESULTS", info);
+                                                    handleUploadDerby(info, team.id);
                                                 }}
                                             >
                                                 {({ open }) => (
@@ -546,24 +427,16 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                                                 type="button"
                                                                 aria-label="Change Derby Darling photo"
                                                                 className={`rounded-full overflow-hidden h-15 w-15 focus:outline-none focus:ring focus:ring-offset-1 ${
-                                                                    uploadingTeamId ===
-                                                                    team.id
+                                                                    uploadingTeamId === team.id
                                                                         ? "opacity-50 pointer-events-none"
                                                                         : ""
                                                                 }`}
-                                                                onClick={() =>
-                                                                    open()
-                                                                }
-                                                                disabled={
-                                                                    uploadingTeamId ===
-                                                                    team.id
-                                                                }
+                                                                onClick={() => open()}
+                                                                disabled={uploadingTeamId === team.id}
                                                                 title="Click to replace photo"
                                                             >
                                                                 <CldImage
-                                                                    src={
-                                                                        currentImageUrl
-                                                                    }
+                                                                    src={currentImageUrl}
                                                                     alt="Derby Darling"
                                                                     width={40}
                                                                     height={40}
@@ -574,23 +447,14 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                                             <button
                                                                 type="button"
                                                                 className={`btn btn-secondary btn-xs w-15 h-15 md:btn-sm transition-all duration-300 ${
-                                                                    uploadingTeamId ===
-                                                                    team.id
+                                                                    uploadingTeamId === team.id
                                                                         ? "opacity-50 pointer-events-none"
                                                                         : ""
                                                                 }`}
-                                                                onClick={() =>
-                                                                    open()
-                                                                }
-                                                                disabled={
-                                                                    uploadingTeamId ===
-                                                                    team.id
-                                                                }
+                                                                onClick={() => open()}
+                                                                disabled={uploadingTeamId === team.id}
                                                             >
-                                                                {uploadBtnLabel(
-                                                                    team.id,
-                                                                    false
-                                                                )}
+                                                                {uploadBtnLabel(team.id, false)}
                                                             </button>
                                                         )}
                                                     </div>
@@ -603,11 +467,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                             <td className="border px-2 py-1">
                                                 <div className="flex justify-center">
                                                     <button
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                team.id
-                                                            )
-                                                        }
+                                                        onClick={() => handleDelete(team.id)}
                                                         className="btn btn-error btn-circle"
                                                     >
                                                         <TrashIcon className="h-4 w-4" />

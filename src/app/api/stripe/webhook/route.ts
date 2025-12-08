@@ -4,6 +4,7 @@ import Stripe from "stripe";
 import { headers } from "next/headers";
 import { sendPurchaseEmail } from "@/lib/emailService";
 import getYear from "@/lib/getYear";
+import { $Enums } from "@/generated/prisma";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: "2025-06-30.basil",
@@ -21,17 +22,13 @@ export async function POST(req: Request) {
     let event: Stripe.Event;
 
     try {
-        event = stripe.webhooks.constructEvent(
-            rawBody,
-            signature!,
-            endpointSecret
-        );
+        event = stripe.webhooks.constructEvent(rawBody, signature!, endpointSecret);
     } catch (err: unknown) {
         console.error(`Webhook error: ${err}`);
         return new NextResponse(`Webhook Error: ${err}`, { status: 400 });
     }
 
-    // Process only successful checkout sessions
+    //Process only successful checkout sessions
     if (event.type === "checkout.session.completed") {
         const session = event.data.object as Stripe.Checkout.Session;
 
@@ -48,7 +45,7 @@ export async function POST(req: Request) {
         const email = session.customer_email!;
         const name = session.metadata?.name;
         const note = session.metadata?.note || null;
-        const size = session.metadata?.size;
+        const size = session.metadata?.size as $Enums.AdSize;
         const referredById = session.metadata?.referredBy || null;
         const teamId = session.metadata?.teamId || null;
         const category = session.metadata.category;
@@ -64,24 +61,37 @@ export async function POST(req: Request) {
                         amount,
                         stripeId: session.id,
                         team: teamId ? { connect: { id: teamId } } : undefined,
-                        user: referredById
-                            ? { connect: { id: referredById } }
-                            : undefined,
+                        user: referredById ? { connect: { id: referredById } } : undefined,
                     },
                 });
             } else if (category === "ad") {
+                const ad = await prisma.ad.findFirst({
+                    where: { size },
+                });
+
+                if (ad) {
+                    //2. If quantityAvailable is not null AND > 0, decrement it
+                    if (ad.quantityAvailable !== null && ad.quantityAvailable > 0) {
+                        await prisma.ad.update({
+                            where: { productId: ad.productId },
+                            data: {
+                                quantityAvailable: {
+                                    decrement: 1,
+                                },
+                            },
+                        });
+                    }
+                }
+
                 await prisma.adPurchase.create({
                     data: {
                         email,
                         name,
                         size,
-                        note, //uncomment once we migrate db also SEND THE SIZE OF THE AD AND MAKE PATCH REQUEST SO ADMIN CAN MANUALLY ADD THE AD AFTER GETTING IT EMAILED
                         amount,
                         stripeId: session.id,
                         team: teamId ? { connect: { id: teamId } } : undefined,
-                        user: referredById
-                            ? { connect: { id: referredById } }
-                            : undefined,
+                        user: referredById ? { connect: { id: referredById } } : undefined,
                     },
                 });
             } else if (category === "shirt") {
@@ -100,7 +110,7 @@ export async function POST(req: Request) {
                 const productIds = parsedItems.map((i) => i.productId);
 
                 // Fetch product names from your DB
-                const dbProducts = await prisma.product.findMany({
+                const dbProducts = await prisma.tshirt.findMany({
                     where: { productId: { in: productIds } },
                     select: { productId: true, name: true },
                 });
@@ -108,19 +118,14 @@ export async function POST(req: Request) {
                 // Build { name: quantity } object
                 const itemsJson: Record<string, number> = {};
                 for (const item of parsedItems) {
-                    const product = dbProducts.find(
-                        (p) => p.productId === item.productId
-                    );
+                    const product = dbProducts.find((p) => p.productId === item.productId);
                     if (product && item.quantity > 0) {
                         itemsJson[product.name] = item.quantity;
                     }
                 }
 
                 // Optionally calculate total shirts
-                const totalQty = Object.values(itemsJson).reduce(
-                    (sum, q) => sum + q,
-                    0
-                );
+                const totalQty = Object.values(itemsJson).reduce((sum, q) => sum + q, 0);
 
                 await prisma.tshirtPurchase.create({
                     data: {

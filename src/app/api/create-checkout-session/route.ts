@@ -1,6 +1,7 @@
 import { stripe } from "@/lib/stripe";
 import { prisma } from "../../../../prisma";
 import { NextResponse } from "next/server";
+import adSizeDisplay from "@/lib/adSizeDisplay";
 
 export async function POST(request: Request) {
     try {
@@ -12,15 +13,12 @@ export async function POST(request: Request) {
 
         if (category === "shirt") {
             if (!Array.isArray(items) || items.length === 0) {
-                return NextResponse.json(
-                    { error: "No shirt items selected" },
-                    { status: 400 }
-                );
+                return NextResponse.json({ error: "No shirt items selected" }, { status: 400 });
             }
 
             // Fetch the shirt products from your DB
             const productIds = items.map((i) => i.productId);
-            const dbProducts = await prisma.product.findMany({
+            const dbProducts = await prisma.tshirt.findMany({
                 where: { productId: { in: productIds } },
                 select: {
                     productId: true,
@@ -32,9 +30,7 @@ export async function POST(request: Request) {
 
             // Build Stripe line items for each shirt + quantity
             const line_items = items.map((item) => {
-                const p = dbProducts.find(
-                    (x) => x.productId === item.productId
-                );
+                const p = dbProducts.find((x) => x.productId === item.productId);
                 if (!p) throw new Error(`Product not found: ${item.productId}`);
 
                 if (p.priceId) {
@@ -90,14 +86,10 @@ export async function POST(request: Request) {
                     price_data: {
                         currency: "usd",
                         product_data: {
-                            name: isDonation ? "Donation" : product.name,
-                            description: isDonation
-                                ? "Thank you for your support"
-                                : "Product Purchase",
+                            name: isDonation ? "Donation" : adSizeDisplay(product.size),
+                            description: isDonation ? "Thank you for your support" : "Product Purchase",
                         },
-                        unit_amount: isDonation
-                            ? Math.round(amount * 100)
-                            : product.price, // already in cents
+                        unit_amount: isDonation ? Math.round(amount * 100) : product.price, // already in cents
                     },
                     quantity: 1,
                 },
@@ -109,9 +101,6 @@ export async function POST(request: Request) {
         return NextResponse.json({ url: session.url });
     } catch (error) {
         console.error("Checkout session error:", error);
-        return NextResponse.json(
-            { error: "Internal Server Error" },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

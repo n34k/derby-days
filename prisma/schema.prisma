@@ -165,7 +165,8 @@ model AdPurchase {
   email      String
   name       String
   note       String?
-  size       String
+  size       AdSize
+  address     String?
   amount     Float
   stripeId   String?   @unique
   createdAt  DateTime @default(now())
@@ -227,12 +228,22 @@ model DraftPick {
   @@index([draftId, round])
 }
 
-model Product {
+model Tshirt {
   productId String @id
   name      String
   price     Int // in cents
   priceId   String @unique // Stripe Price ID
-  category  String // "ads" or "tshirt"
+  quantityAvailable Int?
+  size      TshirtSize? // "S", "M", "L", etc.
+}
+
+model Ad {
+  productId    String @id
+  size     AdSize
+  price        Int // in cents
+  priceId      String @unique // Stripe Price ID
+  sizeInches         String // in inches "8.5 x 11"
+  quantityAvailable Int?
 }
 
 enum GlobalRole {
@@ -261,3 +272,24 @@ enum DerbyStatus {
   COMPLETE
 }
 
+enum AdSize {
+  CENTER_FOLDOUT
+  OUTSIDE_BACK_COVER
+  INSIDE_BACK_COVER
+  INSIDE_FRONT_COVER
+  TWO_PAGES
+  FULL_PAGE
+  HALF_PAGE
+  QUARTER_PAGE
+  BUSINESS_CARD
+}
+
+enum TshirtSize {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
+  XXXL
+}
