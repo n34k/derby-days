@@ -2,11 +2,13 @@ import { UsersTable } from "@/components/tables/UsersTable";
 import { TeamsTable } from "@/components/tables/TeamsTable";
 import { prisma } from "../../../prisma";
 import { Cog6ToothIcon } from "@heroicons/react/24/solid";
-import AdTable from "@/components/tables/AdTable";
-import ProductsTable from "../tables/ProductTable";
 import EmailsTable from "../tables/EmailsTable";
 import DonationTable from "../tables/DonationTable";
 import getYear from "@/lib/getYear";
+import AdPurchaseTable from "../tables/AdPurchaseTable";
+import AdsTable from "../tables/AdTable";
+import TshirtsTable from "../tables/TShirtTable";
+import TshirtPurchasesTable from "../tables/TShirtPurchaseTable";
 
 const AdminPanel = async () => {
     const year = getYear();
@@ -20,9 +22,19 @@ const AdminPanel = async () => {
         orderBy: { name: "asc" },
     });
 
-    const products = await prisma.product.findMany();
+    const ads = await prisma.ad.findMany({
+        orderBy: { size: "desc" },
+    });
 
-    const ads = await prisma.adPurchase.findMany({
+    const tshirts = await prisma.tshirt.findMany({
+        orderBy: { name: "asc" },
+    });
+
+    const tshirtPurchases = await prisma.tshirtPurchase.findMany({
+        orderBy: { createdAt: "desc" },
+    });
+
+    const adPurchases = await prisma.adPurchase.findMany({
         orderBy: { createdAt: "desc" },
     });
 
@@ -46,17 +58,32 @@ const AdminPanel = async () => {
                 <Cog6ToothIcon className="w-10 h-10" />
             </div>
             <div className="flex flex-col justify-evenly h-full gap-5">
-                <UsersTable users={users} draftStatus={draft?.status} />
-                <TeamsTable teams={teams} draftStatus={draft?.status} />
-                <ProductsTable
-                    products={products}
+                <UsersTable
+                    users={users}
                     draftStatus={draft?.status}
                 />
-                <AdTable ads={ads} users={users} teams={teams} />
+                <TeamsTable
+                    teams={teams}
+                    draftStatus={draft?.status}
+                />
                 <DonationTable
                     donations={donations}
                     users={users}
                     teams={teams}
+                />
+                <AdPurchaseTable
+                    ads={adPurchases}
+                    users={users}
+                    teams={teams}
+                />
+                <AdsTable
+                    ads={ads}
+                    draftStatus={draft?.status}
+                />
+                <TshirtPurchasesTable purchases={tshirtPurchases} />
+                <TshirtsTable
+                    tshirts={tshirts}
+                    draftStatus={draft?.status}
                 />
                 <EmailsTable emails={emails} />
             </div>

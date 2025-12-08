@@ -55,7 +55,7 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
         setError(null);
 
         try {
-            const res = await fetch("/api/admin/ad", {
+            const res = await fetch("/api/admin/adPurchase", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -92,7 +92,10 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
             <div className="bg-primary p-6 rounded-xl shadow-xl w-full max-w-md">
                 <h2 className="text-xl font-bold mb-4">Add Ad</h2>
 
-                <form onSubmit={submit} className="space-y-3">
+                <form
+                    onSubmit={submit}
+                    className="space-y-3"
+                >
                     {/* Name */}
                     <input
                         type="text"
@@ -131,9 +134,7 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
                     <div className="grid grid-cols-2 gap-2">
                         <button
                             type="button"
-                            className={`btn ${
-                                referredByType === "TEAM" ? "btn-secondary" : ""
-                            }`}
+                            className={`btn ${referredByType === "TEAM" ? "btn-secondary" : ""}`}
                             onClick={() => {
                                 setReferredByType("TEAM");
                                 setReferredById("");
@@ -144,9 +145,7 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
                         </button>
                         <button
                             type="button"
-                            className={`btn ${
-                                referredByType === "USER" ? "btn-secondary" : ""
-                            }`}
+                            className={`btn ${referredByType === "USER" ? "btn-secondary" : ""}`}
                             onClick={() => {
                                 setReferredByType("USER");
                                 setReferredById("");
@@ -167,7 +166,10 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
                         >
                             <option value="">Select a team…</option>
                             {teams.map((t) => (
-                                <option key={t.id} value={t.id}>
+                                <option
+                                    key={t.id}
+                                    value={t.id}
+                                >
                                     {t.name}
                                 </option>
                             ))}
@@ -183,7 +185,10 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
                         >
                             <option value="">Select a user…</option>
                             {users.map((u) => (
-                                <option key={u.id} value={u.id}>
+                                <option
+                                    key={u.id}
+                                    value={u.id}
+                                >
                                     {u.name || u.email}
                                 </option>
                             ))}
@@ -211,11 +216,7 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
                             className="btn btn-secondary"
                             disabled={!canSubmit || submitting}
                         >
-                            {submitting ? (
-                                "Adding…"
-                            ) : (
-                                <CheckIcon className="h-4 w-4" />
-                            )}
+                            {submitting ? "Adding…" : <CheckIcon className="h-4 w-4" />}
                         </button>
                     </div>
                 </form>

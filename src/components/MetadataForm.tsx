@@ -37,7 +37,8 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
         const form = e.currentTarget;
         const email = (form.elements.namedItem("email") as HTMLInputElement).value;
         const name = (form.elements.namedItem("name") as HTMLInputElement).value;
-        const note = (form.elements.namedItem("note") as HTMLInputElement).value;
+        let note = "";
+        if (donation) note = (form.elements.namedItem("note") as HTMLInputElement).value;
 
         if (referrerType === "") {
             alert("Please select a referrer (Brother or Team).");

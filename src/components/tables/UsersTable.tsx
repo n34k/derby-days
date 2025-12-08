@@ -93,7 +93,7 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
 
     return (
         <div>
-            <div className="flex flex-wrap gap-2.5 items-center pb-5">
+            <div className="flex flex-wrap gap-2.5 items-center pb-2.5">
                 <h2 className="text-2xl font-semibold">Users</h2>
                 {/* Chevron toggle */}
                 <button
@@ -194,7 +194,7 @@ export const UsersTable = ({ users, draftStatus }: UserTableProps) => {
                                                             cloud={user.image.includes("cloudinary")}
                                                             alt={`${user.name} Picture`}
                                                             size={500}
-                                                            className="rounded-full w-[40px] h-[40px] border-1 border-info-content"
+                                                            className="rounded-full w-[40px] h-[40px] border-1 border-info-content cursor-pointer"
                                                         />
                                                     </div>
                                                 ) : (

@@ -1,15 +1,11 @@
 import Link from "next/link";
 import React from "react";
-
-import { prisma } from "../../prisma";
 import InfoCircle from "./modals/InfoCircle";
+import Image from "next/image";
+import { prisma } from "../../prisma";
 
 const AdPurchaseWidget = async () => {
-    const ads = await prisma.product.findMany({
-        where: { category: "ad" },
-        orderBy: { price: "desc" },
-    });
-
+    const ads = await prisma.ad.findMany();
     return (
         <div className="w-[320px] h-[450px] flex flex-col items-center justify-evenly bg-primary p-5 rounded-2xl border-1 border-secondary shadow-lg">
             <div className="flex flex-col text-center">
@@ -29,16 +25,25 @@ const AdPurchaseWidget = async () => {
                     See Past Ad Book
                 </a>
             </div>
+            <div className="relative w-[240px] h-[240px] mx-auto">
+                <Image
+                    src="/images/adbook.png"
+                    alt="Derby Days Ad Book"
+                    fill
+                    className="border-1 border-primary rounded-md"
+                />
+            </div>
             <div className="flex flex-col gap-7.5">
-                {Object.values(ads).map((ad) => (
+                {ads.length > 0 ? (
                     <Link
-                        key={ad.priceId}
-                        href={`/checkout/${ad.priceId}`}
+                        href={"/ads"}
                         className="btn btn-secondary btn-lg p-3 transition duration-300 hover:text-secondary hover:scale-110"
                     >
-                        {ad.name}: ${ad.price / 100}
+                        See Sizes
                     </Link>
-                ))}
+                ) : (
+                    <div className="btn btn-info btn-lg p-3">Coming Soon</div>
+                )}
             </div>
         </div>
     );

@@ -1,27 +1,36 @@
 "use client";
 
 import React, { useState } from "react";
-import { Product } from "@/generated/prisma";
+import { Ad } from "@/generated/prisma";
 
 type Props = {
     isOpen: boolean;
     onClose: () => void;
-    onProductCreated: (product: Product) => void;
+    onAdCreated: (ad: Ad) => void;
 };
 
-type ProductValue = Product[keyof Product];
+type AdValue = Ad[keyof Ad];
 
-const CreateProductModal: React.FC<Props> = ({
-    isOpen,
-    onClose,
-    onProductCreated,
-}) => {
-    const [formData, setFormData] = useState<Product>({
+const adSizes: Ad["size"][] = [
+    "CENTER_FOLDOUT",
+    "OUTSIDE_BACK_COVER",
+    "INSIDE_BACK_COVER",
+    "INSIDE_FRONT_COVER",
+    "TWO_PAGES",
+    "FULL_PAGE",
+    "HALF_PAGE",
+    "QUARTER_PAGE",
+    "BUSINESS_CARD",
+];
+
+const CreateAdModal: React.FC<Props> = ({ isOpen, onClose, onAdCreated }) => {
+    const [formData, setFormData] = useState<Ad>({
         productId: "",
-        name: "",
+        size: "FULL_PAGE" as Ad["size"],
         price: 0,
-        category: "",
         priceId: "",
+        sizeInches: "",
+        quantityAvailable: null,
     });
 
     const [loading, setLoading] = useState(false);
@@ -30,15 +39,17 @@ const CreateProductModal: React.FC<Props> = ({
     const resetState = () => {
         setFormData({
             productId: "",
-            name: "",
+            size: "FULL_PAGE" as Ad["size"],
             price: 0,
-            category: "",
             priceId: "",
+            sizeInches: "",
+            quantityAvailable: null,
         });
         setLoading(false);
+        setError(null);
     };
 
-    const handleChange = (field: keyof Product, value: ProductValue) => {
+    const handleChange = (field: keyof Ad, value: AdValue) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
@@ -48,14 +59,14 @@ const CreateProductModal: React.FC<Props> = ({
         setError(null);
 
         try {
-            const res = await fetch("/api/products", {
+            const res = await fetch("/api/admin/ad", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
 
             if (!res.ok) {
-                let message = "Failed to create product.";
+                let message = "Failed to create ad.";
                 try {
                     const data = await res.json();
                     message = data?.error || message;
@@ -65,21 +76,23 @@ const CreateProductModal: React.FC<Props> = ({
                 throw new Error(message);
             }
 
-            const created = await res.json(); // only called if res.ok is true
+            const created = (await res.json()) as Ad;
+
             if (created) {
-                onProductCreated(formData);
+                onAdCreated(created);
                 resetState();
                 onClose();
             }
-            // now update state with `created`
         } catch (err) {
-            console.error("Error creating product:", err);
+            console.error("Error creating ad:", err);
 
             if (err instanceof Error) {
                 setError(err.message);
             } else {
                 setError("An unknown error occurred.");
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -88,69 +101,91 @@ const CreateProductModal: React.FC<Props> = ({
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
             <div className="bg-primary p-6 rounded-xl shadow-xl w-full max-w-md">
-                <h2 className="text-xl font-bold mb-4">Create New Product</h2>
-                <form className="space-y-4" onSubmit={handleSubmit}>
+                <h2 className="text-xl font-bold mb-4">Create New Ad</h2>
+                <form
+                    className="space-y-4"
+                    onSubmit={handleSubmit}
+                >
+                    {/* Product ID */}
                     <div className="form-control">
                         <label className="label">Product ID</label>
                         <input
                             className="input input-bordered w-full"
                             value={formData.productId}
-                            onChange={(e) =>
-                                handleChange("productId", e.target.value)
-                            }
+                            onChange={(e) => handleChange("productId", e.target.value as AdValue)}
                             required
                         />
                     </div>
 
+                    {/* Size (enum) */}
                     <div className="form-control">
-                        <label className="label">Name</label>
-                        <input
+                        <label className="label">Size</label>
+                        <select
                             className="input input-bordered w-full"
-                            value={formData.name}
-                            onChange={(e) =>
-                                handleChange("name", e.target.value)
-                            }
+                            value={formData.size}
+                            onChange={(e) => handleChange("size", e.target.value as AdValue)}
                             required
-                        />
+                        >
+                            {adSizes.map((size) => (
+                                <option
+                                    key={size}
+                                    value={size}
+                                >
+                                    {size.replace(/_/g, " ")}
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
+                    {/* Price in cents */}
                     <div className="form-control">
                         <label className="label">Price (in cents)</label>
                         <input
                             type="number"
                             className="input input-bordered w-full"
                             value={formData.price ?? 0}
-                            onChange={(e) =>
-                                handleChange("price", parseInt(e.target.value))
-                            }
+                            onChange={(e) => handleChange("price", parseInt(e.target.value || "0", 10) as AdValue)}
                             required
                         />
                     </div>
 
-                    <div className="form-control">
-                        <label className="label">Category</label>
-                        <select
-                            className="input input-bordered w-full"
-                            value={formData.category}
-                            onChange={(e) =>
-                                handleChange("category", e.target.value)
-                            }
-                            required
-                        >
-                            <option value="ad">Ad</option>
-                            <option value="shirt">Shirt</option>
-                        </select>
-                    </div>
-
+                    {/* Stripe Price ID */}
                     <div className="form-control">
                         <label className="label">Stripe Price ID</label>
                         <input
                             className="input input-bordered w-full"
                             value={formData.priceId}
-                            onChange={(e) =>
-                                handleChange("priceId", e.target.value)
-                            }
+                            onChange={(e) => handleChange("priceId", e.target.value as AdValue)}
                             required
+                        />
+                    </div>
+
+                    {/* Size in inches */}
+                    <div className="form-control">
+                        <label className="label">Size (inches)</label>
+                        <input
+                            className="input input-bordered w-full"
+                            placeholder={`e.g. 8.5 x 11`}
+                            value={formData.sizeInches}
+                            onChange={(e) => handleChange("sizeInches", e.target.value as AdValue)}
+                            required
+                        />
+                    </div>
+
+                    {/* Quantity Available (optional) */}
+                    <div className="form-control">
+                        <label className="label">
+                            Quantity Available <span className="text-xs opacity-80">(optional)</span>
+                        </label>
+                        <input
+                            type="number"
+                            className="input input-bordered w-full"
+                            value={formData.quantityAvailable ?? ""}
+                            onChange={(e) => {
+                                const val = e.target.value === "" ? null : parseInt(e.target.value || "0", 10);
+                                handleChange("quantityAvailable", val as AdValue);
+                            }}
+                            min={0}
                         />
                     </div>
 
@@ -182,4 +217,4 @@ const CreateProductModal: React.FC<Props> = ({
     );
 };
 
-export default CreateProductModal;
+export default CreateAdModal;

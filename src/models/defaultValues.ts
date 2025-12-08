@@ -1,11 +1,12 @@
-import { Product } from "@/generated/prisma";
+import { $Enums, Ad } from "@/generated/prisma";
 
-export const DefaultProduct: Product = {
+export const DefaultProduct: Ad = {
     productId: "",
-    name: "",
     price: 0,
     priceId: "",
-    category: "",
+    sizeInches: "",
+    size: $Enums.AdSize.BUSINESS_CARD,
+    quantityAvailable: 0,
 };
 
 export type FormValueData = {
@@ -16,12 +17,7 @@ export type FormValueData = {
     referredBy: string;
     teamId: string;
 };
-export type TextColors =
-    | "text-base-content"
-    | "text-secondary"
-    | "text-info-content"
-    | "text-success"
-    | "text-error";
+export type TextColors = "text-base-content" | "text-secondary" | "text-info-content" | "text-success" | "text-error";
 
 export type InfoBoxText = {
     text: string;

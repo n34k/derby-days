@@ -2,21 +2,22 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { MetadataForm } from "@/components/MetadataForm";
-import { Product } from "@/generated/prisma";
+import { Ad } from "@/generated/prisma";
 import { FormValueData, DefaultProduct } from "@/models/defaultValues";
+import adSizeDisplay from "@/lib/adSizeDisplay";
 
 const PurchasePage = () => {
     const params = useParams();
     const priceId = params?.priceId;
-    const [product, setProduct] = useState<Product>(DefaultProduct);
+    const [product, setProduct] = useState<Ad>(DefaultProduct);
     const [loading, setLoading] = useState(false);
 
     const handleMetadataSubmit = async (formValues: FormValueData) => {
         setLoading(true);
         const metadata = {
             ...formValues,
-            category: "ad", // Inject the product's category here
-            size: product.name,
+            category: "ad",
+            size: product.size,
         };
 
         const res = await fetch("/api/create-checkout-session", {
@@ -38,7 +39,7 @@ const PurchasePage = () => {
     useEffect(() => {
         setLoading(true);
         const fetchProduct = async () => {
-            const res = await fetch(`/api/products/${priceId}`);
+            const res = await fetch(`/api/ad/${priceId}`); //TODO: see if changing to ad is ok
             const data = await res.json();
             setProduct(data);
         };
@@ -55,13 +56,13 @@ const PurchasePage = () => {
 
     return (
         <main className="flex justify-center items-center">
-            {loading || !product.name ? (
+            {loading || !product.sizeInches ? (
                 <div className="text-center py-10 text-xl">Loading...</div>
             ) : (
                 <MetadataForm
                     onSubmit={handleMetadataSubmit}
                     productCost={priceInDollars(product.price)}
-                    productName={product.name}
+                    productName={adSizeDisplay(product.size)}
                     loading={loading}
                 />
             )}

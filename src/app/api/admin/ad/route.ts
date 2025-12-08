@@ -1,125 +1,55 @@
-import { isAdmin } from "@/lib/isAdmin";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "../../../../../prisma";
-import { adPriceMap } from "@/models/stripe-products";
-import getYear from "@/lib/getYear";
+import { isAdmin } from "@/lib/isAdmin";
 
-export async function POST(req: NextRequest) {
-    if (!isAdmin())
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    let body;
+export async function GET() {
+    if (!(await isAdmin())) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     try {
-        body = await req.json();
-    } catch {
-        return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+        const ads = await prisma.ad.findMany({
+            orderBy: { price: "asc" },
+        });
+
+        return NextResponse.json(ads, { status: 200 });
+    } catch (err) {
+        console.error("Error fetching ads:", err);
+        return NextResponse.json({ error: "Failed to fetch ads." }, { status: 500 });
     }
+}
 
-    const { name, email, size, referredByType, referredById } = body;
-    const year = getYear();
-    const amount = adPriceMap.get(size);
-
-    if (!amount) {
-        return NextResponse.json({ error: "Invalid ad size" }, { status: 400 });
+export async function POST(request: Request) {
+    if (!(await isAdmin())) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-    //reffered by was team
-    if (referredByType === "TEAM") {
-        try {
-            await prisma.$transaction([
-                prisma.adPurchase.create({
-                    data: { name, email, size, teamId: referredById, amount },
-                }),
-                prisma.team.update({
-                    where: { id: referredById },
-                    data: { moneyRaised: { increment: amount } },
-                }),
-                prisma.derbyStats.update({
-                    where: { id: year },
-                    data: { totalRaised: { increment: amount } },
-                }),
-            ]);
-        } catch (error) {
-            console.error("Transaction of team buying ad falied:", error);
-            return NextResponse.json(
-                { error: "Transaction failed" },
-                { status: 500 }
-            );
-        }
-        return NextResponse.json({ success: true });
-    }
-
-    const teamOfUser = await prisma.user.findUnique({
-        where: { id: referredById },
-        select: { teamId: true },
-    });
-
-    //user with team in refferd by
-    if (teamOfUser?.teamId) {
-        try {
-            await prisma.$transaction([
-                prisma.adPurchase.create({
-                    data: {
-                        name,
-                        email,
-                        size,
-                        teamId: teamOfUser.teamId,
-                        userId: referredById,
-                        amount,
-                    },
-                }),
-                prisma.team.update({
-                    where: { id: teamOfUser.teamId },
-                    data: { moneyRaised: { increment: amount } },
-                }),
-                prisma.user.update({
-                    where: { id: referredById },
-                    data: { moneyRaised: { increment: amount } },
-                }),
-                prisma.derbyStats.update({
-                    where: { id: year },
-                    data: { totalRaised: { increment: amount } },
-                }),
-            ]);
-        } catch (error) {
-            console.error(
-                "Transaction of user with team buying ad falied:",
-                error
-            );
-            return NextResponse.json(
-                { error: "Transaction failed" },
-                { status: 500 }
-            );
-        }
-        return NextResponse.json({ success: true });
-    }
-
-    //user with no team
     try {
-        await prisma.$transaction([
-            prisma.adPurchase.create({
-                data: {
-                    name,
-                    email,
-                    size,
-                    userId: referredById,
-                    amount,
+        const body = await request.json();
+
+        const { productId, size, price, priceId, sizeInches, quantityAvailable } = body;
+
+        if (!productId || !size || price == null || !priceId || !sizeInches) {
+            return NextResponse.json(
+                {
+                    error: "productId, size, price, priceId and sizeInches are required.",
                 },
-            }),
-            prisma.user.update({
-                where: { id: referredById },
-                data: { moneyRaised: { increment: amount } },
-            }),
-            prisma.derbyStats.update({
-                where: { id: year },
-                data: { totalRaised: { increment: amount } },
-            }),
-        ]);
-    } catch (error) {
-        console.error("Transaction of user with team buying ad falied:", error);
-        return NextResponse.json(
-            { error: "Transaction failed" },
-            { status: 500 }
-        );
+                { status: 400 }
+            );
+        }
+
+        const created = await prisma.ad.create({
+            data: {
+                productId,
+                size,
+                price,
+                priceId,
+                sizeInches,
+                quantityAvailable: quantityAvailable ?? null,
+            },
+        });
+
+        return NextResponse.json(created, { status: 201 });
+    } catch (err) {
+        console.error("Error creating ad:", err);
+        return NextResponse.json({ error: "Failed to create ad: ", err }, { status: 500 });
     }
-    return NextResponse.json({ success: true });
 }
