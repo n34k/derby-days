@@ -2,8 +2,10 @@ import Link from "next/link";
 import React from "react";
 import InfoCircle from "./modals/InfoCircle";
 import Image from "next/image";
+import { prisma } from "../../prisma";
 
 const AdPurchaseWidget = async () => {
+    const ads = await prisma.ad.findMany();
     return (
         <div className="w-[320px] h-[450px] flex flex-col items-center justify-evenly bg-primary p-5 rounded-2xl border-1 border-secondary shadow-lg">
             <div className="flex flex-col text-center">
@@ -32,12 +34,16 @@ const AdPurchaseWidget = async () => {
                 />
             </div>
             <div className="flex flex-col gap-7.5">
-                <Link
-                    href={"/ads"}
-                    className="btn btn-secondary btn-lg p-3 transition duration-300 hover:text-secondary hover:scale-110"
-                >
-                    See Sizes
-                </Link>
+                {ads.length > 0 ? (
+                    <Link
+                        href={"/ads"}
+                        className="btn btn-secondary btn-lg p-3 transition duration-300 hover:text-secondary hover:scale-110"
+                    >
+                        See Sizes
+                    </Link>
+                ) : (
+                    <div className="btn btn-info btn-lg p-3">Coming Soon</div>
+                )}
             </div>
         </div>
     );
