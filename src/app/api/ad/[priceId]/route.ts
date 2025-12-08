@@ -1,17 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../../prisma";
-
-interface Params {
-    params: { priceId: string };
-}
+import { priceIdP } from "@/models/routeParamsTypes";
 
 // GET /api/ad/by-price-id/:priceId
-export async function GET(_req: Request, { params }: Params) {
-    const { priceId } = await params;
+export async function GET(_req: Request, { params }: { params: priceIdP }) {
+    const p = await params;
 
     try {
         const ad = await prisma.ad.findUnique({
-            where: { priceId },
+            where: { priceId: p.priceId },
         });
 
         if (!ad) {
