@@ -39,14 +39,19 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
                     throw new Error("Failed to fetch existing ads.");
                 }
                 const ads: Ad[] = await res.json();
-                const sizes = ads.map((ad) => ad.size);
+                const sizesWithQuantLeft = ads.filter((ad) => {
+                    //only include ads we have
+                    if (ad.quantityAvailable === null) return true; // unlimited
+                    return ad.quantityAvailable > 0;
+                });
+                const sizes = sizesWithQuantLeft.map((ad) => ad.size);
                 setAvailableSizes(sizes);
             } catch (err) {
                 console.error("Error fetching existing ads:", err);
             }
         };
         fetchExistingAds();
-    }, []);
+    }, [submitting]);
 
     if (!isOpen) return null;
 
