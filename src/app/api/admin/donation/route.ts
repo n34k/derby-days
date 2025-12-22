@@ -2,6 +2,7 @@ import { isAdmin } from "@/lib/isAdmin";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../prisma";
 import getYear from "@/lib/getYear";
+import { sendPurchaseEmail } from "@/lib/emailService";
 
 export async function POST(req: NextRequest) {
     if (!isAdmin()) {
@@ -27,25 +28,16 @@ export async function POST(req: NextRequest) {
     // Basic validation
     const amt = Number(amount);
     if (!name || !email) {
-        return NextResponse.json(
-            { error: "Name and email are required" },
-            { status: 400 }
-        );
+        return NextResponse.json({ error: "Name and email are required" }, { status: 400 });
     }
     if (!Number.isFinite(amt) || amt <= 0) {
         return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
     }
     if (referredByType !== "TEAM" && referredByType !== "USER") {
-        return NextResponse.json(
-            { error: "Invalid referredByType" },
-            { status: 400 }
-        );
+        return NextResponse.json({ error: "Invalid referredByType" }, { status: 400 });
     }
     if (!referredById) {
-        return NextResponse.json(
-            { error: "referredById is required" },
-            { status: 400 }
-        );
+        return NextResponse.json({ error: "referredById is required" }, { status: 400 });
     }
 
     // TEAM referral: credit team only
@@ -73,10 +65,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ success: true });
         } catch (error) {
             console.error("Transaction (team donation) failed:", error);
-            return NextResponse.json(
-                { error: "Transaction failed" },
-                { status: 500 }
-            );
+            return NextResponse.json({ error: "Transaction failed" }, { status: 500 });
         }
     }
 
@@ -136,13 +125,10 @@ export async function POST(req: NextRequest) {
                 data: { totalRaised: { increment: amount } },
             }),
         ]);
-
+        sendPurchaseEmail({ to: email, name, category: "donation", amount });
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error("Transaction (user donation) failed:", error);
-        return NextResponse.json(
-            { error: "Transaction failed" },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: "Transaction failed" }, { status: 500 });
     }
 }

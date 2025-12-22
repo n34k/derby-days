@@ -22,6 +22,7 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [address, setAddress] = useState("");
     const [availableSizes, setAvailableSizes] = useState<$Enums.AdSize[] | []>([]);
     const [size, setSize] = useState<Ad["size"] | "">("");
     const [referredByType, setReferredByType] = useState<ReferredByType>("");
@@ -52,6 +53,7 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
     const resetForm = () => {
         setName("");
         setEmail("");
+        setAddress("");
         setSize("");
         setReferredByType("");
         setReferredById("");
@@ -60,6 +62,7 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
     const canSubmit =
         name.trim().length > 0 &&
         email.trim().length > 0 &&
+        address.trim().length > 0 &&
         size !== "" &&
         // require referredBy selection:
         referredByType !== "" &&
@@ -80,6 +83,7 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
                     name,
                     email,
                     size,
+                    address,
                     referredByType, // "TEAM" | "USER"
                     referredById, // id of the selected team or user
                 }),
@@ -131,6 +135,15 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
                         placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        disabled={submitting}
+                    />
+
+                    <input
+                        type="text"
+                        className="input input-bordered w-full"
+                        placeholder="Address"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
                         disabled={submitting}
                     />
 

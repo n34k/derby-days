@@ -2,6 +2,7 @@ import { isAdmin } from "@/lib/isAdmin";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../prisma";
 import getYear from "@/lib/getYear";
+import { sendPurchaseEmail } from "@/lib/emailService";
 
 export async function POST(req: NextRequest) {
     if (!isAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -13,7 +14,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
 
-    const { name, email, size, referredByType, referredById } = body;
+    const { name, email, size, address, referredByType, referredById } = body;
     const year = getYear();
 
     const ads = await prisma.ad.findMany();
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
         try {
             await prisma.$transaction([
                 prisma.adPurchase.create({
-                    data: { name, email, size, teamId: referredById, amount },
+                    data: { name, email, size, address, teamId: referredById, amount },
                 }),
                 prisma.team.update({
                     where: { id: referredById },
@@ -60,6 +61,7 @@ export async function POST(req: NextRequest) {
                         name,
                         email,
                         size,
+                        address,
                         teamId: teamOfUser.teamId,
                         userId: referredById,
                         amount,
@@ -93,6 +95,7 @@ export async function POST(req: NextRequest) {
                     name,
                     email,
                     size,
+                    address,
                     userId: referredById,
                     amount,
                 },
@@ -110,5 +113,6 @@ export async function POST(req: NextRequest) {
         console.error("Transaction of user with team buying ad falied:", error);
         return NextResponse.json({ error: "Transaction failed" }, { status: 500 });
     }
+    sendPurchaseEmail({ to: email, name, category: "ad", amount });
     return NextResponse.json({ success: true });
 }

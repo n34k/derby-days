@@ -95,6 +95,7 @@ const AdPurchaseTable: React.FC<Props> = ({ ads, users, teams }) => {
                                     <th className="border px-2 py-1">Name</th>
                                     <th className="border px-2 py-1">Email</th>
                                     <th className="border px-2 py-1">Size</th>
+                                    <th className="border px-2 py-1">Address</th>
                                     <th className="border px-2 py-1">Team</th>
                                     <th className="border px-2 py-1">User</th>
                                     <th className="border px-2 py-1">Ad</th>
@@ -113,6 +114,7 @@ const AdPurchaseTable: React.FC<Props> = ({ ads, users, teams }) => {
                                             <td className="border px-2 py-1 text-center">{ad.name}</td>
                                             <td className="border px-2 py-1 text-center">{ad.email}</td>
                                             <td className="border px-2 py-1 text-center">{ad.size}</td>
+                                            <td className="border px-2 py-1 text-center">{ad.address}</td>
 
                                             {/* 👇 Team uses Greek letters helper */}
                                             <td className="border px-2 py-1 text-center">

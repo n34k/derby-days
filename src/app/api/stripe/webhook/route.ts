@@ -45,6 +45,7 @@ export async function POST(req: Request) {
         const email = session.customer_email!;
         const name = session.metadata?.name;
         const note = session.metadata?.note || null;
+        const address = session.metadata?.address || null;
         const size = session.metadata?.size as $Enums.AdSize;
         const referredById = session.metadata?.referredBy || null;
         const teamId = session.metadata?.teamId || null;
@@ -88,6 +89,7 @@ export async function POST(req: Request) {
                         email,
                         name,
                         size,
+                        address,
                         amount,
                         stripeId: session.id,
                         team: teamId ? { connect: { id: teamId } } : undefined,

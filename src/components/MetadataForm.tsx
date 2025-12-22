@@ -11,6 +11,7 @@ type MetadataFormProps = {
         email: string;
         name: string;
         note: string;
+        address?: string;
         referredBy: string; // brotherId if credited to brother, else ""
         teamId: string; // teamId if credited to team, or derived from brother.teamId
     }) => void;
@@ -53,6 +54,7 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
 
         const email = (form.elements.namedItem("email") as HTMLInputElement).value;
         const name = (form.elements.namedItem("name") as HTMLInputElement).value;
+        const address = (form.elements.namedItem("address") as HTMLInputElement).value;
 
         let note = "";
         if (donation) {
@@ -83,6 +85,7 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
         onSubmit({
             email,
             name,
+            address,
             note,
             referredBy: finalReferredBy,
             teamId: finalTeamId,
@@ -122,6 +125,23 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
                 />
             </div>
 
+            {!donation && (
+                <div className="form-control w-full max-w-md">
+                    <label className="label">
+                        <span className="label-text">Address</span>
+                        <InfoCircle>
+                            All ad purchasers will be mailed a copy of the Derby Days book to this address.
+                        </InfoCircle>
+                    </label>
+                    <input
+                        type="text"
+                        name="address"
+                        className="input input-bordered text-black bg-white rounded-sm w-full"
+                        required
+                    />
+                </div>
+            )}
+
             {donation && (
                 <div className="form-control w-full max-w-md">
                     <label className="label">
@@ -137,7 +157,6 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
                 </div>
             )}
 
-            {/* Donation Credit (AddDonationModal logic) */}
             <div className="form-control w-full max-w-md">
                 <label className="label flex items-center gap-1">
                     <span className="label-text">Donation Credit</span>
