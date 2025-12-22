@@ -1,12 +1,10 @@
 import { isAdmin } from "@/lib/isAdmin";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../prisma";
-import { adPriceMap } from "@/models/stripe-products";
 import getYear from "@/lib/getYear";
 
 export async function POST(req: NextRequest) {
-    if (!isAdmin())
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!isAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     let body;
     try {
@@ -17,7 +15,10 @@ export async function POST(req: NextRequest) {
 
     const { name, email, size, referredByType, referredById } = body;
     const year = getYear();
-    const amount = adPriceMap.get(size);
+
+    const ads = await prisma.ad.findMany();
+    const priceCents = ads.find((ad) => ad.size == size)?.price;
+    const amount = priceCents ? priceCents / 100 : 0;
 
     if (!amount) {
         return NextResponse.json({ error: "Invalid ad size" }, { status: 400 });
@@ -40,10 +41,7 @@ export async function POST(req: NextRequest) {
             ]);
         } catch (error) {
             console.error("Transaction of team buying ad falied:", error);
-            return NextResponse.json(
-                { error: "Transaction failed" },
-                { status: 500 }
-            );
+            return NextResponse.json({ error: "Transaction failed" }, { status: 500 });
         }
         return NextResponse.json({ success: true });
     }
@@ -81,14 +79,8 @@ export async function POST(req: NextRequest) {
                 }),
             ]);
         } catch (error) {
-            console.error(
-                "Transaction of user with team buying ad falied:",
-                error
-            );
-            return NextResponse.json(
-                { error: "Transaction failed" },
-                { status: 500 }
-            );
+            console.error("Transaction of user with team buying ad falied:", error);
+            return NextResponse.json({ error: "Transaction failed" }, { status: 500 });
         }
         return NextResponse.json({ success: true });
     }
@@ -116,10 +108,7 @@ export async function POST(req: NextRequest) {
         ]);
     } catch (error) {
         console.error("Transaction of user with team buying ad falied:", error);
-        return NextResponse.json(
-            { error: "Transaction failed" },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: "Transaction failed" }, { status: 500 });
     }
     return NextResponse.json({ success: true });
 }

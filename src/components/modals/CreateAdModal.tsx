@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Ad } from "@/generated/prisma";
 
 type Props = {
@@ -24,17 +24,34 @@ const adSizes: Ad["size"][] = [
 ];
 
 const CreateAdModal: React.FC<Props> = ({ isOpen, onClose, onAdCreated }) => {
+    const [currAvailAdSizes, setCurrAvailAdSizes] = useState<Ad["size"][]>([]);
     const [formData, setFormData] = useState<Ad>({
         productId: "",
-        size: "FULL_PAGE" as Ad["size"],
+        size: currAvailAdSizes[0] || "FULL_PAGE",
         price: 0,
         priceId: "",
         sizeInches: "",
         quantityAvailable: null,
     });
-
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchExistingAds = async () => {
+            try {
+                const res = await fetch("/api/ad");
+                if (!res.ok) {
+                    throw new Error("Failed to fetch existing ads.");
+                }
+                const ads: Ad[] = await res.json();
+                const sizes = ads.map((ad) => ad.size);
+                setCurrAvailAdSizes(adSizes.filter((s) => !sizes.includes(s)));
+            } catch (err) {
+                console.error("Error fetching existing ads:", err);
+            }
+        };
+        fetchExistingAds();
+    }, []);
 
     const resetState = () => {
         setFormData({
@@ -126,7 +143,8 @@ const CreateAdModal: React.FC<Props> = ({ isOpen, onClose, onAdCreated }) => {
                             onChange={(e) => handleChange("size", e.target.value as AdValue)}
                             required
                         >
-                            {adSizes.map((size) => (
+                            <option value="">Select ad size…</option>
+                            {currAvailAdSizes.map((size) => (
                                 <option
                                     key={size}
                                     value={size}

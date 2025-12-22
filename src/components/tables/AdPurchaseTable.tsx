@@ -156,7 +156,7 @@ const AdPurchaseTable: React.FC<Props> = ({ ads, users, teams }) => {
                                                         {({ open }) => (
                                                             <button
                                                                 type="button"
-                                                                className={`btn btn-secondary md:w-1/4 transition ${
+                                                                className={`btn btn-secondary btn-circle text-xs transition ${
                                                                     uploadingId === ad.id
                                                                         ? "opacity-50 pointer-events-none"
                                                                         : ""
