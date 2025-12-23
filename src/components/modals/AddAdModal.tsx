@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import type { User } from "@/generated/prisma";
+import type { $Enums, Ad, User } from "@/generated/prisma";
 
 type TeamOption = { id: string; name: string };
 
@@ -14,7 +14,7 @@ type Props = {
     users: Pick<User, "id" | "name" | "email">[];
 };
 
-type Size = "Quarter Page" | "Half Page" | "Full Page" | "Business Card";
+//type Size = "Quarter Page" | "Half Page" | "Full Page" | "Business Card";
 type ReferredByType = "" | "TEAM" | "USER";
 
 export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
@@ -22,18 +22,43 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [size, setSize] = useState<Size | "">("");
+    const [address, setAddress] = useState("");
+    const [availableSizes, setAvailableSizes] = useState<$Enums.AdSize[] | []>([]);
+    const [size, setSize] = useState<Ad["size"] | "">("");
     const [referredByType, setReferredByType] = useState<ReferredByType>("");
     const [referredById, setReferredById] = useState<string>("");
 
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    useEffect(() => {
+        const fetchExistingAds = async () => {
+            try {
+                const res = await fetch("/api/ad");
+                if (!res.ok) {
+                    throw new Error("Failed to fetch existing ads.");
+                }
+                const ads: Ad[] = await res.json();
+                const sizesWithQuantLeft = ads.filter((ad) => {
+                    //only include ads we have
+                    if (ad.quantityAvailable === null) return true; // unlimited
+                    return ad.quantityAvailable > 0;
+                });
+                const sizes = sizesWithQuantLeft.map((ad) => ad.size);
+                setAvailableSizes(sizes);
+            } catch (err) {
+                console.error("Error fetching existing ads:", err);
+            }
+        };
+        fetchExistingAds();
+    }, [submitting]);
+
     if (!isOpen) return null;
 
     const resetForm = () => {
         setName("");
         setEmail("");
+        setAddress("");
         setSize("");
         setReferredByType("");
         setReferredById("");
@@ -42,6 +67,7 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
     const canSubmit =
         name.trim().length > 0 &&
         email.trim().length > 0 &&
+        address.trim().length > 0 &&
         size !== "" &&
         // require referredBy selection:
         referredByType !== "" &&
@@ -62,6 +88,7 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
                     name,
                     email,
                     size,
+                    address,
                     referredByType, // "TEAM" | "USER"
                     referredById, // id of the selected team or user
                 }),
@@ -100,7 +127,7 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
                     <input
                         type="text"
                         className="input input-bordered w-full"
-                        placeholder="Name"
+                        placeholder="Purchaser Name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         disabled={submitting}
@@ -116,18 +143,31 @@ export default function AddAdModal({ isOpen, onClose, teams, users }: Props) {
                         disabled={submitting}
                     />
 
+                    <input
+                        type="text"
+                        className="input input-bordered w-full"
+                        placeholder="Address"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        disabled={submitting}
+                    />
+
                     {/* Size */}
                     <select
                         className="select select-bordered w-full"
                         value={size}
-                        onChange={(e) => setSize(e.target.value as Size | "")}
+                        onChange={(e) => setSize(e.target.value as $Enums.AdSize | "")}
                         disabled={submitting}
                     >
-                        <option value="">Select size…</option>
-                        <option value="Quarter Page">Quarter Page</option>
-                        <option value="Half Page">Half Page</option>
-                        <option value="Full Page">Full Page</option>
-                        <option value="Business Card">Business Card</option>
+                        <option value="">Select ad size…</option>
+                        {availableSizes.map((size) => (
+                            <option
+                                key={size}
+                                value={size}
+                            >
+                                {size.replace(/_/g, " ")}
+                            </option>
+                        ))}
                     </select>
 
                     {/* Referred By: choose Team or User */}

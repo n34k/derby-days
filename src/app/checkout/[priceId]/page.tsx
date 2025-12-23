@@ -39,7 +39,7 @@ const PurchasePage = () => {
     useEffect(() => {
         setLoading(true);
         const fetchProduct = async () => {
-            const res = await fetch(`/api/ad/${priceId}`); //TODO: see if changing to ad is ok
+            const res = await fetch(`/api/ad/${priceId}`);
             const data = await res.json();
             setProduct(data);
         };

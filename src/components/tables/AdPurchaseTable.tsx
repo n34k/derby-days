@@ -7,6 +7,7 @@ import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { allowedFileUploads } from "@/models/allowedFileUploads";
 import AddAdModal from "../modals/AddAdModal";
 import greekLetters from "@/lib/greekLetters";
+import { adUploadPresets } from "@/lib/adPresets";
 
 type Props = {
     ads: AdPurchase[];
@@ -44,13 +45,6 @@ const AdPurchaseTable: React.FC<Props> = ({ ads, users, teams }) => {
         setUploadingId(null);
         if (res.ok) router.refresh();
     };
-
-    const sizeMapToPresetMap = new Map<string, string>([
-        ["Business Card", "card"],
-        ["Quarter Page", "quarter"],
-        ["Half Page", "half"],
-        ["Full Page", "full"],
-    ]);
 
     return (
         <div>
@@ -95,6 +89,7 @@ const AdPurchaseTable: React.FC<Props> = ({ ads, users, teams }) => {
                                     <th className="border px-2 py-1">Name</th>
                                     <th className="border px-2 py-1">Email</th>
                                     <th className="border px-2 py-1">Size</th>
+                                    <th className="border px-2 py-1">Address</th>
                                     <th className="border px-2 py-1">Team</th>
                                     <th className="border px-2 py-1">User</th>
                                     <th className="border px-2 py-1">Ad</th>
@@ -113,6 +108,7 @@ const AdPurchaseTable: React.FC<Props> = ({ ads, users, teams }) => {
                                             <td className="border px-2 py-1 text-center">{ad.name}</td>
                                             <td className="border px-2 py-1 text-center">{ad.email}</td>
                                             <td className="border px-2 py-1 text-center">{ad.size}</td>
+                                            <td className="border px-2 py-1 text-center">{ad.address}</td>
 
                                             {/* 👇 Team uses Greek letters helper */}
                                             <td className="border px-2 py-1 text-center">
@@ -136,14 +132,14 @@ const AdPurchaseTable: React.FC<Props> = ({ ads, users, teams }) => {
                                                     )}
                                                     <CldUploadWidget
                                                         signatureEndpoint="/api/sign-cloudinary-params"
-                                                        uploadPreset={sizeMapToPresetMap.get(ad.size)}
+                                                        uploadPreset={adUploadPresets(ad.size)}
                                                         options={{
                                                             sources: ["local"],
                                                             multiple: false,
-                                                            uploadPreset: sizeMapToPresetMap.get(ad.size),
+                                                            uploadPreset: adUploadPresets(ad.size),
                                                             folder: `${
                                                                 process.env.NEXT_PUBLIC_VERCEL_ENV
-                                                            }/ads/${sizeMapToPresetMap.get(ad.size)}`,
+                                                            }/ads/${adUploadPresets(ad.size)}`,
                                                             clientAllowedFormats: allowedFileUploads,
                                                             publicId: `${ad.id}`,
                                                         }}
@@ -156,7 +152,7 @@ const AdPurchaseTable: React.FC<Props> = ({ ads, users, teams }) => {
                                                         {({ open }) => (
                                                             <button
                                                                 type="button"
-                                                                className={`btn btn-secondary md:w-1/4 transition ${
+                                                                className={`btn btn-secondary text-xs transition ${
                                                                     uploadingId === ad.id
                                                                         ? "opacity-50 pointer-events-none"
                                                                         : ""
