@@ -147,7 +147,8 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
                     <label className="label">
                         <span className="label-text">Note (optional)</span>
                         <InfoCircle>
-                            Leave a message that will be seen with your donation on the donors page.
+                            Leave a message that will be seen with your donation on the donors page. Please do not leave
+                            innapropiate or offensive notes as they will be removed
                         </InfoCircle>
                     </label>
                     <textarea

@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { formatUSD } from "@/lib/formatUSD";
 import { Tshirt } from "@/generated/prisma";
 import InfoCircle from "@/components/modals/InfoCircle";
+import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 
 type Team = { id: string; name: string };
 
@@ -171,7 +172,7 @@ const ShirtsOrder = () => {
                                     <span className="text-sm opacity-80">{formatUSD(p.price / 100)}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <input
+                                    {/* <input
                                         type="number"
                                         min={0}
                                         max={10}
@@ -184,6 +185,27 @@ const ShirtsOrder = () => {
                                             }));
                                         }}
                                         className="input input-bordered w-20 text-center bg-white text-black rounded-sm"
+                                    /> */}
+                                    <MinusCircleIcon
+                                        className="w-6 h-6"
+                                        onClick={() => {
+                                            if (qty[p.productId] == 0) return;
+                                            setQty((prev) => ({
+                                                ...prev,
+                                                [p.productId]: qty[p.productId] - 1,
+                                            }));
+                                        }}
+                                    />
+                                    <p>{qty[p.productId] ?? 0}</p>
+                                    <PlusCircleIcon
+                                        className="w-6 h-6"
+                                        onClick={() => {
+                                            if (qty[p.productId] == 10) return;
+                                            setQty((prev) => ({
+                                                ...prev,
+                                                [p.productId]: qty[p.productId] + 1,
+                                            }));
+                                        }}
                                     />
                                 </div>
                             </li>
