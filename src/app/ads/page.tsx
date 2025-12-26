@@ -14,7 +14,7 @@ const AdsPage = async () => {
     return (
         <div className="p-10 space-y-8">
             {/* Header */}
-            <div className="bg-primary border-1 border-secondary rounded-2xl p-8 text-center">
+            <div className="bg-primary border-1 rounded-2xl p-8 text-center">
                 <h1 className="text-4xl md:text-7xl font-bold mb-3">Purchase Ads</h1>
                 <p className="text-info-content text-lg mb-3 md:text-xl">View available ad sizes and prices below.</p>
 

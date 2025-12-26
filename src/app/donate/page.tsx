@@ -34,7 +34,7 @@ const DonatePage = async () => {
         </div>
     ) : (
         <main className="flex items-center justify-center px-4 py-40 text-center">
-            <div className="flex flex-col gap-5 items-center justify-center rounded-lg border border-secondary bg-primary py-5 px-10">
+            <div className="flex flex-col gap-5 items-center justify-center rounded-lg border bg-primary py-5 px-10">
                 <h1 className="font-semibold text-6xl">Derby Days Has Ended</h1>
                 <p className="text-lg text-info-content">
                     Thanks for trying to donate. Check back next year around spring time to support the cause!

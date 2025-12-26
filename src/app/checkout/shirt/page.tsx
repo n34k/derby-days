@@ -99,7 +99,7 @@ const ShirtsOrder = () => {
     return (
         <main className="flex items-center justify-center pb-10">
             <form
-                className="flex flex-col rounded-2xl border-1 border-secondary gap-4 items-center bg-primary p-8 md:w-[720px] mt-10 mx-5"
+                className="flex flex-col rounded-2xl border-1 gap-4 items-center bg-primary p-8 md:w-[720px] mt-10 mx-5"
                 onSubmit={handleSubmit}
             >
                 <h1 className="text-3xl font-bold text-primary-content">T-Shirts Purchase</h1>

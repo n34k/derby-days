@@ -7,7 +7,7 @@ import { prisma } from "../../prisma";
 const AdPurchaseWidget = async () => {
     const ads = await prisma.ad.findMany();
     return (
-        <div className="w-[320px] h-[450px] flex flex-col items-center justify-evenly bg-primary p-5 rounded-2xl border-1 border-secondary shadow-lg">
+        <div className="w-[320px] h-[450px] flex flex-col items-center justify-evenly bg-primary p-5 rounded-2xl border shadow-lg">
             <div className="flex flex-col text-center">
                 <div className="flex flex-row items-center gap-1">
                     <h1 className="text-4xl font-bold text-secondary">Purchase Ad</h1>

@@ -17,7 +17,7 @@ const page = async () => {
 
     return (
         <main className="flex flex-col items-center justify-evenly py-10 px-10 gap-10">
-            <div className="flex flex-col md:flex-row items-center justify-center gap-5 p-5 bg-primary rounded-lg border-1 border-secondary w-[85vw]">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-5 p-5 bg-primary rounded-lg border-1 w-[85vw]">
                 {/* Text side */}
                 <div className="flex flex-col gap-3 w-full md:max-w-1/2 text-center">
                     <h1 className="text-5xl text-base-content font-bold">{year} Derby Daddy</h1>
@@ -55,7 +55,7 @@ const page = async () => {
                     />
                 </div>
             </div>
-            <div className="flex flex-col items-center justify-center gap-5 p-5 bg-primary rounded-lg border-1 border-secondary w-[85vw]">
+            <div className="flex flex-col items-center justify-center gap-5 p-5 bg-primary rounded-lg border-1 w-[85vw]">
                 <div className="flex flex-row gap-1 mb-5">
                     <h1 className="text-5xl text-base-content font-bold">Judges</h1>
                     <InfoCircle>

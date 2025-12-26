@@ -9,10 +9,7 @@ interface AdminDerbyButtonsProps {
     users: { id: string; name: string | null }[];
 }
 //test push
-export default function AdminDerbyButtons({
-    derby,
-    users,
-}: AdminDerbyButtonsProps) {
+export default function AdminDerbyButtons({ derby, users }: AdminDerbyButtonsProps) {
     const router = useRouter();
     const year = getYear();
 
@@ -60,9 +57,7 @@ export default function AdminDerbyButtons({
             return;
         }
 
-        const ok = window.confirm(
-            "This will demote you to BROTHER and promote the selected user to ADMIN. Continue?"
-        );
+        const ok = window.confirm("This will demote you to BROTHER and promote the selected user to ADMIN. Continue?");
         if (!ok) return;
 
         const res = await fetch("/api/admin/user/transferAdmin", {
@@ -85,18 +80,18 @@ export default function AdminDerbyButtons({
     if (derby?.status === "CREATED") return null;
 
     return (
-        <div className="flex justify-center items-center bg-primary border-1 border-secondary rounded-2xl p-5 w-[90vw] flex-col gap-4">
+        <div className="flex justify-center items-center bg-primary border rounded-2xl p-5 w-[90vw] flex-col gap-4">
             {!derby && (
                 <>
                     <button
-                        className="text-4xl font-bold bg-base-100 rounded-xl border-1 border-secondary w-[75vw] h-[100px] transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10"
+                        className="text-4xl font-bold bg-base-100 rounded-xl border w-[75vw] h-[100px] transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10"
                         onClick={createDerbyDays}
                     >
                         {loading ? "Loading..." : `Create ${year} Derby Days`}
                     </button>
 
                     {/* Transfer Admin UI */}
-                    <div className="w-[75vw] flex flex-col gap-3 bg-base-100 rounded-xl border-1 border-secondary p-4">
+                    <div className="w-[75vw] flex flex-col gap-3 bg-base-100 rounded-xl border p-4">
                         <label
                             htmlFor="new-admin"
                             className="font-semibold text-lg"
@@ -109,11 +104,17 @@ export default function AdminDerbyButtons({
                             value={selectedUserId}
                             onChange={(e) => setSelectedUserId(e.target.value)}
                         >
-                            <option value="" disabled>
+                            <option
+                                value=""
+                                disabled
+                            >
                                 Select a user…
                             </option>
                             {users.map((u) => (
-                                <option key={u.id} value={u.id}>
+                                <option
+                                    key={u.id}
+                                    value={u.id}
+                                >
                                     {u.name}
                                 </option>
                             ))}
@@ -132,7 +133,7 @@ export default function AdminDerbyButtons({
 
             {derby?.status === "POST_DRAFT" && (
                 <button
-                    className="text-4xl font-bold bg-base-100 rounded-xl border-1 border-secondary w-[75vw] h-[100px] transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10"
+                    className="text-4xl font-bold bg-base-100 rounded-xl border w-[75vw] h-[100px] transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10"
                     onClick={endDerbyDays}
                 >
                     End {year} Derby Days
@@ -141,8 +142,8 @@ export default function AdminDerbyButtons({
 
             {derby?.status === "COMPLETE" && (
                 <div>
-                    Derby Days is complete for {year}. Please wait for{" "}
-                    {Number(year) + 1} to pass the app to the next Derby Daddy.
+                    Derby Days is complete for {year}. Please wait for {Number(year) + 1} to pass the app to the next
+                    Derby Daddy.
                 </div>
             )}
         </div>
