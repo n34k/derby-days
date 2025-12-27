@@ -10,10 +10,8 @@ const BrotherStandings = async () => {
     });
 
     return (
-        <div className="md:h-[70vh] overflow-y-auto bg-primary rounded-lg border border-secondary flex flex-col items-center p-5 md:p-10 shadow-lg">
-            <h1 className="text-3xl text-center font-bold mb-8 text-base-content">
-                Brother Standings
-            </h1>
+        <div className="md:h-[70vh] overflow-y-auto bg-primary rounded-lg border flex flex-col items-center p-5 md:p-10 shadow-lg">
+            <h1 className="text-3xl text-center font-bold mb-8 text-base-content">Brother Standings</h1>
 
             <div className="rounded-lg overflow-scroll bg-base-200">
                 {/* Header row */}
@@ -27,9 +25,7 @@ const BrotherStandings = async () => {
                 {/* Data rows */}
                 <div className="divide-y divide-base-300">
                     {userStats.map((stats, idx) => {
-                        const moneyColor = stats.moneyRaised
-                            ? "text-success"
-                            : "text-error";
+                        const moneyColor = stats.moneyRaised ? "text-success" : "text-error";
 
                         return (
                             <div
@@ -38,14 +34,8 @@ const BrotherStandings = async () => {
                             >
                                 <p>{idx + 1}</p>
                                 <p>{stats.name}</p>
-                                <p className="text-center">
-                                    {stats.teamId
-                                        ? greekLetters(stats.teamId)
-                                        : "-"}
-                                </p>
-                                <p
-                                    className={`text-right font-semibold ${moneyColor}`}
-                                >
+                                <p className="text-center">{stats.teamId ? greekLetters(stats.teamId) : "-"}</p>
+                                <p className={`text-right font-semibold ${moneyColor}`}>
                                     {formatUSD(stats.moneyRaised)}
                                 </p>
                             </div>

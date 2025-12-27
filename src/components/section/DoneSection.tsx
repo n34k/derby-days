@@ -22,7 +22,7 @@ const images = [
 const DoneSection = () => {
     return (
         <section className="flex relative items-center justify-center mx-5">
-            <div className="flex flex-col-reverse md:flex-row-reverse justify-center align-middle bg-primary w-full max-w-5xl border-1 border-secondary rounded-box p-5 md:p-7 gap-5 md:gap-7 transition duration-300 transform hover:scale-105">
+            <div className="flex flex-col-reverse md:flex-row-reverse justify-center align-middle bg-primary w-full max-w-5xl border rounded-box p-5 md:p-7 gap-5 md:gap-7 transition duration-300 transform hover:scale-105">
                 <div className="flex flex-col items-center justify-center w-full md:w-1/2 rounded-xl max-h-[500px] md:max-h-none relative">
                     <div className="relative w-[350px] flex justify-center items-center">
                         <Swiper
@@ -55,22 +55,14 @@ const DoneSection = () => {
                     </div>
                 </div>
                 <div className="flex flex-col gap-3 w-full md:w-1/2 text-center md:text-left">
-                    <h1 className="text-5xl text-center text-base-content font-bold">
-                        What We&apos;ve Done
-                    </h1>
-                    <p className="text-info-content text-sm md:text-base text-center">
-                        IMPACT
-                    </p>
+                    <h1 className="text-5xl text-center text-base-content font-bold">What We&apos;ve Done</h1>
+                    <p className="text-info-content text-sm md:text-base text-center">IMPACT</p>
                     <p className="text-base-content">
-                        Thanks to the unwavering dedication of our brothers, the
-                        enthusiasm of participating sororities, and the
-                        generosity of our donors, Sigma Chi Epsilon Eta has
-                        raised more than $250,000 for Valley Children&apos;s
-                        Hospital through Derby Days. But we&apos;re just getting
-                        started. With your support, we can continue to grow this
-                        tradition, make an even greater impact, and bring
-                        brighter futures to the children and families who need
-                        it most. Join us in writing the next chapter of
+                        Thanks to the unwavering dedication of our brothers, the enthusiasm of participating sororities,
+                        and the generosity of our donors, Sigma Chi Epsilon Eta has raised more than $250,000 for Valley
+                        Children&apos;s Hospital through Derby Days. But we&apos;re just getting started. With your
+                        support, we can continue to grow this tradition, make an even greater impact, and bring brighter
+                        futures to the children and families who need it most. Join us in writing the next chapter of
                         hope—every contribution brings us closer.
                     </p>
                 </div>

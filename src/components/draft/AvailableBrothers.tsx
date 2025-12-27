@@ -1,21 +1,14 @@
 "use client";
 import { useCallback, useState } from "react";
-import {
-    useAvailableBrothers,
-    type Brother,
-} from "@/app/hooks/useAvailableBrothers";
+import { useAvailableBrothers, type Brother } from "@/app/hooks/useAvailableBrothers";
 
 type Props = {
     draftId: string;
     isAdmin?: boolean;
 };
 
-export default function AvailableBrothersTable({
-    draftId,
-    isAdmin = false,
-}: Props) {
-    const { list, loading, error, removeById, addBack } =
-        useAvailableBrothers(draftId);
+export default function AvailableBrothersTable({ draftId, isAdmin = false }: Props) {
+    const { list, loading, error, removeById, addBack } = useAvailableBrothers(draftId);
     const [submittingId, setSubmittingId] = useState<string | null>(null);
 
     const onPick = useCallback(
@@ -53,12 +46,7 @@ export default function AvailableBrothersTable({
         console.error("AvailableBrothers error:", error);
         return null;
     }
-    if (!list?.length)
-        return (
-            <h2 className="text-xl font-extrabold">
-                All brothers have been drafted 🎉
-            </h2>
-        );
+    if (!list?.length) return <h2 className="text-xl font-extrabold">All brothers have been drafted 🎉</h2>;
 
     const columns = 4; // fixed
     const rows: Brother[][] = [];
@@ -67,11 +55,9 @@ export default function AvailableBrothersTable({
     }
 
     return (
-        <div className="flex flex-col overflow-x-auto border-1 border-secondary rounded-lg bg-primary w-[90vw]">
+        <div className="flex flex-col overflow-x-auto border rounded-lg bg-primary w-[90vw]">
             <div className="bg-base-300">
-                <h1 className="text-4xl font-bold text-center my-3">
-                    Available Brothers
-                </h1>
+                <h1 className="text-4xl font-bold text-center my-3">Available Brothers</h1>
             </div>
             <table className="min-w-full border-collapse text-sm">
                 <tbody>
@@ -83,27 +69,19 @@ export default function AvailableBrothersTable({
                                     <td
                                         key={cIdx}
                                         className={[
-                                            "border border-secondary p-3 text-center font-medium select-none",
+                                            "border p-3 text-center font-medium select-none",
                                             isAdmin
                                                 ? "transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10"
                                                 : "",
-                                            disabled
-                                                ? "opacity-60 cursor-not-allowed"
-                                                : "",
+                                            disabled ? "opacity-60 cursor-not-allowed" : "",
                                         ].join(" ")}
-                                        onClick={() =>
-                                            !disabled && isAdmin
-                                                ? onPick(b)
-                                                : undefined
-                                        }
+                                        onClick={() => (!disabled && isAdmin ? onPick(b) : undefined)}
                                         aria-disabled={disabled}
                                     >
                                         <div className="flex-col flex">
                                             <span>{b.name}</span>
                                             {isAdmin && b.walkoutSong && (
-                                                <span className="text-info-content text-xs">
-                                                    Song: {b.walkoutSong}
-                                                </span>
+                                                <span className="text-info-content text-xs">Song: {b.walkoutSong}</span>
                                             )}
                                         </div>
                                     </td>

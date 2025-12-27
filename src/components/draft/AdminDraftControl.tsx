@@ -40,17 +40,11 @@ const AdminDraftControl = async () => {
     return (
         draftStatus !== "COMPLETE" &&
         derbyCreatedThisYear && (
-            <div className="flex justify-center items-center bg-primary border-1 border-secondary rounded-2xl p-5 w-[90vw]">
-                {!draftCreatedThisYear && (
-                    <CreateDraftButton
-                        ddAndCoach={allTeamsHaveHeadCoachAndDd}
-                    />
-                )}
+            <div className="flex justify-center items-center bg-primary border rounded-2xl p-5 w-[90vw]">
+                {!draftCreatedThisYear && <CreateDraftButton ddAndCoach={allTeamsHaveHeadCoachAndDd} />}
                 {draftCreatedThisYear && draftStatus === "NOT_STARTED" ? (
                     <div className="flex flex-col items-center gap-5">
-                        <h1 className="font-bold text-4xl">
-                            Pre Draft Controls
-                        </h1>
+                        <h1 className="font-bold text-4xl">Pre Draft Controls</h1>
                         <DraftOrderEdit draft={draftCreatedThisYear} />
                         <DraftStartButton />
                         <DraftDeleteButton />
@@ -59,7 +53,10 @@ const AdminDraftControl = async () => {
                     <></>
                 )}
                 {draftCreatedThisYear && draftStatus === "ONGOING" ? (
-                    <AvailableBrothersTable isAdmin={admin} draftId={year} />
+                    <AvailableBrothersTable
+                        isAdmin={admin}
+                        draftId={year}
+                    />
                 ) : (
                     <></>
                 )}

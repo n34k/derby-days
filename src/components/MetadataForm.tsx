@@ -94,7 +94,7 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
 
     return (
         <form
-            className="flex flex-col rounded-2xl border-1 border-secondary gap-4 items-center bg-primary overflow-y-scroll p-8 md:w-fit mt-10 mx-5"
+            className="flex flex-col rounded-2xl border gap-4 items-center bg-primary overflow-y-scroll p-8 md:w-fit mt-10 mx-5"
             onSubmit={handleSubmit}
         >
             <h1 className="text-3xl font-bold text-primary-content">
@@ -147,7 +147,8 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
                     <label className="label">
                         <span className="label-text">Note (optional)</span>
                         <InfoCircle>
-                            Leave a message that will be seen with your donation on the donors page.
+                            Leave a message that will be seen with your donation on the donors page. Please do not leave
+                            innapropiate or offensive notes as they will be removed.
                         </InfoCircle>
                     </label>
                     <textarea

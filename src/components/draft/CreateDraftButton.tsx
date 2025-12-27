@@ -35,21 +35,19 @@ const CreateDraftButton = ({ ddAndCoach }: CreateDraftButtonProps) => {
             router.refresh();
             setIsLoading(false);
         } else {
-            alert(
-                "All teams must have a head coach and derby darling before creating a draft."
-            );
+            alert("All teams must have a head coach and derby darling before creating a draft.");
         }
     };
 
     return (
         <div>
             {isLoading ? (
-                <div className="flex items-center justify-center text-4xl font-bold bg-base-100 rounded-xl border-1 border-secondary w-[75vw] h-[100px]">
+                <div className="flex items-center justify-center text-4xl font-bold bg-base-100 rounded-xl border w-[75vw] h-[100px]">
                     Loading
                 </div>
             ) : (
                 <button
-                    className="text-4xl font-bold bg-base-100 rounded-xl border-1 border-secondary w-[75vw] h-[100px] transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10"
+                    className="text-4xl font-bold bg-base-100 rounded-xl border w-[75vw] h-[100px] transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10"
                     onClick={onClick}
                 >
                     Create Draft

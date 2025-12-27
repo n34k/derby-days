@@ -1,12 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
-import {
-    PencilIcon,
-    XMarkIcon,
-    CheckIcon,
-    ArrowUpTrayIcon,
-} from "@heroicons/react/24/outline";
+import { PencilIcon, XMarkIcon, CheckIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 
 import TextInput from "../TextInput";
 import { allowedFileUploads } from "@/models/allowedFileUploads";
@@ -20,23 +15,14 @@ interface Props {
     userId: string;
 }
 
-const UpdateUserForm = ({
-    initialName,
-    initialImage,
-    initialWalkoutSong,
-    initialPublicId,
-    userId,
-}: Props) => {
+const UpdateUserForm = ({ initialName, initialImage, initialWalkoutSong, initialPublicId, userId }: Props) => {
     const [name, setName] = useState<string | null | undefined>(initialName);
     const [walkoutSong, setWalkoutSong] = useState<string>(initialWalkoutSong);
     const [imagePublicId, setPublicId] = useState(initialPublicId);
     const [image, setImage] = useState<string>(initialImage);
 
-    const [savedName, setSavedName] = useState<string | null | undefined>(
-        initialName
-    );
-    const [savedWalkoutSong, setSavedWalkoutSong] =
-        useState<string>(initialWalkoutSong);
+    const [savedName, setSavedName] = useState<string | null | undefined>(initialName);
+    const [savedWalkoutSong, setSavedWalkoutSong] = useState<string>(initialWalkoutSong);
 
     const [editing, setEditing] = useState<boolean>(false);
 
@@ -123,7 +109,7 @@ const UpdateUserForm = ({
 
     return (
         <form
-            className="w-[75vw] md:w-[275px] bg-primary rounded-lg border-1 border-secondary md:overflow-y-scroll"
+            className="w-[75vw] md:w-[275px] bg-primary rounded-lg border md:overflow-y-scroll"
             onSubmit={handleSubmit}
         >
             <div className="flex flex-col gap-1 items-center p-5">
@@ -150,23 +136,14 @@ const UpdateUserForm = ({
                         const info = results.info as CloudinaryUploadWidgetInfo;
                         setPublicId(info.public_id);
                         setImage(info.secure_url);
-                        submitUpdate(
-                            name,
-                            info.secure_url,
-                            walkoutSong,
-                            info.public_id
-                        );
+                        submitUpdate(name, info.secure_url, walkoutSong, info.public_id);
                     }}
                 >
                     {({ open }) => (
                         <button
                             type="button"
                             className={`btn btn-secondary mt-2.5 transition-all duration-300 
-                ${
-                    editing
-                        ? "opacity-100 scale-100"
-                        : "opacity-0 scale-95 pointer-events-none"
-                }`}
+                ${editing ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}
                             onClick={() => open()}
                         >
                             Edit Pic
@@ -200,7 +177,10 @@ const UpdateUserForm = ({
                             >
                                 <XMarkIcon className="h-4 w-4" />
                             </button>
-                            <button className="btn btn-secondary" type="submit">
+                            <button
+                                className="btn btn-secondary"
+                                type="submit"
+                            >
                                 <CheckIcon className="h-4 w-4" />
                             </button>
                         </div>

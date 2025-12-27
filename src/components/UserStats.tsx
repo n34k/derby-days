@@ -54,19 +54,31 @@ const UserStats = async ({ user }: UserStatsProps) => {
     };
 
     return (
-        <div className="md:h-[70vh] w-[75vw] md:w-auto bg-primary rounded-lg border-1 border-secondary flex flex-col items-center p-10 shadow-lg min-w-[300px]">
-            <h1 className="text-3xl font-bold mb-8 text-base-content">
-                Your Stats
-            </h1>
+        <div className="md:h-[70vh] w-[75vw] md:w-auto bg-primary rounded-lg border flex flex-col items-center p-10 shadow-lg min-w-[300px]">
+            <h1 className="text-3xl font-bold mb-8 text-base-content">Your Stats</h1>
             <div className="flex flex-col md:grid grid-cols-2 grid-rows-2 gap-6 md:gap-3 w-full">
-                <InfoBox title="Role" info={displayRoleInfo} />
-                {user.globalRole === "BROTHER" ||
-                user.globalRole === "HEAD_COACH" ? (
-                    <InfoBox title="Team" info={teamInfo} />
+                <InfoBox
+                    title="Role"
+                    info={displayRoleInfo}
+                />
+                {user.globalRole === "BROTHER" || user.globalRole === "HEAD_COACH" ? (
+                    <InfoBox
+                        title="Team"
+                        info={teamInfo}
+                    />
                 ) : null}
-                <InfoBox title="Money Raised" info={moneyRaisedInfo} />
-                <InfoBox title="Ad Sales" saleInfo={adSales} />
-                <InfoBox title="Donations" saleInfo={donations} />
+                <InfoBox
+                    title="Money Raised"
+                    info={moneyRaisedInfo}
+                />
+                <InfoBox
+                    title="Ad Sales"
+                    saleInfo={adSales}
+                />
+                <InfoBox
+                    title="Donations"
+                    saleInfo={donations}
+                />
             </div>
         </div>
     );

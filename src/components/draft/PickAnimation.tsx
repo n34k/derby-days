@@ -83,7 +83,7 @@ const PickAnimation = ({ draftId }: PickAnimationProps) => {
                 >
                     {/* Stop click-through on the card */}
                     <motion.div
-                        className="flex flex-col items-center w-[65vw] rounded-2xl border-1 border-secondary bg-primary shadow-2xl overflow-hidden"
+                        className="flex flex-col items-center w-[65vw] rounded-2xl border bg-primary shadow-2xl overflow-hidden"
                         initial={{ scale: 0.95, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.98, opacity: 0 }}
@@ -99,9 +99,7 @@ const PickAnimation = ({ draftId }: PickAnimationProps) => {
                             <div
                                 className="absolute left-0 top-0 h-1 bg-base-100 transition-[width]"
                                 style={{
-                                    width: `${
-                                        Math.max(0, Math.min(1, progress)) * 100
-                                    }%`,
+                                    width: `${Math.max(0, Math.min(1, progress)) * 100}%`,
                                 }}
                             />
                         </div>
@@ -121,13 +119,9 @@ const PickAnimation = ({ draftId }: PickAnimationProps) => {
                             <div className="text-2xl uppercase tracking-widest text-info-content">
                                 Pick #{pick.pickNo}
                             </div>
-                            <div className="text-4xl md:text-6xl font-extrabold">
-                                {pick.player.name}
-                            </div>
+                            <div className="text-4xl md:text-6xl font-extrabold">{pick.player.name}</div>
                             <div className="mt-3 text-3xl md:text-6xl">
-                                <span className="font-semibold">
-                                    {greekLetters(pick.teamId)}
-                                </span>
+                                <span className="font-semibold">{greekLetters(pick.teamId)}</span>
                             </div>
                         </div>
                     </motion.div>

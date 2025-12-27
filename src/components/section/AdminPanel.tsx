@@ -52,7 +52,7 @@ const AdminPanel = async () => {
     });
 
     return (
-        <div className="flex flex-col bg-primary p-5 rounded-lg border-1 border-secondary gap-5 w-[90vw] h-[70vh] overflow-scroll ">
+        <div className="flex flex-col bg-primary p-5 rounded-lg border gap-5 w-[90vw] h-[70vh] overflow-scroll ">
             <div className="flex self-center items-center gap-3">
                 <h1 className="text-4xl font-bold">Admin Dashboard</h1>
                 <Cog6ToothIcon className="w-10 h-10" />
