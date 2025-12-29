@@ -1,6 +1,5 @@
-// src/hooks/useDraftClock.ts
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDraftChannel } from "./useDraftChannel";
 import { PublicEvent } from "@/models/eventTypes";
 
@@ -20,7 +19,7 @@ export type DraftClockState = {
     pickInRound: number | null;
 };
 
-export function useDraftClock(draftId: string, teamIds: string[]) {
+export function useDraftClock(draftId: string, numberTeams: number) {
     const [state, setState] = useState<DraftClockState>({
         status: "NOT_STARTED",
         pickNo: null,
@@ -30,33 +29,40 @@ export function useDraftClock(draftId: string, teamIds: string[]) {
         pickInRound: null,
     });
 
-    const teamCount = teamIds.length;
-
     //hydrate on mount and on focus/visibilitychange
     useEffect(() => {
         let alive = true;
+        console.log("USEEFFECT");
+
         const fetchState = async () => {
             try {
-                const res = await fetch(`/api/draft/${draftId}/state`, {
-                    cache: "no-store",
-                });
-                if (!res.ok) return;
-                const data = await res.json();
-                const { round, pickInRound } = deriveRoundInfo(
-                    Number(data.pickNo),
-                    teamCount
-                );
-                if (alive) {
-                    setState({
-                        status: data.status,
-                        pickNo: data.pickNo ?? null,
-                        teamId: data.teamId ?? null,
-                        deadlineAt: data.deadlineAt ?? null,
-                        round,
-                        pickInRound,
-                    });
+                const res = await fetch(`/api/draft/${draftId}/state`, { cache: "no-store" });
+
+                if (!res.ok) {
+                    console.log("draft/state failed", res.status, await res.text());
+                    return;
                 }
-            } catch {}
+
+                const data = await res.json();
+                console.log("data:", data);
+
+                const pickNo = data.pickNo ?? null;
+                const { round, pickInRound } = deriveRoundInfo(Number(pickNo), numberTeams);
+
+                if (!alive) return;
+                console.log("fetchState setState", Date.now());
+
+                setState({
+                    status: data.status,
+                    pickNo,
+                    teamId: data.teamId ?? null,
+                    deadlineAt: data.deadlineAt ?? null,
+                    round,
+                    pickInRound,
+                });
+            } catch (e) {
+                console.error("fetchState error", e);
+            }
         };
 
         fetchState();
@@ -65,6 +71,7 @@ export function useDraftClock(draftId: string, teamIds: string[]) {
         const onVis = () => {
             if (document.visibilityState === "visible") fetchState();
         };
+
         window.addEventListener("focus", onFocus);
         document.addEventListener("visibilitychange", onVis);
         window.addEventListener("online", onFocus);
@@ -75,31 +82,25 @@ export function useDraftClock(draftId: string, teamIds: string[]) {
             document.removeEventListener("visibilitychange", onVis);
             window.removeEventListener("online", onFocus);
         };
-    }, [draftId, teamCount]);
+    }, [draftId, numberTeams]);
 
     // live updates from Pusher
     useDraftChannel(`public-draft-${draftId}`, (evt: PublicEvent) => {
         if (evt?.type !== "STATE") return;
         const pickNo = Number(evt.pickNo) || null;
+        console.log("pusher STATE", evt, Date.now());
         const { round, pickInRound } = pickNo
-            ? deriveRoundInfo(pickNo, teamCount)
+            ? deriveRoundInfo(pickNo, numberTeams)
             : { round: null, pickInRound: null };
         setState({
             status: evt.status,
             pickNo,
             teamId: evt.teamId ?? null,
-            deadlineAt:
-                typeof evt.deadlineAt === "number" ? evt.deadlineAt : null,
+            deadlineAt: typeof evt.deadlineAt === "number" ? evt.deadlineAt : null,
             round,
             pickInRound,
         });
     });
-
-    const teamIndex = useMemo(() => {
-        const m: Record<string, number> = {};
-        teamIds.forEach((id, i) => (m[id] = i));
-        return m;
-    }, [teamIds]);
-
-    return { state, teamIndex };
+    console.log("STATE", state);
+    return state;
 }

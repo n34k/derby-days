@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Draft" ADD COLUMN     "currRoundNo" INTEGER NOT NULL DEFAULT 1;

@@ -8,8 +8,7 @@ import greekLetters from "@/lib/greekLetters";
 type Team = { id: string; name: string };
 
 export default function DraftHeader({ draftId, teams }: { draftId: string; teams: Team[] }) {
-    const teamIds = useMemo(() => teams.map((t) => t.id), [teams]);
-    const { state } = useDraftClock(draftId, teamIds);
+    const state = useDraftClock(draftId, teams.length);
     const { mmss } = useCountdown(state.deadlineAt);
 
     const teamName = useMemo(() => {

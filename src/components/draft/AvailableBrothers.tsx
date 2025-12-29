@@ -1,19 +1,25 @@
 "use client";
 import { useCallback, useState } from "react";
 import { useAvailableBrothers, type Brother } from "@/app/hooks/useAvailableBrothers";
+import { User } from "@/generated/prisma";
+import { useDraftClock } from "@/app/hooks/useDraftClock";
 
 type Props = {
     draftId: string;
-    isAdmin?: boolean;
+    userData?: User | null;
+    numberTeams: number;
 };
 
-export default function AvailableBrothersTable({ draftId, isAdmin = false }: Props) {
+export default function AvailableBrothersTable({ draftId, userData, numberTeams }: Props) {
     const { list, loading, error, removeById, addBack } = useAvailableBrothers(draftId);
     const [submittingId, setSubmittingId] = useState<string | null>(null);
+    const isHeadCoach = userData?.globalRole === "HEAD_COACH";
+    const headCoachTeam = userData?.teamId;
+    const currTeamPicking = useDraftClock(draftId, numberTeams).teamId;
 
     const onPick = useCallback(
         async (b: Brother) => {
-            if (!isAdmin) return;
+            if (!isHeadCoach) return;
             const ok = window.confirm(`Draft ${b.name}?`);
             if (!ok) return;
 
@@ -38,7 +44,7 @@ export default function AvailableBrothersTable({ draftId, isAdmin = false }: Pro
                 setSubmittingId(null);
             }
         },
-        [isAdmin, draftId, removeById, addBack]
+        [isHeadCoach, draftId, removeById, addBack]
     );
 
     if (loading) return <p>Loading available brothers…</p>;
@@ -70,19 +76,20 @@ export default function AvailableBrothersTable({ draftId, isAdmin = false }: Pro
                                         key={cIdx}
                                         className={[
                                             "border p-3 text-center font-medium select-none",
-                                            isAdmin
+                                            isHeadCoach && headCoachTeam === currTeamPicking
                                                 ? "transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10"
                                                 : "",
                                             disabled ? "opacity-60 cursor-not-allowed" : "",
                                         ].join(" ")}
-                                        onClick={() => (!disabled && isAdmin ? onPick(b) : undefined)}
+                                        onClick={() =>
+                                            !disabled && isHeadCoach && headCoachTeam === currTeamPicking
+                                                ? onPick(b)
+                                                : undefined
+                                        }
                                         aria-disabled={disabled}
                                     >
                                         <div className="flex-col flex">
                                             <span>{b.name}</span>
-                                            {isAdmin && b.walkoutSong && (
-                                                <span className="text-info-content text-xs">Song: {b.walkoutSong}</span>
-                                            )}
                                         </div>
                                     </td>
                                 );

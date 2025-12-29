@@ -203,7 +203,6 @@ model Draft {
   teamOrder     String[]
   deadlineAt    DateTime?
   picksByTeam   String[]    //to easily calculate who is on the clock based on pick number
-
   picks DraftPick[]
 }
 

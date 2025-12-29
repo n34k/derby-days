@@ -46,7 +46,7 @@ export async function middleware(req: NextRequest) {
     const role = await roleRes.json();
     console.log("User role in middleware:", role);
 
-    if (role === "ADMIN") {
+    if (role === "ADMIN" || role === "HEAD_COACH") {
         // Admins bypass redirect while ongoing
         return NextResponse.next();
     }

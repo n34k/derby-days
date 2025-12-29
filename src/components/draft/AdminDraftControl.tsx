@@ -5,11 +5,9 @@ import CreateDraftButton from "./CreateDraftButton";
 import DraftDeleteButton from "./DraftDeleteButton";
 import DraftStartButton from "./DraftStartButton";
 import AvailableBrothersTable from "./AvailableBrothers";
-import { isAdmin } from "@/lib/isAdmin";
 import getYear from "@/lib/getYear";
 
 const AdminDraftControl = async () => {
-    const admin = await isAdmin();
     const year = getYear();
     const draftCreatedThisYear = await prisma.draft.findUnique({
         //admin can only create draft once per year
@@ -54,8 +52,8 @@ const AdminDraftControl = async () => {
                 )}
                 {draftCreatedThisYear && draftStatus === "ONGOING" ? (
                     <AvailableBrothersTable
-                        isAdmin={admin}
                         draftId={year}
+                        numberTeams={teams.length}
                     />
                 ) : (
                     <></>
