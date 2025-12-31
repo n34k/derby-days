@@ -55,7 +55,7 @@ const PurchasePage = () => {
     };
 
     return (
-        <main className="flex justify-center items-center">
+        <main className="flex justify-center items-center mt-6">
             {loading || !product.sizeInches ? (
                 <div className="text-center py-10 text-xl">Loading...</div>
             ) : (
