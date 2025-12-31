@@ -98,14 +98,14 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
 
     return (
         <form
-            className="flex flex-col rounded-2xl border gap-4 items-center bg-primary overflow-y-scroll p-8 md:w-fit mx-5"
+            className="flex flex-col rounded-2xl border gap-4 items-center bg-primary overflow-y-scroll p-8 mx-5 w-full max-w-md md:max-w-xl"
             onSubmit={handleSubmit}
         >
             <h1 className="text-3xl font-bold text-primary-content">
                 {loading ? "" : `${formatUSD(productCost)} ${productName}`}
             </h1>
 
-            <div className="form-control w-full max-w-md">
+            <div className="form-control w-full max-w-md md:max-w-xl">
                 <label className="label">
                     <span className="label-text">Name</span>
                 </label>
@@ -117,7 +117,7 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
                 />
             </div>
 
-            <div className="form-control w-full max-w-md">
+            <div className="form-control w-full max-w-md md:max-w-xl">
                 <label className="label">
                     <span className="label-text">Email</span>
                 </label>
@@ -130,7 +130,7 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
             </div>
 
             {!donation && (
-                <div className="form-control w-full max-w-md">
+                <div className="form-control w-full max-w-md md:max-w-xl">
                     <label className="label">
                         <span className="label-text">Address</span>
                         <InfoCircle>
@@ -147,7 +147,7 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
             )}
 
             {donation && (
-                <div className="form-control w-full max-w-md">
+                <div className="form-control w-full max-w-md md:max-w-xl">
                     <label className="label">
                         <span className="label-text">Note (optional)</span>
                         <InfoCircle>
@@ -162,7 +162,7 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
                 </div>
             )}
 
-            <div className="form-control w-full max-w-md">
+            <div className="form-control w-full max-w-md md:max-w-xl">
                 <label className="label flex items-center gap-1">
                     <span className="label-text">Donation Credit</span>
                     <InfoCircle>
@@ -241,7 +241,7 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
 
             <button
                 type="submit"
-                className="btn btn-secondary w-full max-w-md"
+                className="btn btn-secondary w-full max-w-md md:max-w-xl"
                 disabled={loading}
             >
                 {loading ? <span className="loading loading-spinner" /> : "Continue to Payment"}

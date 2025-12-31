@@ -1,10 +1,7 @@
 "use client";
 import { CurrencyDollarIcon } from "@heroicons/react/24/solid";
 import SortBy from "@/components/SortBy";
-import {
-    DonationFilterOption,
-    DonationFilterOptions,
-} from "@/models/donationTypes";
+import { DonationFilterOption, DonationFilterOptions } from "@/models/donationTypes";
 import { useState } from "react";
 import { Donation } from "@/generated/prisma";
 import Link from "next/link";
@@ -22,11 +19,8 @@ const RecentDonations = ({ donations }: RecentDonationsProps) => {
     const amount = donations.amount;
     const earliest = donations.earliest;
 
-    const [donationSortFilter, setDonationSortFilter] =
-        useState<DonationFilterOption>("Latest");
-    const [displayedDontations, setDisplayedDonations] = useState<Donation[]>(
-        donations.latest
-    );
+    const [donationSortFilter, setDonationSortFilter] = useState<DonationFilterOption>("Latest");
+    const [displayedDontations, setDisplayedDonations] = useState<Donation[]>(donations.latest);
 
     const handleSortChange = (val: DonationFilterOption) => {
         console.log("VAL", val);
@@ -50,9 +44,7 @@ const RecentDonations = ({ donations }: RecentDonationsProps) => {
         <div>
             <div className="flex flex-col items-center mb-4">
                 <div className="flex items-center gap-3 mb-2">
-                    <h1 className="text-4xl md:text-7xl font-bold">
-                        Live Donations
-                    </h1>
+                    <h1 className="text-4xl md:text-7xl font-bold">Live Donations</h1>
                     <CurrencyDollarIcon className="w-10 h-10 md:h-20 md:w-20" />
                 </div>
                 <div className="w-1/2">
@@ -66,17 +58,29 @@ const RecentDonations = ({ donations }: RecentDonationsProps) => {
             {donations.amount.length !== 0 ? (
                 <div className="flex flex-col gap-10">
                     {displayedDontations.map((d) => (
-                        <div className="flex flex-col items-center" key={d.id}>
-                            <p className="text-success text-4xl">${d.amount}</p>
+                        <div
+                            className="flex flex-col items-center justify-center"
+                            key={d.id}
+                        >
                             <p className="text-3xl">{d.name}</p>
-                            {d.note && (
-                                <p className="text-3xl">&quot;{d.note}&quot;</p>
-                            )}
+                            <p className="text-3xl text-info-content">
+                                {new Date(d.createdAt).toLocaleDateString("en-US", {
+                                    month: "numeric",
+                                    day: "numeric",
+                                    year: "2-digit",
+                                })}
+                            </p>
+
+                            <p className="text-success text-3xl font-bold">${d.amount}</p>
+                            {d.note && <p className="text-3xl">&quot;{d.note}&quot;</p>}
                         </div>
                     ))}
                 </div>
             ) : (
-                <Link href="/donate" className="flex justify-center">
+                <Link
+                    href="/donate"
+                    className="flex justify-center"
+                >
                     <p className="text-info-content cursor-pointer transition duration-300 transform hover:scale-110 hover:text-secondary">
                         No donations yet, be the first to donate!
                     </p>
