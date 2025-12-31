@@ -6,7 +6,7 @@ export function useCountdown(deadlineAt: number | null) {
 
     useEffect(() => {
         if (!deadlineAt) return; // nothing to tick
-        const id = setInterval(() => setNow(Date.now()), 250);
+        const id = setInterval(() => setNow(Date.now()), 1000);
         return () => clearInterval(id);
     }, [deadlineAt]);
 

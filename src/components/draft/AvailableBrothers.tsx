@@ -64,6 +64,11 @@ export default function AvailableBrothersTable({ draftId, userData, numberTeams 
         <div className="flex flex-col overflow-x-auto border rounded-lg bg-primary w-[90vw]">
             <div className="bg-base-300">
                 <h1 className="text-4xl font-bold text-center my-3">Available Brothers</h1>
+                {isHeadCoach && currTeamPicking === headCoachTeam ? (
+                    <p className="text-3xl font-bold text-secondary text-center my-3">It is now your pick!</p>
+                ) : (
+                    <p className="text-3xl font-bold text-info-content text-center my-3">Please wait for your turn</p>
+                )}
             </div>
             <table className="min-w-full border-collapse text-sm">
                 <tbody>
