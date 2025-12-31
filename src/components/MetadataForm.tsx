@@ -54,7 +54,11 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
 
         const email = (form.elements.namedItem("email") as HTMLInputElement).value;
         const name = (form.elements.namedItem("name") as HTMLInputElement).value;
-        const address = (form.elements.namedItem("address") as HTMLInputElement).value;
+        let address = "";
+
+        if (!donation) {
+            address = (form.elements.namedItem("address") as HTMLInputElement).value;
+        }
 
         let note = "";
         if (donation) {
@@ -94,7 +98,7 @@ export const MetadataForm = ({ onSubmit, loading, productName, productCost }: Me
 
     return (
         <form
-            className="flex flex-col rounded-2xl border gap-4 items-center bg-primary overflow-y-scroll p-8 md:w-fit mt-10 mx-5"
+            className="flex flex-col rounded-2xl border gap-4 items-center bg-primary overflow-y-scroll p-8 md:w-fit mx-5"
             onSubmit={handleSubmit}
         >
             <h1 className="text-3xl font-bold text-primary-content">

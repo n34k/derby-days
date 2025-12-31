@@ -21,9 +21,7 @@ export const metadata: Metadata = {
     description: "Sigma Chi Epsilon Eta Derby Days landing page",
 };
 
-export default async function RootLayout({
-    children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     const session = await auth();
     let userData = null;
     if (session) {
@@ -51,7 +49,10 @@ export default async function RootLayout({
     }
 
     return (
-        <html lang="en" data-theme="sigmachi">
+        <html
+            lang="en"
+            data-theme="sigmachi"
+        >
             <body className={`min-h-screen flex flex-col ${poppins.variable}`}>
                 <NavBar
                     userData={userData}
