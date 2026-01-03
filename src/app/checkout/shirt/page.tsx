@@ -89,7 +89,7 @@ const ShirtsOrder = () => {
     }
 
     return (
-        <div className="flex justify-center mt-6 px-4">
+        <div className="flex justify-center my-6 px-4">
             <form
                 className="flex flex-col rounded-2xl border gap-4 items-center bg-primary overflow-y-scroll p-8 w-full max-w-md md:max-w-xl"
                 onSubmit={handleSubmit}
