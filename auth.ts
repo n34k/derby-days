@@ -8,10 +8,20 @@ import getYear from "@/lib/getYear";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: PrismaAdapter(prisma),
-    providers: [Google],
+    providers: [
+        Google({
+            authorization: { params: { prompt: "select_account" } },
+        }),
+    ],
     session: { strategy: "jwt" }, // ✅ use JWT so middleware can read without DB
     callbacks: {
         async signIn({ user, profile }) {
+            const session = await auth();
+
+            // If already signed in and attempting an OAuth sign-in, block linking.
+            if (session?.user) {
+                return false;
+            }
             const email = user?.email ?? profile?.email;
             if (!email) return false;
 
@@ -28,10 +38,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
             const canMakeAccount = !draft || draft.status === "NOT_CREATED";
             if (!canMakeAccount) {
-                console.log(
-                    "Draft already created, blocked sign in for: ",
-                    email
-                );
+                console.log("Draft already created, blocked sign in for: ", email);
                 return false;
             }
 
@@ -40,10 +47,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             });
 
             if (!allowed) {
-                console.log(
-                    "Email not on allowlist, blocked sign in for: ",
-                    email
-                );
+                console.log("Email not on allowlist, blocked sign in for: ", email);
                 return false;
             }
 
@@ -78,8 +82,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             session.user.id = typeof token.sub === "string" ? token.sub : "";
 
             // Put role on the session; default to "NONE" (or "USER")
-            session.user.role =
-                (token.role as GlobalRole | undefined) ?? "NONE";
+            session.user.role = (token.role as GlobalRole | undefined) ?? "NONE";
 
             return session;
         },
