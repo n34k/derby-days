@@ -202,7 +202,7 @@ model Draft {
   updatedAt     DateTime    @updatedAt
   teamOrder     String[]
   deadlineAt    DateTime?
-
+  picksByTeam   String[]    //to easily calculate who is on the clock based on pick number
   picks DraftPick[]
 }
 
@@ -262,6 +262,7 @@ enum DraftStatus {
 }
 
 enum PickStatus {
+  PICK_IS_IN
   ANNOUNCED
   VOIDED
 }

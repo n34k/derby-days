@@ -3,67 +3,76 @@ import { prisma } from "../../../../../../prisma";
 import { isAdmin } from "@/lib/isAdmin";
 import { pusher } from "@/lib/pusher/server";
 import { idP } from "@/models/routeParamsTypes";
+import { isHeadCoach } from "@/lib/isHeadCoach";
 
-export async function POST(req: NextRequest, { params }: { params: idP }) {
-    // 1) Auth
+export async function GET() {
     const admin = await isAdmin();
     if (!admin) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // 2) Parse
+    const pick = await prisma.draftPick.findFirst({
+        where: { status: "PICK_IS_IN" },
+        include: {
+            user: { select: { id: true, name: true, image: true, imagePublicId: true, walkoutSong: true } },
+            team: { select: { id: true, name: true } },
+        },
+    });
+
+    return NextResponse.json({ pick: pick ?? null }, { status: 200 });
+}
+
+export async function POST(req: NextRequest, { params }: { params: idP }) {
+    const canPick = (await isAdmin()) || (await isHeadCoach());
+    if (!canPick) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const p = await params;
     const draftId = String(p.id);
+
     let body;
     try {
         body = await req.json();
     } catch {
-        return NextResponse.json(
-            { error: "Invalid JSON body" },
-            { status: 400 }
-        );
+        return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
     }
+
     const playerId: string | undefined = body?.playerId;
     if (!playerId) {
-        return NextResponse.json(
-            { error: "Missing playerId" },
-            { status: 400 }
-        );
+        return NextResponse.json({ error: "Missing playerId" }, { status: 400 });
     }
 
     try {
-        // 3) All core mutations in one transaction
         const result = await prisma.$transaction(async (tx) => {
             const draft = await tx.draft.findUnique({ where: { id: draftId } });
             if (!draft) throw new Error("Draft not found");
-            if (draft.status !== "ONGOING")
-                throw new Error("Draft is not active");
 
-            // Ensure player is still draftable
-            const brother = await tx.user.findUnique({
-                where: { id: playerId },
-            });
-            if (
-                !brother ||
-                brother.globalRole !== "BROTHER" ||
-                brother.teamId
-            ) {
-                throw new Error("Player not available");
-            }
-
-            // Compute team on the clock (snake)
+            // Compute team on the clock (snake) based on currentPickNo
             const order = draft.teamOrder as unknown as string[];
-            if (!Array.isArray(order) || order.length === 0) {
-                throw new Error("Draft team order not set");
-            }
+            if (!Array.isArray(order) || order.length === 0) throw new Error("Draft team order not set");
+
             const T = order.length;
-            const k = draft.currentPickNo; // 1-based overall pick
+            const k = draft.currentPickNo; // 1-based
             const round = Math.floor((k - 1) / T) + 1;
-            const i = ((k - 1) % T) + 1; // 1..T within the round
+            const i = ((k - 1) % T) + 1;
             const pickInRound = round % 2 === 0 ? T - i + 1 : i;
             const teamId = order[pickInRound - 1];
 
-            // Create the pick (uniques on overall, (draft,user), and (draft,round,pickInRound) will guard races)
+            // Player must be draftable (not already assigned)
+            const brother = await tx.user.findUnique({ where: { id: playerId } });
+            if (!brother || brother.globalRole !== "BROTHER" || brother.teamId) {
+                throw new Error("Player not available");
+            }
+
+            // Optional guard: disallow multiple PICK_IS_IN for same overall pick
+            const existing = await tx.draftPick.findFirst({
+                where: { draftId, overallPickNo: k },
+            });
+
+            if (existing) {
+                throw new Error("A pick already exists for the current pick number");
+            }
+
+            await tx.draft.update({ where: { id: draftId }, data: { status: "PAUSED" } }); //pick is in, pause draft clock
+
             const pick = await tx.draftPick.create({
                 data: {
                     draftId,
@@ -72,76 +81,22 @@ export async function POST(req: NextRequest, { params }: { params: idP }) {
                     overallPickNo: k,
                     round,
                     pickInRound,
-                    status: "ANNOUNCED", // later add admin "announce" gate, change to PENDING first
+                    status: "PICK_IS_IN",
                 },
                 include: {
-                    user: {
-                        select: {
-                            id: true,
-                            name: true,
-                            image: true,
-                            imagePublicId: true,
-                        },
-                    },
+                    user: { select: { id: true, name: true, image: true, imagePublicId: true, walkoutSong: true } },
                     team: { select: { id: true, name: true } },
                 },
             });
 
-            // Assign the brother to the team (guard against last-millisecond races)
-            const { count: updatedUsers } = await tx.user.updateMany({
-                where: { id: playerId, teamId: null },
-                data: { teamId },
-            });
-            if (updatedUsers !== 1) {
-                // Another process drafted them; force rollback
-                throw new Error("Player just became unavailable");
-            }
-
-            // Advance the pointer
-            await tx.draft.update({
-                where: { id: draftId },
-                data: {
-                    currentPickNo: { increment: 1 },
-                    deadlineAt: new Date(Date.now() + 10 * 60 * 1000),
-                },
-            });
-
-            // Option A completion check: any BROTHERs left with teamId = null?
-            const remaining = await tx.user.count({
-                where: { globalRole: "BROTHER", teamId: null },
-            });
-            console.log("REMAINING", remaining);
-            let completed = false;
-            if (remaining === 0) {
-                await tx.draft.update({
-                    where: { id: draftId },
-                    data: { status: "COMPLETE" },
-                });
-                await tx.derbyStats.update({
-                    where: { id: draftId },
-                    data: { status: "POST_DRAFT" },
-                });
-                completed = true;
-                console.log("UPDATED TO COMPLETE");
-            }
-
-            // Pre-compute next team on clock for STATE (only if not completed)
-            let nextTeamId: string | null = null;
-            if (!completed) {
-                const nextK = k + 1;
-                const nextRound = Math.floor((nextK - 1) / T) + 1;
-                const nextI = ((nextK - 1) % T) + 1;
-                const nextPickInRound =
-                    nextRound % 2 === 0 ? T - nextI + 1 : nextI;
-                nextTeamId = order[nextPickInRound - 1] ?? null;
-            }
-
-            return { pick, completed, nextPickNo: k + 1, nextTeamId };
+            return { pick, draftStatus: draft.status };
         });
 
-        //4) Broadcast (after TX commit)
+        //Broadcast after commit
+        console.log("PICK_IS_IN broadcast:", result.pick.id);
         await pusher.trigger(`public-draft-${draftId}`, "event", {
-            type: "ANNOUNCE",
+            type: "PICK_IS_IN",
+            pickId: result.pick.id,
             pickNo: result.pick.overallPickNo,
             round: result.pick.round,
             teamId: result.pick.teamId,
@@ -149,31 +104,12 @@ export async function POST(req: NextRequest, { params }: { params: idP }) {
                 id: result.pick.userId,
                 name: result.pick.user.name,
                 image: result.pick.user?.image,
+                walkoutSong: result.pick.user.walkoutSong,
             },
         });
 
-        if (result.completed) {
-            // Final state
-            await pusher.trigger(`public-draft-${draftId}`, "event", {
-                type: "STATE",
-                status: "COMPLETE",
-                pickNo: result.pick.overallPickNo, //last made pick
-                teamId: result.pick.teamId,
-                deadlineAt: Date.now(), //irrelevant, draft is done
-            });
-        } else {
-            // Next team on the clock + timer
-            await pusher.trigger(`public-draft-${draftId}`, "event", {
-                type: "STATE",
-                status: "ONGOING",
-                pickNo: result.nextPickNo,
-                teamId: result.nextTeamId,
-                deadlineAt: Date.now() + 10 * 60 * 1000,
-            });
-        }
-
-        return NextResponse.json({ ok: true }, { status: 201 });
+        return NextResponse.json({ ok: true, pickId: result.pick.id }, { status: 201 });
     } catch (err) {
-        return NextResponse.json({ err }, { status: 400 });
+        return NextResponse.json({ error: err }, { status: 400 });
     }
 }

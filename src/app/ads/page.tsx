@@ -40,7 +40,7 @@ const AdsPage = () => {
     const rows = useMemo(() => ads, [ads]);
 
     return (
-        <div className="mt-6 px-4 space-y-8 flex justify-center">
+        <div className="my-6 px-4 space-y-8 flex justify-center">
             <div className="bg-primary border-1 rounded-2xl p-8 text-center w-full max-w-md md:max-w-xl">
                 <h1 className="text-4xl md:text-3xl font-bold mb-3">Purchase Ads</h1>
                 <p className="text-info-content text-lg mb-3 md:text-md">

@@ -25,10 +25,7 @@ export function useAvailableBrothers(draftId: string) {
                 const res = await fetch(`/api/draft/${draftId}/available`, {
                     cache: "no-store",
                 });
-                if (!res.ok)
-                    throw new Error(
-                        (await res.json()).error ?? `HTTP ${res.status}`
-                    );
+                if (!res.ok) throw new Error((await res.json()).error ?? `HTTP ${res.status}`);
                 const data = await res.json();
                 if (alive) setList((data?.available ?? []) as Brother[]);
             } catch (e) {
@@ -82,9 +79,7 @@ export function useAvailableBrothers(draftId: string) {
 
     const addBack = useCallback((b: Brother) => {
         setList((prev) =>
-            prev.some((x) => x.id === b.id)
-                ? prev
-                : [...prev, b].sort((a, c) => a.name.localeCompare(c.name))
+            prev.some((x) => x.id === b.id) ? prev : [...prev, b].sort((a, c) => a.name.localeCompare(c.name))
         );
     }, []);
 

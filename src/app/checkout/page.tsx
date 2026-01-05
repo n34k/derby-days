@@ -32,7 +32,7 @@ const DonationPage = () => {
     };
 
     return (
-        <div className="flex justify-center items-center mt-6">
+        <div className="flex justify-center items-center my-6">
             <MetadataForm
                 onSubmit={handleMetadataSubmit}
                 productCost={amount}
