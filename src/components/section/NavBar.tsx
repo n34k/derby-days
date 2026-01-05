@@ -28,7 +28,8 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
     const canShowDraft =
         draftStatus === "NOT_STARTED" ||
         draftStatus === "COMPLETE" ||
-        userRole === "ADMIN";
+        userRole === "ADMIN" ||
+        userRole === "HEAD_COACH";
 
     console.log("STAUTS", draftStatus);
 
@@ -37,7 +38,10 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
             <div className="relative">
                 <div className="flex justify-between items-center px-5 text-text">
                     {/* Logo */}
-                    <Link href="/" onClick={() => setMenuOpen(false)}>
+                    <Link
+                        href="/"
+                        onClick={() => setMenuOpen(false)}
+                    >
                         <Image
                             src="/images/logo.png"
                             alt="Derby Days"
@@ -112,7 +116,10 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                     </nav>
 
                     {/* Desktop Button */}
-                    <Link href="/donate" className="">
+                    <Link
+                        href="/donate"
+                        className=""
+                    >
                         <button className="btn btn-secondary btn-lg p-3 transition duration-300 hover:text-secondary hover:scale-110">
                             Support Us
                         </button>
@@ -134,9 +141,7 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                 {/* Dropdown Menu */}
                 <div
                     className={`flex justify-evenly items-center md:hidden w-full bg-base backdrop-blur-md border-t-1 shadow-lg overflow-hidden
-            transition-[max-height] duration-50 ${
-                menuOpen ? "max-h-[60vh] py-3" : "max-h-0"
-            } `}
+            transition-[max-height] duration-50 ${menuOpen ? "max-h-[60vh] py-3" : "max-h-0"} `}
                 >
                     {teamsMade && (
                         <Link
@@ -155,9 +160,7 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                             onClick={() => setMenuOpen(false)}
                         >
                             <TrophyIcon className="h-8 w-8 text-base-content" />
-                            <p className="text-base-content font-bold">
-                                Standings
-                            </p>
+                            <p className="text-base-content font-bold">Standings</p>
                         </Link>
                     )}
                     <Link
@@ -193,9 +196,7 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                             onClick={() => setMenuOpen(false)}
                         >
                             <UserIcon className="h-8 w-8 text-base-content" />
-                            <p className="text-base-content font-bold">
-                                Account
-                            </p>
+                            <p className="text-base-content font-bold">Account</p>
                         </Link>
                     ) : (
                         <Link href="/signin">
@@ -205,9 +206,7 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                                 onClick={() => setMenuOpen(false)}
                             >
                                 <ArrowLeftEndOnRectangleIcon className="h-8 w-8 text-base-content" />
-                                <p className="text-base-content font-bold">
-                                    Sign In
-                                </p>
+                                <p className="text-base-content font-bold">Sign In</p>
                             </button>
                         </Link>
                     )}

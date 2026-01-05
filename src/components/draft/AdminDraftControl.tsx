@@ -4,12 +4,11 @@ import { prisma } from "../../../prisma";
 import CreateDraftButton from "./CreateDraftButton";
 import DraftDeleteButton from "./DraftDeleteButton";
 import DraftStartButton from "./DraftStartButton";
-import AvailableBrothersTable from "./AvailableBrothers";
-import { isAdmin } from "@/lib/isAdmin";
 import getYear from "@/lib/getYear";
+import AdminAnnouncePick from "./AdminAnnouncePick";
+import { DraftStatus } from "@/generated/prisma";
 
 const AdminDraftControl = async () => {
-    const admin = await isAdmin();
     const year = getYear();
     const draftCreatedThisYear = await prisma.draft.findUnique({
         //admin can only create draft once per year
@@ -31,11 +30,13 @@ const AdminDraftControl = async () => {
         }
     }
 
-    let draftStatus;
+    let draftStatus = null;
 
     if (draftCreatedThisYear) {
         draftStatus = draftCreatedThisYear.status;
     }
+
+    const draftActive = draftStatus === DraftStatus.ONGOING || draftStatus === DraftStatus.PAUSED;
 
     return (
         draftStatus !== "COMPLETE" &&
@@ -52,14 +53,7 @@ const AdminDraftControl = async () => {
                 ) : (
                     <></>
                 )}
-                {draftCreatedThisYear && draftStatus === "ONGOING" ? (
-                    <AvailableBrothersTable
-                        isAdmin={admin}
-                        draftId={year}
-                    />
-                ) : (
-                    <></>
-                )}
+                {draftCreatedThisYear && draftActive ? <AdminAnnouncePick draftId={draftCreatedThisYear.id} /> : <></>}
             </div>
         )
     );
