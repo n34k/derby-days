@@ -37,10 +37,7 @@ export async function PATCH(req: NextRequest) {
 
     const result = AdminUpdateUserSchema.safeParse(body);
     if (!result.success) {
-        return NextResponse.json(
-            { error: "Validation failed", details: result.error.flatten() },
-            { status: 400 }
-        );
+        return NextResponse.json({ error: "Validation failed", details: result.error.flatten() }, { status: 400 });
     }
 
     const data = result.data;
@@ -48,10 +45,7 @@ export async function PATCH(req: NextRequest) {
     try {
         const existingUser = await prisma.user.findUnique({ where: { id } });
         if (!existingUser) {
-            return NextResponse.json(
-                { error: "User not found" },
-                { status: 404 }
-            );
+            return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
         const updatedUser = await prisma.user.update({ where: { id }, data });
@@ -83,15 +77,23 @@ export async function DELETE(req: NextRequest) {
     }
 
     try {
-        await prisma.brotherEmails.delete({
-            where: { email: userToDelete.email },
-        });
-
-        await cloudinary.uploader.destroy(userToDelete.imagePublicId || "");
+        if (userToDelete.imagePublicId) {
+            await cloudinary.uploader.destroy(userToDelete.imagePublicId || "");
+        }
 
         await prisma.user.delete({
             where: { id },
         });
+
+        const emailToDelete = await prisma.brotherEmails.findUnique({
+            where: { email: userToDelete.email },
+        });
+
+        if (emailToDelete) {
+            await prisma.brotherEmails.delete({
+                where: { email: userToDelete.email },
+            });
+        }
 
         return NextResponse.json({ success: true });
     } catch (error) {
