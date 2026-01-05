@@ -32,8 +32,6 @@ export function useDraftClock(draftId: string, numberTeams: number) {
     //hydrate on mount and on focus/visibilitychange
     useEffect(() => {
         let alive = true;
-        console.log("USEEFFECT");
-
         const fetchState = async () => {
             try {
                 const res = await fetch(`/api/draft/${draftId}/state`, { cache: "no-store" });
@@ -86,7 +84,12 @@ export function useDraftClock(draftId: string, numberTeams: number) {
 
     // live updates from Pusher
     useDraftChannel(`public-draft-${draftId}`, (evt: PublicEvent) => {
+        if (evt?.type === "PICK_IS_IN") {
+            setState((prev) => ({ ...prev, status: "PAUSED" }));
+            return;
+        }
         if (evt?.type !== "STATE") return;
+
         const pickNo = Number(evt.pickNo) || null;
         console.log("pusher STATE", evt, Date.now());
         const { round, pickInRound } = pickNo
@@ -101,6 +104,5 @@ export function useDraftClock(draftId: string, numberTeams: number) {
             pickInRound,
         });
     });
-    console.log("STATE", state);
     return state;
 }

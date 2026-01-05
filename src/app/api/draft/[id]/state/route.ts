@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../../../prisma";
 import { idP } from "@/models/routeParamsTypes";
+import { DraftStatus } from "@/generated/prisma";
 
 export async function GET(_req: Request, { params }: { params: idP }) {
     const p = await params;
@@ -21,7 +22,8 @@ export async function GET(_req: Request, { params }: { params: idP }) {
     const T = order?.length ?? 0;
 
     let teamId: string | null = null;
-    if (draft.status === "ONGOING" && T > 0) {
+    const draftActive = draft.status === DraftStatus.PAUSED || draft.status === DraftStatus.ONGOING;
+    if (draftActive && T > 0) {
         teamId = draft.picksByTeam[draft.currentPickNo - 1];
     }
     return NextResponse.json({

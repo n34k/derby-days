@@ -1,10 +1,11 @@
-// src/app/api/draft/[id]/status/route.ts  (or keep your current path)
+// src/app/api/draft/[id]/status/route.ts
 import { isAdmin } from "@/lib/isAdmin";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../../prisma";
 import { idP } from "@/models/routeParamsTypes";
 import { pusher } from "@/lib/pusher/server";
 import getYear from "@/lib/getYear";
+import { DraftStatus } from "@/generated/prisma";
 
 const DRAFT_TIMER = 10 * 60 * 1000;
 
@@ -70,7 +71,7 @@ export async function PATCH(req: NextRequest, { params }: { params: idP }) {
         });
 
         //If starting (or already started), compute who's on the clock and emit STATE with a new deadline
-        if (nextStatus === "ONGOING") {
+        if (nextStatus === DraftStatus.ONGOING) {
             const order = draft.teamOrder as string[];
             if (!Array.isArray(order) || order.length === 0) {
                 return NextResponse.json({ error: "Team order not set" }, { status: 400 });
@@ -80,7 +81,6 @@ export async function PATCH(req: NextRequest, { params }: { params: idP }) {
             const deadlineAt = Date.now() + DRAFT_TIMER;
 
             // Broadcast the STATE so clients start the timer immediately
-            console.log("PUSHER STATE ONGOING");
             await pusher.trigger(`public-draft-${p.id}`, "event", {
                 type: "STATE",
                 status: "ONGOING",

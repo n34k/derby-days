@@ -26,7 +26,7 @@ export async function middleware(req: NextRequest) {
     console.log("Draft status in middleware:", status);
 
     //If not ongoing, everyone can access /draft
-    if (status !== DraftStatus.ONGOING) {
+    if (status !== DraftStatus.ONGOING || status !== DraftStatus.PAUSED) {
         return NextResponse.next();
     }
 

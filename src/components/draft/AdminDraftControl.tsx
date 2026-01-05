@@ -4,8 +4,9 @@ import { prisma } from "../../../prisma";
 import CreateDraftButton from "./CreateDraftButton";
 import DraftDeleteButton from "./DraftDeleteButton";
 import DraftStartButton from "./DraftStartButton";
-import AvailableBrothersTable from "./AvailableBrothers";
 import getYear from "@/lib/getYear";
+import AdminAnnouncePick from "./AdminAnnouncePick";
+import { DraftStatus } from "@/generated/prisma";
 
 const AdminDraftControl = async () => {
     const year = getYear();
@@ -29,11 +30,13 @@ const AdminDraftControl = async () => {
         }
     }
 
-    let draftStatus;
+    let draftStatus = null;
 
     if (draftCreatedThisYear) {
         draftStatus = draftCreatedThisYear.status;
     }
+
+    const draftActive = draftStatus === DraftStatus.ONGOING || draftStatus === DraftStatus.PAUSED;
 
     return (
         draftStatus !== "COMPLETE" &&
@@ -50,14 +53,7 @@ const AdminDraftControl = async () => {
                 ) : (
                     <></>
                 )}
-                {draftCreatedThisYear && draftStatus === "ONGOING" ? (
-                    <AvailableBrothersTable
-                        draftId={year}
-                        numberTeams={teams.length}
-                    />
-                ) : (
-                    <></>
-                )}
+                {draftCreatedThisYear && draftActive ? <AdminAnnouncePick draftId={draftCreatedThisYear.id} /> : <></>}
             </div>
         )
     );

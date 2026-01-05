@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useDraftClock } from "@/app/hooks/useDraftClock";
 import { useCountdown } from "@/app/hooks/useCountdown";
 import greekLetters from "@/lib/greekLetters";
+import { DraftStatus } from "@/generated/prisma";
 
 type Team = { id: string; name: string };
 
@@ -25,7 +26,8 @@ export default function DraftHeader({ draftId, teams }: { draftId: string; teams
                 </div>
             </div>
             <div className="text-4xl md:text-7xl font-mono tabular-nums">
-                {state.status === "ONGOING" && state.deadlineAt ? mmss : "--:--"}
+                {state.status === DraftStatus.ONGOING && mmss}
+                <p className="text-secondary">{state.status === DraftStatus.PAUSED && "Pick Is In"}</p>
             </div>
 
             <div className="flex items-center gap-8">
@@ -34,7 +36,7 @@ export default function DraftHeader({ draftId, teams }: { draftId: string; teams
                     <div className="font-bold text-4xl md:text-6xl">{state.round}</div>
                 </div>
                 <div className="flex flex-col items-center gap-1 text-center">
-                    <div className="text-xs md:text-sm text-info-content">Pick</div>
+                    <div className="text-xs md:text-sm text-info-content">Overall Pick</div>
                     <div className="font-bold text-4xl md:text-6xl">{state.pickNo ?? "—"}</div>
                 </div>
             </div>
