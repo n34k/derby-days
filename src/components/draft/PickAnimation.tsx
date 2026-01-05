@@ -14,8 +14,8 @@ type PickInfo = {
     player: {
         id: string;
         name: string;
-        image: string;
-        imagePublicId?: string | null;
+        image?: string | null | undefined;
+        walkoutSong?: string | null | undefined;
     };
     teamId: string;
     pickNo: number;
