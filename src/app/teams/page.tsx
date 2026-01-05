@@ -15,7 +15,7 @@ const TeamsOverviewPage = async () => {
                         key={team.id}
                         className="relative flex-1 h-full flex items-center justify-center bg-center bg-cover"
                         style={{
-                            backgroundImage: `url(images/${team.id}.jpg)`,
+                            backgroundImage: `url(images/${team.id}.avif)`,
                         }}
                     >
                         {/* Overlay */}
