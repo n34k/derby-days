@@ -9,10 +9,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 //when you get the images, import them statically like in DoneSection.tsx, key is alt
 const images = [
-    { src: "/images/check2024.jpg", alt: "Check 2024" },
-    { src: "/images/check2023.jpg", alt: "Check 2023" },
-    { src: "/images/check2022.jpg", alt: "Check 2022" },
-    { src: "/images/check2020.jpg", alt: "Check 2020" },
+    { src: "/images/kappamural.webp", alt: "Kappa Mural" },
+    { src: "/images/dgmural.webp", alt: "DG Mural" },
+    { src: "/images/samural.webp", alt: "Sigma Alpha Mural" },
+    { src: "/images/thetamural.webp", alt: "Theta Mural" },
+    { src: "/images/kkgmural.webp", alt: "KKG Mural" },
 ];
 
 const WhatSection = () => {

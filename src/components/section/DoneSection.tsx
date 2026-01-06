@@ -7,12 +7,14 @@ import "swiper/css/pagination";
 import { Navigation, Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-import check2024 from "../../../public/images/check2024.jpg";
-import check2023 from "../../../public/images//check2023.jpg";
-import check2022 from "../../../public/images/check2022.jpg";
-import check2020 from "../../../public/images/check2020.jpg"; // <- match the real filename exactly
+import check2024 from "../../../public/images/check2024.avif";
+import check2023 from "../../../public/images//check2023.avif";
+import check2022 from "../../../public/images/check2022.avif";
+import check2020 from "../../../public/images/check2020.avif";
+import kopicheck from "../../../public/images/kopicheck.avif";
 
 const images = [
+    { src: kopicheck, alt: "Check 2018" },
     { src: check2024, alt: "Check 2024" },
     { src: check2023, alt: "Check 2023" },
     { src: check2022, alt: "Check 2022" },
