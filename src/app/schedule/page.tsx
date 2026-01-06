@@ -32,6 +32,7 @@ const page = async () => {
 
                                     <p className="text-info-content text-lg">
                                         {new Date(entry.startTime).toLocaleString(undefined, {
+                                            timeZone: "America/Los_Angeles",
                                             month: "short",
                                             day: "numeric",
                                             hour: "numeric",
