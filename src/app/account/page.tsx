@@ -6,12 +6,18 @@ import SignOutButton from "@/components/SignOutButton";
 import { getUserSessionData } from "@/lib/getUserSessionData";
 import BrotherStats from "@/components/BrotherStandings";
 import { redirect } from "next/navigation";
+import { prisma } from "../../../prisma";
 
 async function AccountPage() {
     const userData = await getUserSessionData();
     if (!userData) {
         redirect("/");
     }
+
+    const userStats = await prisma.user.findMany({
+        select: { id: true, name: true, moneyRaised: true, teamId: true, image: true },
+        orderBy: { moneyRaised: "desc" },
+    });
 
     return (
         <div className="flex flex-col gap-10 items-center justify-evenly md:flex-row md:px-15 md:pt-15 p-5">
@@ -26,7 +32,7 @@ async function AccountPage() {
                 <SignOutButton />
             </div>
             <UserStats user={userData} />
-            <BrotherStats />
+            <BrotherStats userStats={userStats} />
         </div>
     );
 }
