@@ -34,19 +34,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         where: { id: getYear() },
     });
 
-    let draftStatus;
+    const schedule = await prisma.scheduleEntry.findFirst();
 
-    if (draft) {
-        draftStatus = draft.status;
-    } else {
-        draftStatus = DraftStatus.NOT_CREATED;
-    }
+    const scheduleMade = schedule ? true : false;
 
-    let teamsMade = false;
+    const draftStatus = draft ? draft.status : DraftStatus.NOT_CREATED;
 
-    if (teams) {
-        teamsMade = true;
-    }
+    const teamsMade = teams ? true : false;
 
     return (
         <html
@@ -58,6 +52,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
                     userData={userData}
                     teamsMade={teamsMade}
                     draftStatus={draftStatus}
+                    scheduleMade={scheduleMade}
                 />
                 <main className="flex-1">{children}</main>
                 <Footer />
