@@ -9,6 +9,7 @@ import AdPurchaseTable from "../tables/AdPurchaseTable";
 import AdsTable from "../tables/AdTable";
 import TshirtsTable from "../tables/TShirtTable";
 import TshirtPurchasesTable from "../tables/TShirtPurchaseTable";
+import ScheduleEntriesTable from "../tables/ScheduleTable";
 
 const AdminPanel = async () => {
     const year = getYear();
@@ -51,6 +52,8 @@ const AdminPanel = async () => {
         select: { status: true },
     });
 
+    const schedule = await prisma.scheduleEntry.findMany();
+
     return (
         <div className="flex flex-col bg-primary p-5 rounded-lg border gap-5 w-[90vw] h-[70vh] overflow-scroll ">
             <div className="flex self-center items-center gap-3">
@@ -85,6 +88,7 @@ const AdminPanel = async () => {
                     tshirts={tshirts}
                     draftStatus={draft?.status}
                 />
+                <ScheduleEntriesTable entries={schedule} />
                 <EmailsTable emails={emails} />
             </div>
         </div>

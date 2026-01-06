@@ -13,7 +13,6 @@ const images = [
     { src: "/images/dgmural.webp", alt: "DG Mural" },
     { src: "/images/samural.webp", alt: "Sigma Alpha Mural" },
     { src: "/images/thetamural.webp", alt: "Theta Mural" },
-    { src: "/images/kkgmural.webp", alt: "KKG Mural" },
 ];
 
 const WhatSection = () => {

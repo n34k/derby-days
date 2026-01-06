@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, CalendarDateRangeIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import {
     UserGroupIcon,
     TrophyIcon,
@@ -19,9 +19,10 @@ interface NavBarProps {
     userData: User | null;
     teamsMade: boolean;
     draftStatus: DraftStatus;
+    scheduleMade: boolean;
 }
 
-const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
+const NavBar = ({ userData, teamsMade, draftStatus, scheduleMade }: NavBarProps) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const userRole = userData?.globalRole || "NONE";
 
@@ -53,7 +54,7 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <nav className="hidden md:flex gap-20 items-center">
+                    <nav className="hidden md:flex gap-17.5 items-center">
                         {teamsMade && (
                             <Link
                                 href="/teams"
@@ -90,6 +91,14 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                         >
                             Judges
                         </Link>
+                        {scheduleMade && (
+                            <Link
+                                href="/schedule"
+                                className="p-3 text-base-content font-semibold transition duration-300 transform hover:scale-110 hover:bg-secondary hover:bg-opacity-10 rounded-md"
+                            >
+                                Schedule
+                            </Link>
+                        )}
                         {userData ? (
                             <Link
                                 href="/account"
@@ -140,8 +149,8 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
 
                 {/* Dropdown Menu */}
                 <div
-                    className={`flex justify-evenly items-center md:hidden w-full bg-base backdrop-blur-md border-t-1 shadow-lg overflow-hidden
-            transition-[max-height] duration-50 ${menuOpen ? "max-h-[60vh] py-3" : "max-h-0"} `}
+                    className={`flex gap-2 justify-evenly items-center md:hidden w-full bg-base backdrop-blur-md border-t-1 shadow-lg overflow-scroll
+            transition-[max-height] duration-50 ${menuOpen ? "max-h-[60vh] py-3 px-2" : "max-h-0"} `}
                 >
                     {teamsMade && (
                         <Link
@@ -189,6 +198,16 @@ const NavBar = ({ userData, teamsMade, draftStatus }: NavBarProps) => {
                         <ScaleIcon className="h-8 w-8 text-base-content" />
                         <p className="text-base-content font-bold">Judges</p>
                     </Link>
+                    {scheduleMade && (
+                        <Link
+                            className="flex flex-col items-center"
+                            href="/schedule"
+                            onClick={() => setMenuOpen(false)}
+                        >
+                            <CalendarDateRangeIcon className="h-8 w-8 text-base-content" />
+                            <p className="text-base-content font-bold">Schedule</p>
+                        </Link>
+                    )}
                     {userData ? (
                         <Link
                             className="flex flex-col items-center"
