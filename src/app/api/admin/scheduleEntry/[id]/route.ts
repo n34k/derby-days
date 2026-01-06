@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../../prisma";
 import { isAdmin } from "@/lib/isAdmin";
 import { Prisma } from "@/generated/prisma";
-
-type Params = { id: string };
+import { idP } from "@/models/routeParamsTypes";
 
 type PatchBody = Partial<{
     title: string;
@@ -12,7 +11,7 @@ type PatchBody = Partial<{
     startTime: string; // coming from client as ISO string
 }>;
 
-export async function PATCH(req: NextRequest, { params }: { params: Params }) {
+export async function PATCH(req: NextRequest, { params }: { params: idP }) {
     const can = await isAdmin();
     if (!can) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const p = await params;
@@ -59,7 +58,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Params }) {
     return NextResponse.json({ entry });
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: Params }) {
+export async function DELETE(_req: NextRequest, { params }: { params: idP }) {
     const can = await isAdmin();
     if (!can) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const p = await params;
