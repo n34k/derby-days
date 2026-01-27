@@ -16,6 +16,7 @@ const PurchasePage = () => {
         setLoading(true);
         const metadata = {
             ...formValues,
+            userData: null,
             category: "ad",
             size: product.size,
         };

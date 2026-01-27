@@ -2,10 +2,13 @@ import { stripe } from "@/lib/stripe";
 import { prisma } from "../../../../prisma";
 import { NextResponse } from "next/server";
 import adSizeDisplay from "@/lib/adSizeDisplay";
+import { getUserSessionData } from "@/lib/getUserSessionData";
 
 export async function POST(request: Request) {
     try {
         const { amount, product, metadata, items } = await request.json();
+        const userData = await getUserSessionData();
+        metadata.userData = JSON.stringify(userData);
 
         const category = metadata?.category; // now always expected
 

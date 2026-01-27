@@ -13,6 +13,7 @@ const DonationPage = () => {
         setLoading(true);
         const metadata = {
             ...formValues,
+            userData: null,
             category: "donation",
         };
 
