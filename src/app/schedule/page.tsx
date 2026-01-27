@@ -16,7 +16,7 @@ const page = async () => {
                 {/* Header */}
                 <div className="flex flex-row gap-1 mb-2">
                     <h1 className="text-5xl text-base-content font-bold">{year} Event Schedule</h1>
-                    <InfoCircle>Official Derby Days event schedule. Times and locations may change.</InfoCircle>
+                    <InfoCircle>Times and locations may change.</InfoCircle>
                 </div>
 
                 {/* Events */}
