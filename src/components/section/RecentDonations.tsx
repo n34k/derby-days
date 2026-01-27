@@ -5,6 +5,7 @@ import { DonationFilterOption, DonationFilterOptions } from "@/models/donationTy
 import { useState } from "react";
 import { Donation } from "@/generated/prisma";
 import Link from "next/link";
+import greekLetters from "@/lib/greekLetters";
 
 interface RecentDonationsProps {
     donations: {
@@ -63,13 +64,17 @@ const RecentDonations = ({ donations }: RecentDonationsProps) => {
                             key={d.id}
                         >
                             <p className="text-3xl">{d.name}</p>
-                            <p className="text-3xl text-info-content">
-                                {new Date(d.createdAt).toLocaleDateString("en-US", {
-                                    month: "numeric",
-                                    day: "numeric",
-                                    year: "2-digit",
-                                })}
-                            </p>
+
+                            <div className="flex flex-row gap-2">
+                                <p className="text-3xl text-info-content">
+                                    {new Date(d.createdAt).toLocaleDateString("en-US", {
+                                        month: "numeric",
+                                        day: "numeric",
+                                        year: "2-digit",
+                                    })}
+                                </p>
+                                {d.teamId && <p className="text-3xl text-info-content">| {greekLetters(d.teamId)}</p>}
+                            </div>
 
                             <p className="text-success text-3xl font-bold">${d.amount}</p>
                             {d.note && <p className="text-3xl">&quot;{d.note}&quot;</p>}
