@@ -61,6 +61,7 @@ const ShirtsOrder = () => {
             name,
             category: "shirt",
             teamId,
+            userData: null,
             items: JSON.stringify(items),
         };
 

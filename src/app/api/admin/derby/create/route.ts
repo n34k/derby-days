@@ -25,9 +25,7 @@ export async function POST() {
         const teams = await prisma.team.findMany({
             select: { id: true, derbyDarlingPublicId: true },
         });
-        const teamPublicIds = teams
-            .map((t) => t.derbyDarlingPublicId)
-            .filter((p): p is string => Boolean(p));
+        const teamPublicIds = teams.map((t) => t.derbyDarlingPublicId).filter((p): p is string => Boolean(p));
 
         // 2) Read JUDGE users first (we need their emails & image public IDs before deleteMany)
         const judgeUsers = await prisma.user.findMany({
@@ -35,12 +33,8 @@ export async function POST() {
             select: { id: true, email: true, imagePublicId: true },
         });
         const judgeUserIds = judgeUsers.map((u) => u.id);
-        const judgeEmails = judgeUsers
-            .map((u) => u.email)
-            .filter((e): e is string => Boolean(e));
-        const judgeImagePublicIds = judgeUsers
-            .map((u) => u.imagePublicId)
-            .filter((p): p is string => Boolean(p));
+        const judgeEmails = judgeUsers.map((u) => u.email).filter((e): e is string => Boolean(e));
+        const judgeImagePublicIds = judgeUsers.map((u) => u.imagePublicId).filter((p): p is string => Boolean(p));
 
         // 3) Database cleanup & seed (transaction = all-or-nothing for DB changes)
         await prisma.$transaction([
@@ -54,6 +48,7 @@ export async function POST() {
             prisma.adPurchase.deleteMany({}),
             prisma.draftPick.deleteMany({}),
             prisma.tshirtPurchase.deleteMany({}),
+            prisma.scheduleEntry.deleteMany({}),
 
             // Delete teams
             prisma.team.deleteMany({}),
@@ -90,9 +85,7 @@ export async function POST() {
         let cloudinaryDeletedTeams: string[] = [];
         if (teamPublicIds.length > 0) {
             try {
-                const result = await cloudinary.api.delete_resources(
-                    teamPublicIds
-                );
+                const result = await cloudinary.api.delete_resources(teamPublicIds);
                 cloudinaryDeletedTeams = Object.entries(result.deleted || {})
                     .filter(([, status]) => status === "deleted")
                     .map(([id]) => id);
@@ -105,9 +98,7 @@ export async function POST() {
         let cloudinaryDeletedJudges: string[] = [];
         if (judgeImagePublicIds.length > 0) {
             try {
-                const result = await cloudinary.api.delete_resources(
-                    judgeImagePublicIds
-                );
+                const result = await cloudinary.api.delete_resources(judgeImagePublicIds);
                 cloudinaryDeletedJudges = Object.entries(result.deleted || {})
                     .filter(([, status]) => status === "deleted")
                     .map(([id]) => id);
@@ -133,9 +124,6 @@ export async function POST() {
         });
     } catch (err) {
         console.error("Create Derby Days error:", err);
-        return NextResponse.json(
-            { error: (err as Error)?.message || "Internal Server Error" },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: (err as Error)?.message || "Internal Server Error" }, { status: 500 });
     }
 }

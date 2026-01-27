@@ -51,6 +51,7 @@ export async function POST(req: Request) {
         const teamId = session.metadata?.teamId || null;
         const category = session.metadata.category;
         const shirtItems = session.metadata?.items || null;
+        const userData = JSON.parse(session.metadata?.userData) || null;
 
         try {
             if (category === "donation") {
@@ -170,7 +171,18 @@ export async function POST(req: Request) {
                         });
                     }
                 }
+                // if on checkout they chose reffered by team
             } else if (teamId) {
+                // if a user donates directly to a team, see if they are logged in
+                // and increment their moneyRaised as well
+                console.log("USER DATA IN STRIPE WEBHOOK:", userData);
+                if (userData) {
+                    await prisma.user.update({
+                        where: { id: userData.id },
+                        data: { moneyRaised: { increment: amount } },
+                    });
+                }
+
                 await prisma.team.update({
                     where: { id: teamId },
                     data: { moneyRaised: { increment: amount } },
