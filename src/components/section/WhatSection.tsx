@@ -54,13 +54,13 @@ const WhatSection = () => {
                     <h1 className="text-5xl text-base-content font-bold">What is Derby Days?</h1>
                     <p className="text-info-content text-sm md:text-base text-center">ABOUT</p>
                     <p className="text-base-content">
-                        Derby Days is Sigma Chi&apos;s national philanthropy event — a spirited, week-long competition
-                        that brings together fraternities, sororities, and the campus community to raise funds for a
-                        meaningful cause. Through challenges, performances, team spirit, and campus engagement, Derby
-                        Days unites fun with purpose. At its heart, Derby Days is about making a difference. Every
-                        dollar raised supports Valley Childrens hospital, helping fund research, provide care, and
-                        uplift lives. Derby Days is tradition, competition, and service — all rolled into one
-                        unforgettable week.
+                        Derby Days is Sigma Chi&apos;s national philanthropy event. It&apos;s a spirited, month-long
+                        competition that brings together fraternities, sororities, and the campus community to raise
+                        funds for a meaningful cause. Through challenges, performances, team spirit, and campus
+                        engagement, Derby Days unites fun with purpose. At its heart, Derby Days is about making a
+                        difference. Every dollar raised supports Valley Childrens hospital, helping fund research,
+                        provide care, and uplift lives. Derby Days is tradition, competition, and service all rolled
+                        into one unforgettable week.
                     </p>
                 </div>
             </div>

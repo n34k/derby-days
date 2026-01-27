@@ -1,1 +1,1 @@
-export const allowedFileUploads = ["jpg", "jpeg", "png"];
+export const allowedFileUploads = ["jpg", "jpeg", "png", "webp", "pdf"];

@@ -7,7 +7,7 @@ import { pusher } from "@/lib/pusher/server";
 import getYear from "@/lib/getYear";
 import { DraftStatus } from "@/generated/prisma";
 
-const DRAFT_TIMER = 10 * 60 * 1000;
+const DRAFT_TIMER = 10 * 60 * 500;
 
 export async function GET() {
     const year = getYear();
@@ -66,7 +66,7 @@ export async function PATCH(req: NextRequest, { params }: { params: idP }) {
             where: { id: p.id },
             data: {
                 status: nextStatus,
-                deadlineAt: new Date(Date.now() + 10 * 60 * 1000),
+                deadlineAt: new Date(Date.now() + DRAFT_TIMER),
             },
         });
 
