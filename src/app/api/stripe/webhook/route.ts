@@ -2,7 +2,7 @@ import { prisma } from "../../../../../prisma";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { headers } from "next/headers";
-import { sendPurchaseEmail } from "@/lib/emailService";
+import { sendAdminPurchaseEmail, sendPurchaseEmail } from "@/lib/emailService";
 import getYear from "@/lib/getYear";
 import { $Enums } from "@/generated/prisma";
 
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
         const amount = session.amount_total! / 100;
         const email = session.customer_email!;
         const name = session.metadata?.name;
-        const note = session.metadata?.note || null;
+        const note = session.metadata?.note || undefined;
         const address = session.metadata?.address || null;
         const size = session.metadata?.size as $Enums.AdSize;
         const referredById = session.metadata?.referredBy || null;
@@ -201,7 +201,9 @@ export async function POST(req: Request) {
             });
         }
         try {
+            console.log("category:", JSON.stringify(category), "len:", category?.length);
             await sendPurchaseEmail({ to: email, name, category, amount });
+            await sendAdminPurchaseEmail({ name, category, amount, note });
         } catch (err) {
             console.error("Failed to send purchase email:", err);
             return new NextResponse("Failed to send purchase email", {

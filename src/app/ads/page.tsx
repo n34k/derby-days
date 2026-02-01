@@ -48,7 +48,9 @@ const AdsPage = () => {
                     book. All ad purchasers will also receive a complimentary copy of the Derby Days book. View
                     available ad sizes and pricing below.
                 </p>
-
+                <p className="text-info-content text-lg mb-3 md:text-md">
+                    After purchasing, please email your ad to fresnoderbydays@gmail.com
+                </p>
                 <div className="overflow-x-auto">
                     <table className="table w-full border border-base-content">
                         <thead className="bg-base-200 text-base-content">

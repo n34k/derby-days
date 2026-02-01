@@ -9,14 +9,41 @@ interface PurchaseEmailParams {
     amount: number;
 }
 
+interface AdminPurchaseEmailParams {
+    note?: string;
+    name: string;
+    category: string;
+    amount: number;
+}
+
 const from = "Fresno State Derby Days <no-reply@derbydays.org>";
 
-export async function sendPurchaseEmail({
-    to,
-    name,
-    category,
-    amount,
-}: PurchaseEmailParams) {
+const email = "fresnoderbydays@gmail.com";
+
+export async function sendAdminPurchaseEmail({ name, category, amount, note }: AdminPurchaseEmailParams) {
+    let subject = "";
+    let html = "";
+    if (category === "donation") {
+        subject = "New Donation!";
+        html = `<p>${name} has donated <strong>$${amount.toFixed(2)}</strong></p><p>Note: ${note}</p>`;
+    } else if (category === "ad") {
+        subject = "New Ad Purchase!";
+        html = `<p>${name} has bought an ad for <strong>$${amount.toFixed(2)}</strong></p>`;
+    } else if (category === "shirt") return;
+
+    console.log("Sending email", from);
+    console.log("to: ", email);
+    console.log("HTML: ", html);
+
+    await resend.emails.send({
+        from,
+        to: email,
+        subject,
+        html,
+    });
+}
+
+export async function sendPurchaseEmail({ to, name, category, amount }: PurchaseEmailParams) {
     let subject = "";
     let html = "";
     if (category === "donation") {
@@ -24,7 +51,7 @@ export async function sendPurchaseEmail({
         html = `
     <p>Hi ${name},</p>
     <p>Thank you so much for your generous donation of <strong>$${amount.toFixed(
-        2
+        2,
     )}</strong> to Valley Children’s Hospital through Derby Days. Your support helps us make a real difference in the lives of the children and families we serve.</p>
     <p>You will be able to see you donation reflected in the live standings, as well as the donors page on our website.<p>
     <p>We truly appreciate your generosity.</p>
