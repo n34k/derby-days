@@ -57,7 +57,7 @@ const RecentDonations = ({ donations }: RecentDonationsProps) => {
                 </div>
             </div>
             {donations.amount.length !== 0 ? (
-                <div className="flex flex-col gap-10">
+                <div className="flex flex-col gap-10 px-4 text-center">
                     {displayedDontations.map((d) => (
                         <div
                             className="flex flex-col items-center justify-center"
