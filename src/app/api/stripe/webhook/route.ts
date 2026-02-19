@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import { sendAdminPurchaseEmail, sendPurchaseEmail } from "@/lib/emailService";
 import getYear from "@/lib/getYear";
 import { $Enums } from "@/generated/prisma";
+import { ShirtCart } from "@/app/checkout/shirt/page";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: "2025-06-30.basil",
@@ -99,36 +100,15 @@ export async function POST(req: Request) {
                 });
             } else if (category === "shirt") {
                 // Parse items from metadata (sent as a JSON string)
-                let parsedItems: Array<{
-                    productId: string;
-                    quantity: number;
-                }> = [];
+                let parsedItems: ShirtCart[] = [];
                 try {
                     parsedItems = JSON.parse(shirtItems || "[]");
                 } catch {
                     console.error("Failed to parse shirt items JSON");
                 }
 
-                // Get all productIds to look up names
-                const productIds = parsedItems.map((i) => i.productId);
-
-                // Fetch product names from your DB
-                const dbProducts = await prisma.tshirt.findMany({
-                    where: { productId: { in: productIds } },
-                    select: { productId: true, name: true },
-                });
-
-                // Build { name: quantity } object
-                const itemsJson: Record<string, number> = {};
-                for (const item of parsedItems) {
-                    const product = dbProducts.find((p) => p.productId === item.productId);
-                    if (product && item.quantity > 0) {
-                        itemsJson[product.name] = item.quantity;
-                    }
-                }
-
                 // Optionally calculate total shirts
-                const totalQty = Object.values(itemsJson).reduce((sum, q) => sum + q, 0);
+                const totalQty = Object.values(parsedItems).reduce((sum, q) => sum + q.qty, 0);
 
                 await prisma.tshirtPurchase.create({
                     data: {
@@ -136,7 +116,7 @@ export async function POST(req: Request) {
                         name,
                         team: teamId ? { connect: { id: teamId } } : undefined,
                         stripeId: session.id,
-                        sizeQty: itemsJson,
+                        sizeQty: parsedItems,
                     },
                 });
                 if (teamId) {

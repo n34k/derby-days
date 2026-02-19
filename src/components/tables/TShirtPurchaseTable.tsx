@@ -14,16 +14,23 @@ const TshirtPurchasesTable: React.FC<TshirtPurchasesTableProps> = ({ purchases }
     const renderSizeQty = (value: TshirtPurchase["sizeQty"]) => {
         if (value == null) return "-";
 
-        // Prisma Json -> any on the frontend
         if (typeof value === "string") return value;
 
         try {
-            // Try to pretty-print if it's an object like { S: 2, M: 1 }
-            if (typeof value === "object" && value !== null) {
-                const entries = Object.entries(value as Record<string, string>);
-                if (entries.length === 0) return "-";
+            if (Array.isArray(value)) {
+                if (value.length === 0) return "-";
 
-                return entries.map(([size, qty]) => `${size}: ${qty}`).join(", ");
+                return value
+                    .map((item) => {
+                        const { name, size, qty } = item as {
+                            name?: string;
+                            size?: string;
+                            qty?: number;
+                        };
+
+                        return `${name ?? "Item"} (${size ?? "-"}) × ${qty ?? 0}`;
+                    })
+                    .join(", ");
             }
 
             return JSON.stringify(value);

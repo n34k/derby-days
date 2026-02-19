@@ -1,20 +1,27 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { formatUSD } from "@/lib/formatUSD";
 import { Tshirt } from "@/generated/prisma";
 import InfoCircle from "@/components/modals/InfoCircle";
+import { tshirtSizes } from "@/models/tshirtSizes";
 import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 
 type Team = { id: string; name: string };
+
+type ShirtAddToCart = { name: string; productId: string; size: string };
+
+export type ShirtCart = ShirtAddToCart & {
+    qty: number;
+};
 
 const ShirtsOrder = () => {
     const [teams, setTeams] = useState<Team[]>([]);
     const [shirts, setShirts] = useState<Tshirt[]>([]);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [qty, setQty] = useState<Record<string, number>>({});
     const [teamId, setTeamId] = useState("");
     const [loading, setLoading] = useState(false);
+    const [cart, setCart] = useState<ShirtCart[]>([]);
 
     useEffect(() => {
         fetch("/api/teams")
@@ -27,34 +34,50 @@ const ShirtsOrder = () => {
                 setShirts(items);
                 const init: Record<string, number> = {};
                 items.forEach((p) => (init[p.productId] = 0));
-                setQty(init);
             });
     }, []);
 
-    const lineSubtotals = useMemo(() => {
-        return shirts.map((p) => ({
-            id: p.productId,
-            name: p.name,
-            priceCents: p.price,
-            qty: qty[p.productId] ?? 0,
-            subtotalCents: (qty[p.productId] ?? 0) * p.price,
-        }));
-    }, [shirts, qty]);
+    const canCheckout = cart.length > 0 && !!teamId && !!name && !!email;
 
-    const totalCents = useMemo(() => lineSubtotals.reduce((s, li) => s + li.subtotalCents, 0), [lineSubtotals]);
+    const addToCart = (shirt: ShirtAddToCart) => {
+        setCart((prevCart) => {
+            const existing = prevCart.find((item) => item.productId === shirt.productId && item.size === shirt.size);
 
-    const canCheckout = totalCents > 0 && !!teamId && !!name && !!email;
+            if (existing) {
+                return prevCart.map((item) =>
+                    item.productId === shirt.productId && item.size === shirt.size
+                        ? { ...item, qty: item.qty + 1 }
+                        : item,
+                );
+            }
+
+            return [...prevCart, { ...shirt, qty: 1 }];
+        });
+    };
+
+    const incQty = (productId: string, size: string) => {
+        setCart((prev) =>
+            prev.map((item) =>
+                item.productId === productId && item.size === size
+                    ? { ...item, qty: Math.min(10, item.qty + 1) }
+                    : item,
+            ),
+        );
+    };
+
+    const decQty = (productId: string, size: string) => {
+        setCart((prev) =>
+            prev
+                .map((item) =>
+                    item.productId === productId && item.size === size ? { ...item, qty: item.qty - 1 } : item,
+                )
+                .filter((item) => item.qty > 0),
+        );
+    };
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         if (!canCheckout) return;
-
-        const items = lineSubtotals.filter((li) => li.qty > 0).map((li) => ({ productId: li.id, quantity: li.qty }));
-
-        if (items.length === 0) {
-            alert("Please select at least one shirt.");
-            return;
-        }
 
         const metadata = {
             email,
@@ -62,7 +85,7 @@ const ShirtsOrder = () => {
             category: "shirt",
             teamId,
             userData: null,
-            items: JSON.stringify(items),
+            items: JSON.stringify(cart),
         };
 
         setLoading(true);
@@ -70,7 +93,7 @@ const ShirtsOrder = () => {
             const res = await fetch("/api/create-checkout-session", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ items, metadata }),
+                body: JSON.stringify({ items: cart, metadata }),
             });
 
             const data = await res.json();
@@ -157,13 +180,11 @@ const ShirtsOrder = () => {
                 {/* Shirts */}
                 <div className="w-full max-w-md md:max-w-xl mt-2">
                     <label className="label">
-                        <span className="label-text text-lg font-semibold text-primary-content">Choose sizes</span>
+                        <span className="label-text text-lg font-semibold text-primary-content">Choose shirts</span>
                     </label>
 
                     <ul className="flex flex-col gap-2">
                         {shirts.map((p) => {
-                            const currentQty = qty[p.productId] ?? 0;
-
                             return (
                                 <li
                                     key={p.productId}
@@ -176,35 +197,18 @@ const ShirtsOrder = () => {
                                         </div>
 
                                         <div className="flex items-center gap-3">
-                                            <button
-                                                type="button"
-                                                className="btn btn-ghost btn-sm"
-                                                onClick={() => {
-                                                    if (currentQty === 0) return;
-                                                    setQty((prev) => ({ ...prev, [p.productId]: currentQty - 1 }));
-                                                }}
-                                                disabled={loading || currentQty === 0}
-                                                aria-label={`Decrease ${p.name}`}
-                                            >
-                                                <MinusCircleIcon className="w-6 h-6" />
-                                            </button>
-
-                                            <span className="min-w-[2ch] text-center text-primary-content">
-                                                {currentQty}
-                                            </span>
-
-                                            <button
-                                                type="button"
-                                                className="btn btn-ghost btn-sm"
-                                                onClick={() => {
-                                                    if (currentQty === 10) return;
-                                                    setQty((prev) => ({ ...prev, [p.productId]: currentQty + 1 }));
-                                                }}
-                                                disabled={loading || currentQty === 10}
-                                                aria-label={`Increase ${p.name}`}
-                                            >
-                                                <PlusCircleIcon className="w-6 h-6" />
-                                            </button>
+                                            {tshirtSizes.map((s) => (
+                                                <button
+                                                    className="btn"
+                                                    type="button"
+                                                    key={s}
+                                                    onClick={() =>
+                                                        addToCart({ size: s, productId: p.productId, name: p.name })
+                                                    }
+                                                >
+                                                    {s}
+                                                </button>
+                                            ))}
                                         </div>
                                     </div>
                                 </li>
@@ -213,12 +217,53 @@ const ShirtsOrder = () => {
                     </ul>
                 </div>
 
-                {/* Total */}
                 <div className="w-full max-w-md md:max-w-xl mt-2">
-                    <div className="flex items-center justify-between">
-                        <span className="text-primary-content font-semibold">Total</span>
-                        <span className="text-primary-content font-bold">{formatUSD(totalCents / 100)}</span>
-                    </div>
+                    <label className="label">
+                        <span className="label-text text-lg font-semibold text-primary-content">Cart</span>
+                    </label>
+                    {cart.length === 0 ? (
+                        <p className="text-center text-info-content">Cart is empty</p>
+                    ) : (
+                        <ul>
+                            {cart.map((s) => {
+                                const key = s.productId + s.size;
+                                return (
+                                    <li
+                                        key={key}
+                                        className="flex flex-row justify-between border border-base-content/20 bg-base-100 rounded-sm px-3 py-3"
+                                    >
+                                        <div className="flex items-center justify-between gap-3">
+                                            <div className="flex flex-col text-left">
+                                                <span className="text-primary-content font-medium">{s.name}</span>
+                                                <span className="text-sm opacity-80">Size: {s.size}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-3">
+                                            <button
+                                                type="button"
+                                                className="btn btn-ghost btn-sm"
+                                                onClick={() => decQty(s.productId, s.size)}
+                                            >
+                                                <MinusCircleIcon className="w-6 h-6" />
+                                            </button>
+                                            <span className="min-w-[2ch] text-center text-primary-content">
+                                                {s.qty}
+                                            </span>
+                                            <button
+                                                type="button"
+                                                className="btn btn-ghost btn-sm"
+                                                onClick={() => incQty(s.productId, s.size)}
+                                                disabled={loading || s.qty === 10}
+                                            >
+                                                <PlusCircleIcon className="w-6 h-6" />
+                                            </button>
+                                        </div>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    )}
                 </div>
 
                 <button
