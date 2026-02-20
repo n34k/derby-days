@@ -23,14 +23,14 @@ export async function POST(request: Request) {
     try {
         const body = await request.json();
 
-        const { productId, name, price, priceId, quantityAvailable, size } = body ?? {};
+        const { productId, name, price, priceId, quantityAvailable } = body ?? {};
 
         if (!productId || !name || price == null || !priceId) {
             return NextResponse.json(
                 {
                     error: "productId, name, price, and priceId are required.",
                 },
-                { status: 400 }
+                { status: 400 },
             );
         }
 
@@ -41,7 +41,6 @@ export async function POST(request: Request) {
                 price,
                 priceId,
                 quantityAvailable: quantityAvailable === undefined ? null : quantityAvailable,
-                size: size ?? null, // TshirtSize? enum or string, depending on your generated type
             },
         });
 

@@ -231,7 +231,6 @@ model DraftPick {
 model Tshirt {
   productId String @id
   name      String
-  imagePublicIds String[]   
   price     Int // in cents
   priceId   String @unique // Stripe Price ID
   quantityAvailable Int?

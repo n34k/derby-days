@@ -18,7 +18,6 @@ const CreateTshirtModal: React.FC<Props> = ({ isOpen, onClose, onTshirtCreated }
         price: 0,
         priceId: "",
         quantityAvailable: null,
-        imagePublicIds: [],
     });
 
     const [loading, setLoading] = useState(false);
@@ -31,7 +30,6 @@ const CreateTshirtModal: React.FC<Props> = ({ isOpen, onClose, onTshirtCreated }
             price: 0,
             priceId: "",
             quantityAvailable: null,
-            imagePublicIds: [],
         });
         setLoading(false);
         setError(null);

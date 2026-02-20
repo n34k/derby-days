@@ -1,1 +1,1 @@
-export const tshirtSizes = ["XS", "S", "M", "L", "XL"] as const;
+export const tshirtSizes = ["XS", "S", "M", "L", "XL", "XXL"] as const;
