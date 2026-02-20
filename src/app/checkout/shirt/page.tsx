@@ -37,11 +37,8 @@ const ShirtsOrder = () => {
     const [cart, setCart] = useState<ShirtCart[]>([]);
     const [imagesByProductId, setImagesByProductId] = useState<Record<string, string[]>>({});
     const [imagesLoading, setImagesLoading] = useState(false);
-
     const [justAddedKey, setJustAddedKey] = useState<string | null>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    // Toasts
     const [toasts, setToasts] = useState<Toast[]>([]);
 
     const showToast = (message: string, variant: Toast["variant"] = "success") => {
