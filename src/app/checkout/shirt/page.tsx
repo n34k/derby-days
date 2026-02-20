@@ -36,10 +36,13 @@ const ShirtsOrder = () => {
     const [loading, setLoading] = useState(false);
     const [cart, setCart] = useState<ShirtCart[]>([]);
     const [imagesByProductId, setImagesByProductId] = useState<Record<string, string[]>>({});
-    const [justAddedKey, setJustAddedKey] = useState<string | null>(null);
-    const [toasts, setToasts] = useState<Toast[]>([]);
+    const [imagesLoading, setImagesLoading] = useState(false);
 
+    const [justAddedKey, setJustAddedKey] = useState<string | null>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // Toasts
+    const [toasts, setToasts] = useState<Toast[]>([]);
 
     const showToast = (message: string, variant: Toast["variant"] = "success") => {
         const id = Date.now();
@@ -67,6 +70,7 @@ const ShirtsOrder = () => {
         if (shirts.length === 0) return;
 
         const fetchStripeImages = async () => {
+            setImagesLoading(true);
             try {
                 const prodIds = shirts.map((s) => s.productId);
 
@@ -92,6 +96,8 @@ const ShirtsOrder = () => {
             } catch (e) {
                 console.error("Error fetching stripe images:", e);
                 showToast("Unable to load product images.", "error");
+            } finally {
+                setImagesLoading(false);
             }
         };
 
@@ -106,10 +112,8 @@ const ShirtsOrder = () => {
             return;
         }
 
-        // Toast feedback
         showToast(`Added ${shirt.name} (${shirt.size})`, "success");
 
-        // Button "just added" check feedback
         const key = `${shirt.productId}:${shirt.size}`;
         setJustAddedKey(key);
 
@@ -205,6 +209,14 @@ const ShirtsOrder = () => {
         }
     };
 
+    const ImagePlaceholder = ({ size }: { size: number }) => (
+        <div
+            className="rounded-md bg-base-300 animate-pulse"
+            style={{ width: size, height: size }}
+            aria-label="Loading images"
+        />
+    );
+
     return (
         <div className="flex justify-center my-6 px-4">
             <form
@@ -271,68 +283,64 @@ const ShirtsOrder = () => {
                 </div>
 
                 {/* Shirts */}
-                {loading ? (
-                    <p className="text-info-content">Loading...</p>
-                ) : (
-                    <div className="w-full max-w-md md:max-w-xl mt-2">
-                        <label className="label">
-                            <span className="label-text text-lg font-semibold text-primary-content">Choose shirts</span>
-                        </label>
+                <div className="w-full max-w-md md:max-w-xl mt-2">
+                    <label className="label">
+                        <span className="label-text text-lg font-semibold text-primary-content">Choose shirts</span>
+                    </label>
 
-                        <ul className="flex flex-col gap-2">
-                            {shirts.map((p) => (
-                                <li
-                                    key={p.productId}
-                                    className="border border-base-content/20 bg-base-100 rounded-sm px-3 py-3"
-                                >
-                                    <div className="flex flex-col md:flex-row justify-between gap-3">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-[80px] shrink-0">
+                    <ul className="flex flex-col gap-2">
+                        {shirts.map((p) => (
+                            <li
+                                key={p.productId}
+                                className="border border-base-content/20 bg-base-100 rounded-sm px-3 py-3"
+                            >
+                                <div className="flex flex-col md:flex-row justify-between gap-3">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-[80px] shrink-0">
+                                            {imagesLoading ? (
+                                                <ImagePlaceholder size={80} />
+                                            ) : (
                                                 <ImageCarousel
                                                     images={imagesByProductId[p.productId] ?? []}
                                                     viewportSize={80}
                                                 />
-                                            </div>
-
-                                            <div className="flex flex-col text-left">
-                                                <span className="text-primary-content font-medium">{p.name}</span>
-                                                <span className="text-sm opacity-80">{formatUSD(p.price / 100)}</span>
-                                            </div>
+                                            )}
                                         </div>
 
-                                        <div className="flex flex-col gap-2 overflow-x-scroll">
-                                            <p className="text-info-content text-sm">Choose Sizes: </p>
-                                            <div className="flex items-center gap-3 overflow-x-scroll">
-                                                {tshirtSizes.map((s) => {
-                                                    const key = `${p.productId}:${s}`;
-                                                    const isJustAdded = justAddedKey === key;
-
-                                                    return (
-                                                        <button
-                                                            key={s}
-                                                            type="button"
-                                                            onClick={() =>
-                                                                addToCart({
-                                                                    size: s,
-                                                                    productId: p.productId,
-                                                                    name: p.name,
-                                                                })
-                                                            }
-                                                            disabled={loading}
-                                                            className={`btn transition ${isJustAdded ? "btn-success" : ""}`}
-                                                        >
-                                                            {isJustAdded ? <CheckIcon className="w-4 h-4" /> : s}
-                                                        </button>
-                                                    );
-                                                })}
-                                            </div>
+                                        <div className="flex flex-col text-left">
+                                            <span className="text-primary-content font-medium">{p.name}</span>
+                                            <span className="text-sm opacity-80">{formatUSD(p.price / 100)}</span>
                                         </div>
                                     </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
+
+                                    <div className="flex flex-col gap-2 overflow-x-scroll">
+                                        <p className="text-info-content text-sm">Choose Sizes: </p>
+                                        <div className="flex items-center gap-3 overflow-x-scroll">
+                                            {tshirtSizes.map((s) => {
+                                                const key = `${p.productId}:${s}`;
+                                                const isJustAdded = justAddedKey === key;
+
+                                                return (
+                                                    <button
+                                                        key={s}
+                                                        type="button"
+                                                        onClick={() =>
+                                                            addToCart({ size: s, productId: p.productId, name: p.name })
+                                                        }
+                                                        disabled={loading}
+                                                        className={`btn transition ${isJustAdded ? "btn-success" : ""}`}
+                                                    >
+                                                        {isJustAdded ? <CheckIcon className="w-4 h-4" /> : s}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
 
                 {/* Cart */}
                 <div className="w-full max-w-md md:max-w-xl mt-2">
@@ -353,10 +361,14 @@ const ShirtsOrder = () => {
                                     >
                                         <div className="flex items-center gap-3">
                                             <div className="w-[80px] shrink-0">
-                                                <ImageCarousel
-                                                    images={imagesByProductId[s.productId] ?? []}
-                                                    viewportSize={80}
-                                                />
+                                                {imagesLoading ? (
+                                                    <ImagePlaceholder size={80} />
+                                                ) : (
+                                                    <ImageCarousel
+                                                        images={imagesByProductId[s.productId] ?? []}
+                                                        viewportSize={80}
+                                                    />
+                                                )}
                                             </div>
 
                                             <div className="flex flex-col text-left">
