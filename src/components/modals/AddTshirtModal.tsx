@@ -11,8 +11,6 @@ type Props = {
 
 type TshirtValue = Tshirt[keyof Tshirt];
 
-const TSHIRT_SIZES = ["XS", "S", "M", "L", "XL", "XXL"] as const;
-
 const CreateTshirtModal: React.FC<Props> = ({ isOpen, onClose, onTshirtCreated }) => {
     const [formData, setFormData] = useState<Tshirt>({
         productId: "",
@@ -20,7 +18,6 @@ const CreateTshirtModal: React.FC<Props> = ({ isOpen, onClose, onTshirtCreated }
         price: 0,
         priceId: "",
         quantityAvailable: null,
-        size: null,
     });
 
     const [loading, setLoading] = useState(false);
@@ -33,7 +30,6 @@ const CreateTshirtModal: React.FC<Props> = ({ isOpen, onClose, onTshirtCreated }
             price: 0,
             priceId: "",
             quantityAvailable: null,
-            size: null,
         });
         setLoading(false);
         setError(null);
@@ -127,33 +123,6 @@ const CreateTshirtModal: React.FC<Props> = ({ isOpen, onClose, onTshirtCreated }
                             onChange={(e) => handleChange("price", parseInt(e.target.value || "0", 10) as TshirtValue)}
                             required
                         />
-                    </div>
-
-                    {/* Size (optional) */}
-                    <div className="form-control">
-                        <label className="label">
-                            Size <span className="text-xs opacity-80">(optional)</span>
-                        </label>
-                        <select
-                            className="input input-bordered w-full"
-                            value={formData.size ?? ""}
-                            onChange={(e) =>
-                                handleChange(
-                                    "size",
-                                    (e.target.value === "" ? null : (e.target.value as TshirtValue)) as TshirtValue
-                                )
-                            }
-                        >
-                            <option value="">No specific size</option>
-                            {TSHIRT_SIZES.map((size) => (
-                                <option
-                                    key={size}
-                                    value={size}
-                                >
-                                    {size}
-                                </option>
-                            ))}
-                        </select>
                     </div>
 
                     {/* Quantity Available (optional) */}

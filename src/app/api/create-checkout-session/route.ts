@@ -7,6 +7,7 @@ import { getUserSessionData } from "@/lib/getUserSessionData";
 export async function POST(request: Request) {
     try {
         const { amount, product, metadata, items } = await request.json();
+        console.log("ITMES: ", items);
         const userData = await getUserSessionData();
         metadata.userData = JSON.stringify(userData);
 
@@ -21,6 +22,7 @@ export async function POST(request: Request) {
 
             // Fetch the shirt products from your DB
             const productIds = items.map((i) => i.productId);
+            console.log("productIds", productIds);
             const dbProducts = await prisma.tshirt.findMany({
                 where: { productId: { in: productIds } },
                 select: {
@@ -36,29 +38,21 @@ export async function POST(request: Request) {
                 const p = dbProducts.find((x) => x.productId === item.productId);
                 if (!p) throw new Error(`Product not found: ${item.productId}`);
 
-                if (p.priceId) {
-                    return {
-                        price: p.priceId,
-                        quantity: item.quantity ?? 1,
-                        adjustable_quantity: {
-                            enabled: true,
-                            minimum: 1,
-                            maximum: 10,
-                        },
-                    };
-                }
-
-                if (!p.price) {
-                    throw new Error(`Missing priceCents for product ${p.name}`);
-                }
-
                 return {
                     price_data: {
                         currency: "usd",
-                        product_data: { name: p.name },
-                        unit_amount: p.price,
+                        product_data: {
+                            name: p.name,
+                            description: `Size: ${item.size}`,
+                        },
+                        unit_amount: p.price, // cents
                     },
-                    quantity: item.quantity ?? 1,
+                    quantity: item.qty ?? 1,
+                    adjustable_quantity: {
+                        enabled: true,
+                        minimum: 1,
+                        maximum: 10,
+                    },
                 };
             });
 

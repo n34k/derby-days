@@ -1,10 +1,22 @@
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { prisma } from "../../prisma";
+import { stripe } from "@/lib/stripe";
+import ImageCarousel from "./ImageCarousel";
 
 const ShirtPurcahseWidget = async () => {
     const shirts = await prisma.tshirt.findMany();
+
+    const products = await Promise.all(
+        shirts.map((s) => {
+            return stripe.products.retrieve(s.productId);
+        }),
+    );
+
+    const images = products.flatMap((p) => p.images);
+
+    console.log("IMAGES: ", images);
+
     return (
         <div className="w-[320px] h-[450px] flex flex-col items-center justify-between gap-5 bg-primary p-5 rounded-2xl border shadow-lg">
             <div className="flex flex-col text-center">
@@ -12,11 +24,9 @@ const ShirtPurcahseWidget = async () => {
                 <p className="text-info-content text-sm md:text-base">PREVIEW</p>
             </div>
             <div className="relative w-[240px] h-[240px] mx-auto">
-                <Image
-                    src="/images/shirtplaceholder.webp"
-                    alt="shirt picture"
-                    fill
-                    className="border-1 border-primary rounded-md"
+                <ImageCarousel
+                    images={images}
+                    viewportSize={240}
                 />
             </div>
             {shirts.length > 0 ? (

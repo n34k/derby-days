@@ -40,7 +40,6 @@ export async function PATCH(request: Request, { params }: { params: productIdP }
         if (body.price !== undefined) data.price = body.price;
         if (body.priceId !== undefined) data.priceId = body.priceId;
         if (body.quantityAvailable !== undefined) data.quantityAvailable = body.quantityAvailable;
-        if (body.size !== undefined) data.size = body.size;
 
         if (Object.keys(data).length === 0) {
             return NextResponse.json({ error: "No valid fields provided for update." }, { status: 400 });

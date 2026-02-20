@@ -183,7 +183,7 @@ model TshirtPurchase {
   teamId    String?
   email     String
   name      String?
-  sizeQty   Json
+  sizeQty   Json[]
   stripeId  String   @unique
   createdAt DateTime @default(now())
 
@@ -234,7 +234,6 @@ model Tshirt {
   price     Int // in cents
   priceId   String @unique // Stripe Price ID
   quantityAvailable Int?
-  size      TshirtSize? // "S", "M", "L", etc.
 }
 
 model Ad {

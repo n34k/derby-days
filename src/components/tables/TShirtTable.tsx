@@ -90,7 +90,6 @@ export const TshirtsTable = ({ tshirts, draftStatus }: TshirtsTableProps) => {
                                     {" "}
                                     Name
                                 </th>
-                                <th className="border px-2 py-1">Size</th>
                                 <th className="border px-2 py-1">Price</th>
                                 <th className="border px-2 py-1">Stripe Price ID</th>
                                 <th className="border px-2 py-1">Quantity Available</th>
@@ -112,9 +111,6 @@ export const TshirtsTable = ({ tshirts, draftStatus }: TshirtsTableProps) => {
 
                                             {/* Name */}
                                             <td className="border px-2 py-1">{tshirt.name}</td>
-
-                                            {/* Size */}
-                                            <td className="border px-2 py-1">{tshirt.size ?? "-"}</td>
 
                                             {/* Price */}
                                             <td className="border px-2 py-1">
