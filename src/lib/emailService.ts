@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import greekLetters from "./greekLetters";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -14,21 +15,33 @@ interface AdminPurchaseEmailParams {
     name: string;
     category: string;
     amount: number;
+    teamId: string | null;
+    userName: string | null | undefined;
 }
 
 const from = "Fresno State Derby Days <no-reply@derbydays.org>";
 
 const email = "fresnoderbydays@gmail.com";
 
-export async function sendAdminPurchaseEmail({ name, category, amount, note }: AdminPurchaseEmailParams) {
+export async function sendAdminPurchaseEmail({
+    name,
+    category,
+    amount,
+    note,
+    teamId,
+    userName,
+}: AdminPurchaseEmailParams) {
     let subject = "";
     let html = "";
+    const teamHtml = teamId ? `<p>Team Credit: ${greekLetters(teamId)}</p>` : "";
+    const noteHtml = note ? `<p>Note: ${note}</p>` : "";
+    const userHtml = userName ? `<p>User Credit: ${userName}</p>` : "";
     if (category === "donation") {
         subject = "New Donation!";
-        html = `<p>${name} has donated <strong>$${amount.toFixed(2)}</strong></p><p>Note: ${note}</p>`;
+        html = `<p>${name} has donated <strong>$${amount.toFixed(2)}</strong></p>${noteHtml}${teamHtml}${userHtml}`;
     } else if (category === "ad") {
         subject = "New Ad Purchase!";
-        html = `<p>${name} has bought an ad for <strong>$${amount.toFixed(2)}</strong></p>`;
+        html = `<p>${name} has bought an ad for <strong>$${amount.toFixed(2)}</strong></p>${teamHtml}${userHtml}`;
     } else if (category === "shirt") return;
 
     console.log("Sending email", from);

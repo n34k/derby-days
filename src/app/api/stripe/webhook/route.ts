@@ -183,7 +183,13 @@ export async function POST(req: Request) {
         try {
             console.log("category:", JSON.stringify(category), "len:", category?.length);
             await sendPurchaseEmail({ to: email, name, category, amount });
-            await sendAdminPurchaseEmail({ name, category, amount, note });
+
+            let user = undefined;
+            if (referredById)
+                //get user's name to show in referred by email
+                user = await prisma.user.findFirst({ where: { id: referredById }, select: { name: true } });
+
+            await sendAdminPurchaseEmail({ name, category, amount, note, teamId, userName: user?.name });
         } catch (err) {
             console.error("Failed to send purchase email:", err);
             return new NextResponse("Failed to send purchase email", {
