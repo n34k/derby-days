@@ -10,4 +10,5 @@ export const AdminUpdateTeamSchema = z.object({
     derbyDarlingImageUrl: z.string().url().nullable().optional(),
     derbyDarlingPublicId: z.string().nullable().optional(),
     oldDerbyDarlingPublicId: z.string().nullable().optional(),
+    theme: z.string().nullable().optional(),
 });

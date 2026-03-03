@@ -3,11 +3,7 @@ import { prisma } from "../../../../prisma";
 import PersonCard from "@/components/PersonCard";
 import greekLetters from "@/lib/greekLetters";
 
-export default async function TeamPage({
-    params,
-}: {
-    params: Promise<{ teamId: string }>;
-}) {
+export default async function TeamPage({ params }: { params: Promise<{ teamId: string }> }) {
     const { teamId } = await params;
     const team = await prisma.team.findUnique({ where: { id: teamId } });
 
@@ -23,8 +19,7 @@ export default async function TeamPage({
               }
             : null;
 
-    let headCoachInfo: { name: string | null; image?: string | null } | null =
-        null;
+    let headCoachInfo: { name: string | null; image?: string | null } | null = null;
 
     if (team.headCoachId) {
         const headCoach = await prisma.user.findUnique({
@@ -49,6 +44,7 @@ export default async function TeamPage({
     return (
         <main className="flex flex-col gap-5 items-center justify-center p-8">
             <h1 className="text-5xl font-bold">{greekLetters(team.id)}</h1>
+            {team.theme && <h2 className="text-3xl text-info-content">Theme: {team.theme}</h2>}
             <div className="flex flex-col md:flex-row gap-7.5">
                 <PersonCard
                     role="Derby Darling"

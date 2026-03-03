@@ -34,10 +34,7 @@ export async function PATCH(req: NextRequest) {
     const parsed = AdminUpdateTeamSchema.safeParse(body);
     console.log("Parsed data:", parsed);
     if (!parsed.success) {
-        return NextResponse.json(
-            { error: "Validation failed", details: parsed.error.flatten() },
-            { status: 400 }
-        );
+        return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
     }
     const data = parsed.data;
 
@@ -55,12 +52,7 @@ export async function PATCH(req: NextRequest) {
 
             // 1) Handle head coach reassignment if present in payload
             if ("headCoachId" in data) {
-                console.log(
-                    "Updating head coach for team",
-                    teamId,
-                    "to",
-                    data.headCoachId
-                );
+                console.log("Updating head coach for team", teamId, "to", data.headCoachId);
                 const newCoachId = data.headCoachId ?? null;
                 const oldCoachId = existingTeam.headCoachId ?? null;
 
@@ -108,6 +100,7 @@ export async function PATCH(req: NextRequest) {
                 derbyDarlingName: data.derbyDarlingName,
                 derbyDarlingImageUrl: data.derbyDarlingImageUrl,
                 derbyDarlingPublicId: data.derbyDarlingPublicId,
+                theme: data.theme,
             };
             Object.keys(updatable).forEach((k) => {
                 if (updatable[k] === undefined) delete updatable[k];
@@ -169,9 +162,7 @@ export async function DELETE(req: NextRequest) {
     try {
         // Transaction: first unset teamId for all users in this team, then delete the team
         if (teamToDelete.derbyDarlingPublicId) {
-            await cloudinary.uploader.destroy(
-                teamToDelete.derbyDarlingPublicId || ""
-            );
+            await cloudinary.uploader.destroy(teamToDelete.derbyDarlingPublicId || "");
         }
 
         await prisma.$transaction([

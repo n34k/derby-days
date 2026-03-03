@@ -130,7 +130,7 @@ model Team {
   derbyDarlingPublicId String?
 
   members User[]
-
+  theme       String?       
   donations   Donation[]
   draftPicks  DraftPick[]
   points      Int         @default(0)

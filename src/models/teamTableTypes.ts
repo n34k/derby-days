@@ -15,6 +15,7 @@ export type EditedTeam = Partial<
         | "derbyDarlingImageUrl"
         | "derbyDarlingPublicId"
         | "points"
+        | "theme"
         | "tshirtsSold"
         | "moneyRaised"
     >

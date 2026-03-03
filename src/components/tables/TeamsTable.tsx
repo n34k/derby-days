@@ -82,7 +82,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                 const freshTeam = (resJson?.team ?? null) as TeamWithCoach | null;
 
                 setTeamState((prev) =>
-                    prev.map((t) => (t.id === teamId ? freshTeam ?? { ...t, ...updatedFields } : t))
+                    prev.map((t) => (t.id === teamId ? (freshTeam ?? { ...t, ...updatedFields }) : t)),
                 );
             } catch (error) {
                 console.error(`Error updating team ${teamId}:`, error);
@@ -141,13 +141,13 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
             setTeamState((prev) =>
                 prev.map((t) =>
                     t.id === teamId
-                        ? freshTeam ?? {
+                        ? (freshTeam ?? {
                               ...t,
                               derbyDarlingImageUrl: body.derbyDarlingImageUrl,
                               derbyDarlingPublicId: body.derbyDarlingPublicId,
-                          }
-                        : t
-                )
+                          })
+                        : t,
+                ),
             );
 
             setEditedTeams((prev) => ({
@@ -199,7 +199,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
     const uploadBtnLabel = useMemo(
         () => (id: string, hasImage: boolean) =>
             uploadingTeamId === id ? "Uploading..." : hasImage ? "Replace" : "Upload",
-        [uploadingTeamId]
+        [uploadingTeamId],
     );
 
     return (
@@ -287,6 +287,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                 <th className="border px-2 py-1">Money Raised</th>
                                 <th className="border px-2 py-1">Points</th>
                                 <th className="border px-2 py-1">Head Coach</th>
+                                <th className="border px-2 py-1">Theme</th>
                                 <th className="border px-2 py-1">Derby Darling Name</th>
                                 <th className="border px-2 py-1">Derby Darling Image</th>
                                 {createOrDeleteAllowed && editing && (
@@ -317,12 +318,12 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                                         handleChange(
                                                             team.id,
                                                             "tshirtsSold",
-                                                            parseInt(e.target.value || "0", 10)
+                                                            parseInt(e.target.value || "0", 10),
                                                         )
                                                     }
                                                 />
                                             ) : (
-                                                team.tshirtsSold ?? "—"
+                                                (team.tshirtsSold ?? "—")
                                             )}
                                         </td>
 
@@ -342,12 +343,12 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                                         handleChange(
                                                             team.id,
                                                             "points",
-                                                            parseInt(e.target.value || "0", 10)
+                                                            parseInt(e.target.value || "0", 10),
                                                         )
                                                     }
                                                 />
                                             ) : (
-                                                team.points ?? "—"
+                                                (team.points ?? "—")
                                             )}
                                         </td>
 
@@ -382,7 +383,20 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                                     {coachErr && <span className="text-xs text-error">{coachErr}</span>}
                                                 </div>
                                             ) : (
-                                                team.headCoach?.name ?? "—"
+                                                (team.headCoach?.name ?? "—")
+                                            )}
+                                        </td>
+
+                                        <td className="border px-2 py-1 text-center">
+                                            {editing && draftStatus !== "COMPLETE" ? (
+                                                <input
+                                                    className="w-full max-w-[220px]"
+                                                    placeholder="Theme"
+                                                    value={isEdited?.theme ?? team.theme ?? ""}
+                                                    onChange={(e) => handleChange(team.id, "theme", e.target.value)}
+                                                />
+                                            ) : (
+                                                (team.theme ?? "—")
                                             )}
                                         </td>
 
@@ -398,7 +412,7 @@ export const TeamsTable = ({ teams, draftStatus }: TeamsTableProps) => {
                                                     }
                                                 />
                                             ) : (
-                                                team.derbyDarlingName ?? "—"
+                                                (team.derbyDarlingName ?? "—")
                                             )}
                                         </td>
 
