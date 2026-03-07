@@ -7,7 +7,7 @@ import { pusher } from "@/lib/pusher/server";
 import getYear from "@/lib/getYear";
 import { DraftStatus } from "@/generated/prisma";
 
-const DRAFT_TIMER = 10 * 60 * 300;
+export const DRAFT_TIMER = 10 * 60 * 300;
 
 export async function GET() {
     const year = getYear();

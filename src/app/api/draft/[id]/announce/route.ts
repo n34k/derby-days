@@ -3,6 +3,7 @@ import { prisma } from "../../../../../../prisma";
 import { pusher } from "@/lib/pusher/server";
 import { isAdmin } from "@/lib/isAdmin";
 import { idP } from "@/models/routeParamsTypes";
+import { DRAFT_TIMER } from "../status/route";
 
 export async function POST(req: NextRequest, { params }: { params: idP }) {
     const canAnnounce = await isAdmin();
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest, { params }: { params: idP }) {
             });
 
             // Advance the pointer + deadline
-            const nextDeadlineAt = new Date(Date.now() + 10 * 60 * 1000);
+            const nextDeadlineAt = new Date(Date.now() + DRAFT_TIMER);
             await tx.draft.update({
                 where: { id: draftId },
                 data: {
@@ -116,7 +117,7 @@ export async function POST(req: NextRequest, { params }: { params: idP }) {
                 completed,
                 nextPickNo,
                 nextTeamId,
-                deadlineAtMs: completed ? Date.now() : Date.now() + 10 * 60 * 1000,
+                deadlineAtMs: completed ? Date.now() : Date.now() + DRAFT_TIMER,
             };
         });
 
