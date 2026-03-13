@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 
+export const DRAFT_TIMER = 10 * 60 * 300;
+
 export function useCountdown(deadlineAt: number | null) {
     const [now, setNow] = useState<number>(() => Date.now());
 

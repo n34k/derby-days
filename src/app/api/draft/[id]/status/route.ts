@@ -6,8 +6,7 @@ import { idP } from "@/models/routeParamsTypes";
 import { pusher } from "@/lib/pusher/server";
 import getYear from "@/lib/getYear";
 import { DraftStatus } from "@/generated/prisma";
-
-export const DRAFT_TIMER = 10 * 60 * 300;
+import { DRAFT_TIMER } from "@/app/hooks/useCountdown";
 
 export async function GET() {
     const year = getYear();

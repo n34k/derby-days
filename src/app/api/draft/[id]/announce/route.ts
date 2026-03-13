@@ -3,7 +3,7 @@ import { prisma } from "../../../../../../prisma";
 import { pusher } from "@/lib/pusher/server";
 import { isAdmin } from "@/lib/isAdmin";
 import { idP } from "@/models/routeParamsTypes";
-import { DRAFT_TIMER } from "../status/route";
+import { DRAFT_TIMER } from "@/app/hooks/useCountdown";
 
 export async function POST(req: NextRequest, { params }: { params: idP }) {
     const canAnnounce = await isAdmin();

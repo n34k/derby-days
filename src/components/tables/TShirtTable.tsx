@@ -9,12 +9,10 @@ interface TshirtsTableProps {
     draftStatus: DraftStatus | undefined;
 }
 
-export const TshirtsTable = ({ tshirts, draftStatus }: TshirtsTableProps) => {
+export const TshirtsTable = ({ tshirts }: TshirtsTableProps) => {
     const [expanded, setExpanded] = useState(false);
     const [tshirtsState, setTshirtsState] = useState<Tshirt[]>(tshirts);
     const [showCreateModal, setShowCreateModal] = useState(false);
-
-    const changeAllowed = !draftStatus || draftStatus === "NOT_CREATED";
 
     const handleDelete = async (productId: string) => {
         if (!confirm("Are you sure you want to delete this t-shirt?")) return;
@@ -36,7 +34,7 @@ export const TshirtsTable = ({ tshirts, draftStatus }: TshirtsTableProps) => {
         setTshirtsState((prev) => [...prev, newTshirt]);
     };
 
-    const colCount = changeAllowed ? 7 : 6;
+    const colCount = 7;
 
     return (
         <div>
@@ -62,7 +60,7 @@ export const TshirtsTable = ({ tshirts, draftStatus }: TshirtsTableProps) => {
                     <ChevronDownIcon className={`w-7 h-7 transition-transform ${expanded ? "rotate-180" : ""}`} />
                 </button>
 
-                {expanded && changeAllowed && (
+                {expanded && (
                     <button
                         className="btn btn-secondary btn-circle"
                         onClick={() => setShowCreateModal(true)}
@@ -93,7 +91,7 @@ export const TshirtsTable = ({ tshirts, draftStatus }: TshirtsTableProps) => {
                                 <th className="border px-2 py-1">Price</th>
                                 <th className="border px-2 py-1">Stripe Price ID</th>
                                 <th className="border px-2 py-1">Quantity Available</th>
-                                {changeAllowed && <th className="border px-2 py-1">Delete</th>}
+                                <th className="border px-2 py-1">Delete</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -126,16 +124,15 @@ export const TshirtsTable = ({ tshirts, draftStatus }: TshirtsTableProps) => {
                                             </td>
 
                                             {/* Delete */}
-                                            {changeAllowed && (
-                                                <td className="text-center border px-2 py-1">
-                                                    <button
-                                                        className="btn btn-error btn-circle"
-                                                        onClick={() => handleDelete(tshirt.productId)}
-                                                    >
-                                                        <TrashIcon className="h-4 w-4" />
-                                                    </button>
-                                                </td>
-                                            )}
+
+                                            <td className="text-center border px-2 py-1">
+                                                <button
+                                                    className="btn btn-error btn-circle"
+                                                    onClick={() => handleDelete(tshirt.productId)}
+                                                >
+                                                    <TrashIcon className="h-4 w-4" />
+                                                </button>
+                                            </td>
                                         </tr>
                                     ))
                             ) : (
