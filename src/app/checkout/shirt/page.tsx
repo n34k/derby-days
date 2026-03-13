@@ -101,7 +101,7 @@ const ShirtsOrder = () => {
         fetchStripeImages();
     }, [shirts]);
 
-    const canCheckout = cart.length > 0 && !!teamId && !!name && !!email;
+    const canCheckout = cart.length > 0 && !!name && !!email;
 
     const addToCart = (shirt: ShirtAddToCart) => {
         if (cart.length >= 6) {
@@ -264,7 +264,6 @@ const ShirtsOrder = () => {
                         className="select select-bordered bg-white text-black rounded-sm w-full"
                         value={teamId}
                         onChange={(e) => setTeamId(e.target.value)}
-                        required
                         disabled={loading}
                     >
                         <option value="">Select a team…</option>
