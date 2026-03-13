@@ -30,7 +30,7 @@ const HelpSection = () => {
                     title="Purchase a Shirt"
                     Icon={ShoppingBagIcon}
                 >
-                    Buy a Derby Days shirt. We have sizes from S to XXL. Sales will open during Derby Days season.
+                    Buy a Derby Days shirt. We have sizes from XS to XXL. Sales will open during Derby Days season.
                 </Service>
                 <Service
                     title="Spread the Word"
