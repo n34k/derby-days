@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { formatUSD } from "@/lib/formatUSD";
 import { Tshirt } from "@/generated/prisma";
 import InfoCircle from "@/components/modals/InfoCircle";
-import { tshirtSizes } from "@/models/tshirtSizes";
+import { CLOSE_SHIRT_SALES_DATE, tshirtSizes } from "@/models/tshirtSizes";
 import { MinusCircleIcon, PlusCircleIcon, CheckIcon } from "@heroicons/react/24/outline";
 import ImageCarousel from "@/components/ImageCarousel";
 
@@ -40,6 +40,8 @@ const ShirtsOrder = () => {
     const [justAddedKey, setJustAddedKey] = useState<string | null>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [toasts, setToasts] = useState<Toast[]>([]);
+
+    const shirtsClosed = new Date() >= CLOSE_SHIRT_SALES_DATE;
 
     const showToast = (message: string, variant: Toast["variant"] = "success") => {
         const id = Date.now();
@@ -406,7 +408,7 @@ const ShirtsOrder = () => {
                 <button
                     type="submit"
                     className="btn btn-secondary w-full max-w-md md:max-w-xl"
-                    disabled={loading || !canCheckout}
+                    disabled={loading || !canCheckout || shirtsClosed}
                 >
                     {loading ? <span className="loading loading-spinner" /> : "Continue to Payment"}
                 </button>
