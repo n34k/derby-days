@@ -131,49 +131,52 @@ export async function POST(req: Request) {
                 //amount in metadata be the profit from tshirt
             }
 
-            // Update logic for user and team money raised
-            if (referredById) {
-                const user = await prisma.user.findUnique({
-                    where: { id: referredById },
-                    include: { team: true },
-                });
+            // Update logic for user and team money raised but not with shirt purchase
 
-                if (user) {
-                    await prisma.user.update({
-                        where: { id: user.id },
-                        data: { moneyRaised: { increment: amount } },
+            if (category !== "shirt") {
+                if (referredById) {
+                    const user = await prisma.user.findUnique({
+                        where: { id: referredById },
+                        include: { team: true },
                     });
 
-                    if (user.teamId) {
-                        await prisma.team.update({
-                            where: { id: user.teamId },
+                    if (user) {
+                        await prisma.user.update({
+                            where: { id: user.id },
+                            data: { moneyRaised: { increment: amount } },
+                        });
+
+                        if (user.teamId) {
+                            await prisma.team.update({
+                                where: { id: user.teamId },
+                                data: { moneyRaised: { increment: amount } },
+                            });
+                        }
+                    }
+                    // if on checkout they chose reffered by team
+                } else if (teamId) {
+                    // if a user donates directly to a team, see if they are logged in
+                    // and increment their moneyRaised as well
+                    console.log("USER DATA IN STRIPE WEBHOOK:", userData);
+                    if (userData) {
+                        await prisma.user.update({
+                            where: { id: userData.id },
                             data: { moneyRaised: { increment: amount } },
                         });
                     }
-                }
-                // if on checkout they chose reffered by team
-            } else if (teamId) {
-                // if a user donates directly to a team, see if they are logged in
-                // and increment their moneyRaised as well
-                console.log("USER DATA IN STRIPE WEBHOOK:", userData);
-                if (userData) {
-                    await prisma.user.update({
-                        where: { id: userData.id },
+
+                    await prisma.team.update({
+                        where: { id: teamId },
                         data: { moneyRaised: { increment: amount } },
                     });
                 }
 
-                await prisma.team.update({
-                    where: { id: teamId },
-                    data: { moneyRaised: { increment: amount } },
+                //Update total money raised
+                await prisma.derbyStats.update({
+                    where: { id: year },
+                    data: { totalRaised: { increment: amount } },
                 });
             }
-
-            //Update total money raised
-            await prisma.derbyStats.update({
-                where: { id: year },
-                data: { totalRaised: { increment: amount } },
-            });
         } catch (err) {
             console.error("Donation processing error:", err);
             return new NextResponse("Failed to process donation", {
